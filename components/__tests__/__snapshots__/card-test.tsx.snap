@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders as Pressable when onPress provided 1`] = `
+<RNGestureHandlerButton
+  collapsable={false}
+  enabled={true}
+  hitSlop={
+    {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    }
+  }
+  style={
+    [
+      {},
+      {
+        "backgroundColor": "white",
+        "borderRadius": 8,
+        "padding": 14,
+      },
+    ]
+  }
+>
+  <Text>
+    Clickable card
+  </Text>
+</RNGestureHandlerButton>
+`;
+
+exports[`renders as View when no onPress provided 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "white",
+      "borderRadius": 8,
+      "padding": 14,
+    }
+  }
+>
+  <Text>
+    Static card
+  </Text>
+</View>
+`;
+
+exports[`renders correctly with children 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "white",
+      "borderRadius": 8,
+      "padding": 14,
+    }
+  }
+>
+  <Text>
+    Card content
+  </Text>
+</View>
+`;

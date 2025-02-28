@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FAB renders correctly 1`] = `
+<View
+  style={
+    [
+      {
+        "bottom": 20,
+        "position": "absolute",
+        "right": 8,
+        "zIndex": 100,
+      },
+      {
+        "bottom": 20,
+      },
+    ]
+  }
+>
+  <RNGestureHandlerButton
+    collapsable={false}
+    enabled={true}
+    hitSlop={
+      {
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+      }
+    }
+    rippleColor={4290302944}
+    style={
+      [
+        {},
+        {
+          "backgroundColor": "hsl(200 40% 50%)",
+          "borderRadius": 16,
+          "elevation": 2,
+          "padding": 16,
+          "shadowColor": "black",
+        },
+      ]
+    }
+    testID="fab-button"
+  >
+    <Text>
+      +
+    </Text>
+  </RNGestureHandlerButton>
+</View>
+`;

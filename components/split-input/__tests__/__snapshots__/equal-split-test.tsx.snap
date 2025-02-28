@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EqualSplit EqualSplitInput renders correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "white",
+      "borderRadius": 4,
+      "flex": 1,
+      "gap": 8,
+      "padding": 12,
+    }
+  }
+>
+  <View
+    style={
+      {
+        "display": "flex",
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+      }
+    }
+  >
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "fontSize": 16,
+            "fontWeight": "400",
+            "lineHeight": 24,
+          },
+        ]
+      }
+    >
+      user1
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontSize": 16,
+            "fontWeight": "400",
+            "lineHeight": 24,
+          },
+        ]
+      }
+    >
+      $10.00
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "display": "flex",
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+      }
+    }
+  >
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "fontSize": 16,
+            "fontWeight": "400",
+            "lineHeight": 24,
+          },
+        ]
+      }
+    >
+      user2
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontSize": 16,
+            "fontWeight": "400",
+            "lineHeight": 24,
+          },
+        ]
+      }
+    >
+      $10.00
+    </Text>
+  </View>
+</View>
+`;

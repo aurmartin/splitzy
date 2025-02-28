@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📦 Checkout project repo
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node + PNPM + install deps
+        uses: ./.github/actions/setup-node-pnpm-install
+
+      - name: 📦 Setup env file
+        run: |
+          echo "SERVER_URL=http://localhost:50000" > .env.test
+          echo "SUPABASE_URL=http://localhost:50001" >> .env.test
+          echo "SUPABASE_ANON_KEY=TEST_KEY" >> .env.test
+
+      - name: 🏃‍♂️ Run Tests
+        run: pnpm test:ci
+
+  type-check:
+    name: Type Check (tsc)
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📦 Checkout project repo
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node + PNPM + install deps
+        uses: ./.github/actions/setup-node-pnpm-install
+
+      - name: 🏃‍♂️ Run TypeScript Commit
+        run: pnpm tsc --noemit
+
+  lint:
+    name: Lint (eslint, prettier)
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📦 Checkout project repo
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node + PNPM + install deps
+        uses: ./.github/actions/setup-node-pnpm-install
+
+      - name: 🏃‍♂️ Run ESLint
+        run: pnpm run lint

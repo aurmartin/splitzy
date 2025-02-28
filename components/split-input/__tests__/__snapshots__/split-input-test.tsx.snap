@@ -1,0 +1,168 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SplitInput SplitInput component renders correctly 1`] = `
+<View
+  style={
+    {
+      "gap": 8,
+    }
+  }
+>
+  <View>
+    <Text
+      style={
+        [
+          {
+            "fontSize": 16,
+            "fontWeight": "400",
+            "lineHeight": 24,
+          },
+          {
+            "marginBottom": 4,
+          },
+        ]
+      }
+    >
+      Partager la dépense
+    </Text>
+    <View
+      style={
+        {
+          "backgroundColor": "white",
+          "borderColor": "hsl(0 0% 70%)",
+          "borderRadius": 4,
+          "borderStyle": "solid",
+          "borderWidth": 1,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "marginBottom": -5,
+            "marginTop": -5,
+            "padding": 0,
+          }
+        }
+      >
+        <RNCPicker
+          items={
+            [
+              {
+                "label": "Également",
+                "testID": undefined,
+                "textColor": undefined,
+                "value": "equal",
+              },
+              {
+                "label": "En pourcentage",
+                "testID": undefined,
+                "textColor": undefined,
+                "value": "percentage",
+              },
+            ]
+          }
+          numberOfLines={1}
+          onChange={[Function]}
+          selectedIndex={0}
+          style={
+            [
+              {
+                "height": 216,
+              },
+              undefined,
+            ]
+          }
+          testID="picker"
+        />
+      </View>
+    </View>
+  </View>
+  <View
+    style={
+      {
+        "backgroundColor": "white",
+        "borderRadius": 4,
+        "flex": 1,
+        "gap": 8,
+        "padding": 12,
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "display": "flex",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+        }
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 16,
+              "fontWeight": "400",
+              "lineHeight": 24,
+            },
+          ]
+        }
+      >
+        user1
+      </Text>
+      <Text
+        style={
+          [
+            {
+              "fontSize": 16,
+              "fontWeight": "400",
+              "lineHeight": 24,
+            },
+          ]
+        }
+      >
+        $10.00
+      </Text>
+    </View>
+    <View
+      style={
+        {
+          "display": "flex",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+        }
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 16,
+              "fontWeight": "400",
+              "lineHeight": 24,
+            },
+          ]
+        }
+      >
+        user2
+      </Text>
+      <Text
+        style={
+          [
+            {
+              "fontSize": 16,
+              "fontWeight": "400",
+              "lineHeight": 24,
+            },
+          ]
+        }
+      >
+        $10.00
+      </Text>
+    </View>
+  </View>
+</View>
+`;

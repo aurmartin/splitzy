@@ -1,0 +1,12 @@
+build
+coverage
+node_modules
+.expo
+pnpm-lock.yaml
+package-lock.json
+
+**/*.html
+
+expo-env.d.ts
+
+android/

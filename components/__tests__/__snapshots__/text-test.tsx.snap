@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontSize": 16,
+        "fontWeight": "400",
+        "lineHeight": 24,
+      },
+    ]
+  }
+>
+  Snapshot test!
+</Text>
+`;
+
+exports[`renders correctly with style 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontSize": 16,
+        "fontWeight": "400",
+        "lineHeight": 24,
+      },
+      {
+        "fontSize": 20,
+      },
+    ]
+  }
+>
+  Snapshot test!
+</Text>
+`;
+
+exports[`renders correctly with type 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontSize": 22,
+        "fontWeight": "400",
+        "lineHeight": 28,
+      },
+    ]
+  }
+>
+  Snapshot test!
+</Text>
+`;

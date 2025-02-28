@@ -1,0 +1,207 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<RNGestureHandlerButton
+  collapsable={false}
+  enabled={true}
+  hitSlop={
+    {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    }
+  }
+  rippleColor={4290302944}
+  style={
+    [
+      {},
+      [
+        {
+          "alignItems": "center",
+          "borderRadius": 40,
+          "height": 40,
+          "justifyContent": "center",
+          "paddingHorizontal": 16,
+        },
+        {
+          "backgroundColor": "hsl(200 40% 50%)",
+        },
+        undefined,
+      ],
+    ]
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "fontSize": 16,
+          "fontWeight": "400",
+          "lineHeight": 24,
+        },
+        {
+          "color": "white",
+        },
+      ]
+    }
+  >
+    Press me!
+  </Text>
+</RNGestureHandlerButton>
+`;
+
+exports[`renders correctly with style 1`] = `
+<RNGestureHandlerButton
+  collapsable={false}
+  enabled={true}
+  hitSlop={
+    {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    }
+  }
+  rippleColor={4290302944}
+  style={
+    [
+      {},
+      [
+        {
+          "alignItems": "center",
+          "borderRadius": 40,
+          "height": 40,
+          "justifyContent": "center",
+          "paddingHorizontal": 16,
+        },
+        {
+          "backgroundColor": "hsl(200 40% 50%)",
+        },
+        {
+          "backgroundColor": "red",
+        },
+      ],
+    ]
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "fontSize": 16,
+          "fontWeight": "400",
+          "lineHeight": 24,
+        },
+        {
+          "color": "white",
+        },
+      ]
+    }
+  >
+    Press me!
+  </Text>
+</RNGestureHandlerButton>
+`;
+
+exports[`renders correctly with type 1`] = `
+<RNGestureHandlerButton
+  collapsable={false}
+  enabled={true}
+  hitSlop={
+    {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    }
+  }
+  rippleColor={4290302944}
+  style={
+    [
+      {},
+      [
+        {
+          "alignItems": "center",
+          "borderRadius": 40,
+          "height": 40,
+          "justifyContent": "center",
+          "paddingHorizontal": 16,
+        },
+        {
+          "backgroundColor": "hsl(200 40% 50%)",
+        },
+        undefined,
+      ],
+    ]
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "fontSize": 16,
+          "fontWeight": "400",
+          "lineHeight": 24,
+        },
+        {
+          "color": "white",
+        },
+      ]
+    }
+  >
+    Press me!
+  </Text>
+</RNGestureHandlerButton>
+`;
+
+exports[`renders disabled state correctly 1`] = `
+<RNGestureHandlerButton
+  collapsable={false}
+  enabled={false}
+  hitSlop={
+    {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    }
+  }
+  rippleColor={4290302944}
+  style={
+    [
+      {},
+      [
+        {
+          "alignItems": "center",
+          "borderRadius": 40,
+          "height": 40,
+          "justifyContent": "center",
+          "paddingHorizontal": 16,
+        },
+        {
+          "backgroundColor": "hsl(200 40% 50%)",
+        },
+        undefined,
+      ],
+    ]
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "fontSize": 16,
+          "fontWeight": "400",
+          "lineHeight": 24,
+        },
+        {
+          "color": "white",
+        },
+      ]
+    }
+  >
+    Press me!
+  </Text>
+</RNGestureHandlerButton>
+`;

@@ -1,0 +1,93 @@
+{
+  "name": "splitzy",
+  "main": "expo-router/entry",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "EXPO_NO_DOTENV=1 expo start",
+    "android": "EXPO_NO_DOTENV=1 expo run:android",
+    "ios": "EXPO_NO_DOTENV=1 expo run:ios",
+    "web": "EXPO_NO_DOTENV=1 expo start --web",
+    "test": "dotenv -e .env.test -- jest",
+    "test:watch": "dotenv -e .env.test -- jest --watchAll",
+    "test:ci": "dotenv -e .env.test -- jest --ci",
+    "format": "prettier --write .",
+    "lint": "expo lint",
+    "build:dev": "EXPO_NO_DOTENV=1 APP_ENV=development dotenv -e .env.development -- eas build --platform android --profile development --local",
+    "build:preview": "EXPO_NO_DOTENV=1 APP_ENV=preview dotenv -e .env.preview -- eas build --platform android --profile preview --local --output splitzy-preview.apk",
+    "build:production": "EXPO_NO_DOTENV=1 APP_ENV=production dotenv -e .env.production -- eas build --platform android --profile production --local --output splitzy.apk"
+  },
+  "dependencies": {
+    "@aptabase/react-native": "^0.3.10",
+    "@expo/vector-icons": "^14.0.4",
+    "@react-native-community/netinfo": "11.4.1",
+    "@react-native-picker/picker": "^2.9.0",
+    "@react-navigation/native": "^7.0.14",
+    "@sentry/react-native": "^6.3.0",
+    "@supabase/supabase-js": "^2.48.1",
+    "dinero.js": "^1.9.1",
+    "drizzle-orm": "^0.39.2",
+    "expo": "~52.0.36",
+    "expo-auth-session": "~6.0.3",
+    "expo-constants": "~17.0.7",
+    "expo-crypto": "~14.0.2",
+    "expo-dev-client": "~5.0.12",
+    "expo-document-picker": "~13.0.3",
+    "expo-linking": "~7.0.5",
+    "expo-localization": "~16.0.1",
+    "expo-router": "~4.0.17",
+    "expo-splash-screen": "~0.29.22",
+    "expo-sqlite": "^15.1.2",
+    "expo-status-bar": "~2.0.1",
+    "expo-system-ui": "~4.0.8",
+    "expo-web-browser": "~14.0.2",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-native": "0.76.7",
+    "react-native-gesture-handler": "~2.20.2",
+    "react-native-mmkv": "^3.2.0",
+    "react-native-safe-area-context": "4.12.0",
+    "react-native-screens": "4.4.0",
+    "react-native-web": "~0.19.13",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.8",
+    "@testing-library/react-native": "^12.9.0",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/dinero.js": "^1.9.4",
+    "@types/jest": "^29.5.14",
+    "@types/react": "~18.3.18",
+    "better-sqlite3": "^11.8.1",
+    "dotenv-cli": "^8.0.0",
+    "eslint": "^8.57.1",
+    "eslint-config-expo": "~8.0.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "jest": "^29.7.0",
+    "jest-expo": "~52.0.5",
+    "msw": "^2.7.3",
+    "prettier": "^3.5.0",
+    "prettier-eslint": "^16.3.0",
+    "typescript": "~5.3.3",
+    "uuid": "^11.1.0"
+  },
+  "private": true,
+  "packageManager": "pnpm@10.5.0+sha512.11106a5916c7406fe4b8cb8e3067974b8728f47308a4f5ac5e850304afa6f57e2847d7950dfe78877d8d36bfb401d381c4215db3a4c3547ffa63c14333a6fa51",
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": [
+          "drizzle-orm",
+          "dinero.js"
+        ]
+      }
+    }
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@sentry/cli",
+      "better-sqlite3",
+      "msw"
+    ]
+  }
+}

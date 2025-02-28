@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PercentageSplit PercentageSplitInput renders correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "white",
+      "borderRadius": 4,
+      "flex": 1,
+      "gap": 8,
+      "padding": 12,
+    }
+  }
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "gap": 8,
+      }
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontSize": 16,
+            "fontWeight": "400",
+            "lineHeight": 24,
+          },
+          {
+            "flex": 1,
+          },
+        ]
+      }
+    >
+      user1
+    </Text>
+    <TextInput
+      keyboardType="numeric"
+      onChangeText={[Function]}
+      placeholder="0.00"
+      placeholderTextColor="#666"
+      style={
+        [
+          {
+            "backgroundColor": "#fff",
+            "borderColor": "hsl(0 0% 70%)",
+            "borderRadius": 4,
+            "borderWidth": 1,
+            "height": 45,
+            "padding": 10,
+          },
+          {
+            "height": 30,
+            "minWidth": 50,
+            "padding": 0,
+            "paddingHorizontal": 8,
+          },
+        ]
+      }
+      testID="float-input"
+      value="100"
+    />
+    <Text
+      style={
+        [
+          {
+            "fontSize": 16,
+            "fontWeight": "400",
+            "lineHeight": 24,
+          },
+        ]
+      }
+    >
+      %
+    </Text>
+  </View>
+</View>
+`;
