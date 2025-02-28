@@ -1,6 +1,6 @@
 # Splitzy
 
-[![Unit Tests](https://github.com/aurmartin/splitzy/actions/workflows/test.yml/badge.svg)](https://github.com/aurmartin/splitzy/actions/workflows/test.yml)
+[![Unit Tests](https://github.com/aurmartin/splitzy/actions/workflows/ci.yml/badge.svg)](https://github.com/aurmartin/splitzy/actions/workflows/ci.yml)
 
 A local-first, AI-powered expense splitting app that works offline. Built with React Native and Expo.
 
