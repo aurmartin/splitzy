@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RedirectScreen should render snapshot 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <RNCSafeAreaView
+    edges={
+      {
+        "bottom": "additive",
+        "left": "additive",
+        "right": "additive",
+        "top": "additive",
+      }
+    }
+    style={
+      {
+        "flex": 1,
+      }
+    }
+  >
+    <RNCSafeAreaView
+      edges={
+        {
+          "bottom": "additive",
+          "left": "additive",
+          "right": "additive",
+          "top": "additive",
+        }
+      }
+      style={
+        {
+          "backgroundColor": "hsl(200 15% 90%)",
+          "flex": 1,
+          "padding": 8,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flex": 1,
+            "gap": 16,
+            "justifyContent": "center",
+          }
+        }
+      >
+        <ActivityIndicator
+          color="hsl(200 40% 50%)"
+          size="large"
+        />
+        <Text
+          style={
+            [
+              {
+                "fontSize": 16,
+                "fontWeight": "400",
+                "lineHeight": 24,
+              },
+            ]
+          }
+        >
+          Logging in...
+        </Text>
+      </View>
+    </RNCSafeAreaView>
+  </RNCSafeAreaView>
+</RNCSafeAreaProvider>
+`;

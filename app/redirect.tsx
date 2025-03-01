@@ -21,7 +21,10 @@ export default function RedirectScreen() {
 
       const { access_token, refresh_token } = params;
 
-      if (!access_token) return;
+      if (!access_token) {
+        console.error("No access_token provided");
+        return router.replace("/login");
+      }
 
       const { error } = await system.setSession({
         access_token,
@@ -41,7 +44,7 @@ export default function RedirectScreen() {
   React.useEffect(() => {
     if (url) {
       try {
-        createSessionFromUrl(url);
+        setTimeout(() => createSessionFromUrl(url), 0);
       } catch (error) {
         Sentry.captureException(error);
         console.error(error);

@@ -1,0 +1,176 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoginScreen should render snapshot 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <RNCSafeAreaView
+    edges={
+      {
+        "bottom": "additive",
+        "left": "additive",
+        "right": "additive",
+        "top": "additive",
+      }
+    }
+    style={
+      {
+        "flex": 1,
+      }
+    }
+  >
+    <RNCSafeAreaView
+      edges={
+        {
+          "bottom": "additive",
+          "left": "additive",
+          "right": "additive",
+          "top": "additive",
+        }
+      }
+      style={
+        {
+          "backgroundColor": "hsl(200 15% 90%)",
+          "flex": 1,
+          "padding": 8,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "flex": 1,
+            "gap": 20,
+            "padding": 8,
+          }
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontSize": 56,
+                "fontWeight": "300",
+                "lineHeight": 64,
+              },
+              {
+                "marginBottom": 32,
+                "marginTop": 32,
+                "textAlign": "center",
+              },
+            ]
+          }
+        >
+          Welcome!
+        </Text>
+        <Text
+          style={
+            [
+              {
+                "fontSize": 28,
+                "fontWeight": "400",
+                "lineHeight": 36,
+              },
+            ]
+          }
+        >
+          Sign in or create an account
+        </Text>
+        <Text
+          style={
+            [
+              {
+                "fontSize": 16,
+                "fontWeight": "400",
+                "lineHeight": 24,
+              },
+            ]
+          }
+        >
+          Enter your email address below. If you don't have an account yet, we'll automatically create one for you when you first sign in!
+        </Text>
+        <TextInput
+          autoCapitalize="none"
+          autoComplete="email"
+          autoCorrect={false}
+          keyboardType="email-address"
+          onChangeText={[Function]}
+          placeholder="Email"
+          placeholderTextColor="#666"
+          style={
+            [
+              {
+                "backgroundColor": "#fff",
+                "borderColor": "hsl(0 0% 70%)",
+                "borderRadius": 4,
+                "borderWidth": 1,
+                "height": 45,
+                "padding": 10,
+              },
+              undefined,
+            ]
+          }
+          value=""
+        />
+        <RNGestureHandlerButton
+          accessibilityLabel="Login"
+          collapsable={false}
+          enabled={true}
+          hitSlop={
+            {
+              "bottom": 0,
+              "left": 0,
+              "right": 0,
+              "top": 0,
+            }
+          }
+          rippleColor={4290302944}
+          style={
+            [
+              {},
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 40,
+                  "height": 40,
+                  "justifyContent": "center",
+                  "paddingHorizontal": 16,
+                },
+                {
+                  "backgroundColor": "hsl(200 40% 50%)",
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <Text
+            style={
+              [
+                {
+                  "fontSize": 16,
+                  "fontWeight": "400",
+                  "lineHeight": 24,
+                },
+                {
+                  "color": "white",
+                },
+              ]
+            }
+          >
+            Login or Create Account
+          </Text>
+        </RNGestureHandlerButton>
+      </View>
+    </RNCSafeAreaView>
+  </RNCSafeAreaView>
+</RNCSafeAreaProvider>
+`;
