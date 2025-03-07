@@ -23,10 +23,10 @@
     "@react-native-picker/picker": "^2.9.0",
     "@react-navigation/native": "^7.0.14",
     "@sentry/react-native": "^6.3.0",
-    "@supabase/supabase-js": "^2.48.1",
+    "@supabase/supabase-js": "^2.49.1",
     "dinero.js": "^1.9.1",
-    "drizzle-orm": "^0.39.2",
-    "expo": "~52.0.36",
+    "drizzle-orm": "^0.39.3",
+    "expo": "~52.0.37",
     "expo-auth-session": "~6.0.3",
     "expo-constants": "~17.0.7",
     "expo-crypto": "~14.0.2",
@@ -51,7 +51,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.8",
+    "@babel/core": "^7.26.9",
     "@testing-library/react-native": "^12.9.0",
     "@types/better-sqlite3": "^7.6.12",
     "@types/dinero.js": "^1.9.4",
@@ -68,13 +68,13 @@
     "jest-expo": "~52.0.5",
     "jws": "^4.0.0",
     "msw": "^2.7.3",
-    "prettier": "^3.5.0",
+    "prettier": "^3.5.3",
     "prettier-eslint": "^16.3.0",
     "typescript": "~5.3.3",
     "uuid": "^11.1.0"
   },
   "private": true,
-  "packageManager": "pnpm@10.5.0+sha512.11106a5916c7406fe4b8cb8e3067974b8728f47308a4f5ac5e850304afa6f57e2847d7950dfe78877d8d36bfb401d381c4215db3a4c3547ffa63c14333a6fa51",
+  "packageManager": "pnpm@10.6.0+sha512.df0136e797db0cfa7ec1084e77f3bdf81bacbae9066832fbf95cba4c2140ad05e64f316cde51ce3f99ea00a91ffc702d6aedd3c0f450f895e3e7c052fe573cd8",
   "expo": {
     "doctor": {
       "reactNativeDirectoryCheck": {
