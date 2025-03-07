@@ -130,7 +130,7 @@ const Expenses = React.memo(function _Expenses(props: { group: Group }) {
       windowSize={10}
       onRefresh={async () => {
         setRefreshing(true);
-        await system.syncEngine.refreshTable(tables.expenses);
+        await system.syncEngine.syncTableFromRemote(tables.expenses);
         setRefreshing(false);
       }}
       refreshing={refreshing}

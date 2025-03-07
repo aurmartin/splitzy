@@ -34,9 +34,10 @@ beforeEach(() => {
   clearDatabase(system.db);
 });
 
-beforeAll(() => {
+beforeAll(async () => {
   server.listen();
   system = new System(createDatabase());
+  await system.initializeMigrations();
 });
 
 afterEach(() => server.resetHandlers());

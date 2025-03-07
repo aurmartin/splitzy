@@ -72,7 +72,7 @@ export const useImportGroup = () => {
         group_id: groupId,
       });
 
-      await system.syncEngine.refreshTable(groupsTable);
+      await system.syncEngine.syncTableFromRemote(groupsTable);
     },
     [system],
   );

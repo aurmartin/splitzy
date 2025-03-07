@@ -5,14 +5,19 @@ import { type ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
 import {
   SQLiteColumnBuilderBase,
   SQLiteTransaction,
+  integer,
   sqliteTable,
   text,
 } from "drizzle-orm/sqlite-core";
 import { type SQLiteRunResult } from "expo-sqlite";
 
+export const schemaMigrationsTable = sqliteTable("schema_migrations", {
+  version: integer().primaryKey(),
+  appliedAt: text().notNull(),
+});
+
 export const groupsTable = sqliteTable("groups", {
   id: text().primaryKey(),
-  syncStatus: text().notNull(),
   name: text().notNull(),
   currency: text().notNull(),
   members: text().notNull(),
@@ -23,7 +28,6 @@ export const groupsTable = sqliteTable("groups", {
 
 export const expensesTable = sqliteTable("expenses", {
   id: text().primaryKey(),
-  syncStatus: text().notNull(),
   groupId: text().notNull(),
   title: text().notNull(),
   payerName: text().notNull(),
@@ -41,7 +45,6 @@ export const syncedTable = (
   return sqliteTable(name, {
     ...columns,
     id: text().primaryKey(),
-    syncStatus: text().notNull(),
   });
 };
 
@@ -49,16 +52,17 @@ export type SyncableTable = ReturnType<typeof syncedTable>;
 
 export const syncQueue = sqliteTable("sync_queue", {
   id: text().primaryKey(),
-  type: text().notNull(),
-  table: text().notNull(),
-  objectId: text().notNull(),
-  data: text(),
+  operationType: text().notNull(),
+  entityTable: text().notNull(),
+  entityId: text().notNull(),
+  changes: text(),
   createdAt: text().notNull(),
 });
 
 export const tables = {
   groups: groupsTable,
   expenses: expensesTable,
+  syncQueue: syncQueue,
 };
 
 export type ExpenseRecord = typeof expensesTable.$inferSelect;

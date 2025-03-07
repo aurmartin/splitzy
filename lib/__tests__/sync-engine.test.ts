@@ -5,6 +5,7 @@ import {
   createDatabase,
   createSupabaseServer,
 } from "@/lib/test-utils";
+import { generateId } from "@/lib/utils";
 import { expect } from "@jest/globals";
 import { HttpResponse, http } from "msw";
 
@@ -15,39 +16,40 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-describe("sync engine initialization", () => {
-  let system: System;
+let system: System;
 
-  beforeEach(async () => {
-    system = new System(createDatabase());
-    clearDatabase(system.db);
-  });
+beforeEach(async () => {
+  system = new System(createDatabase());
+  system.initializeMigrations();
+  clearDatabase(system.db);
+  server.resetHandlers();
+});
 
-  afterEach(async () => {
-    if (system) {
-      await system.dispose();
-    }
-  });
+afterEach(async () => {
+  if (system) {
+    await system.dispose();
+  }
+});
 
+const createRemoteGroup = (overrides: Record<string, any> = {}) => ({
+  id: generateId(),
+  name: "group name",
+  currency: "USD",
+  members: "[]",
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  deletedAt: null,
+  ...overrides,
+});
+
+describe("init", () => {
   it("should pull data from supabase and insert it into the database", async () => {
-    // Verify database is empty before sync
-    const beforeGroups = system.db.select().from(tables.groups).all();
-    expect(beforeGroups.length).toBe(0);
-
     // Setup
-    const supabaseGroup = {
-      id: "1",
-      name: "group name",
-      currency: "USD",
-      members: "[]",
-      createdAt: "2025-01-01T00:00:00Z",
-      updatedAt: "2025-01-01T00:00:00Z",
-      deletedAt: null,
-    };
+    const remoteGroup = createRemoteGroup();
 
     server.use(
       http.get("http://localhost:50001/rest/v1/groups", () =>
-        HttpResponse.json([supabaseGroup]),
+        HttpResponse.json([remoteGroup]),
       ),
     );
 
@@ -58,12 +60,178 @@ describe("sync engine initialization", () => {
     const afterGroups = system.db.select().from(tables.groups).all();
 
     expect(afterGroups.length).toBe(1);
-    expect(afterGroups[0].id).toBe(supabaseGroup.id);
-    expect(afterGroups[0].name).toBe(supabaseGroup.name);
-    expect(afterGroups[0].currency).toBe(supabaseGroup.currency);
-    expect(afterGroups[0].members).toBe(supabaseGroup.members);
-    expect(afterGroups[0].createdAt).toBe(supabaseGroup.createdAt);
-    expect(afterGroups[0].updatedAt).toBe(supabaseGroup.updatedAt);
-    expect(afterGroups[0].deletedAt).toBe(supabaseGroup.deletedAt);
+    expect(afterGroups[0].id).toBe(remoteGroup.id);
+    expect(afterGroups[0].name).toBe(remoteGroup.name);
+    expect(afterGroups[0].currency).toBe(remoteGroup.currency);
+    expect(afterGroups[0].members).toBe(remoteGroup.members);
+    expect(afterGroups[0].createdAt).toBe(remoteGroup.createdAt);
+    expect(afterGroups[0].updatedAt).toBe(remoteGroup.updatedAt);
+    expect(afterGroups[0].deletedAt).toBe(remoteGroup.deletedAt);
+  });
+});
+
+describe("syncTableFromRemote", () => {
+  it("should insert remote entities that don't exist locally", async () => {
+    // Setup
+    const remoteGroup = createRemoteGroup();
+
+    server.use(
+      http.get("http://localhost:50001/rest/v1/groups", () =>
+        HttpResponse.json([remoteGroup]),
+      ),
+    );
+
+    // Act
+    await system.syncEngine.syncTableFromRemote(tables.groups);
+
+    // Assert
+    const afterGroups = system.db.select().from(tables.groups).all();
+
+    expect(afterGroups.length).toBe(1);
+    expect(afterGroups[0].id).toBe(remoteGroup.id);
+  });
+
+  it("should update remote entities that exist locally", async () => {
+    // Setup
+    const remoteGroup = createRemoteGroup({ name: "remote group name" });
+    const localGroup = { ...remoteGroup, name: "local group name" };
+
+    server.use(
+      http.get("http://localhost:50001/rest/v1/groups", () =>
+        HttpResponse.json([remoteGroup]),
+      ),
+    );
+
+    await system.db.insert(tables.groups).values(localGroup);
+
+    // Assert setup
+    const beforeGroups = system.db.select().from(tables.groups).all();
+    expect(beforeGroups.length).toBe(1);
+    expect(beforeGroups[0].name).toBe(localGroup.name);
+
+    // Act
+    await system.syncEngine.syncTableFromRemote(tables.groups);
+
+    // Assert
+    const afterGroups = system.db.select().from(tables.groups).all();
+    expect(afterGroups.length).toBe(1);
+    expect(afterGroups[0].id).toBe(remoteGroup.id);
+    expect(afterGroups[0].name).toBe(remoteGroup.name);
+  });
+
+  it("should delete local entities that don't exist remotely", async () => {
+    // Setup
+    const localGroup = createRemoteGroup();
+
+    server.use(
+      http.get("http://localhost:50001/rest/v1/groups", () =>
+        HttpResponse.json([]),
+      ),
+    );
+
+    await system.db.insert(tables.groups).values(localGroup);
+
+    // Assert setup
+    const beforeGroups = system.db.select().from(tables.groups).all();
+    expect(beforeGroups.length).toBe(1);
+    expect(beforeGroups[0].id).toBe(localGroup.id);
+
+    // Act
+    await system.syncEngine.syncTableFromRemote(tables.groups);
+
+    // Assert
+    const afterGroups = system.db.select().from(tables.groups).all();
+    expect(afterGroups.length).toBe(0);
+  });
+
+  it("should merge local update operations with remote entities", async () => {
+    // Setup
+    const remoteGroup = createRemoteGroup({ name: "remote group name" });
+    const localGroup = { ...remoteGroup, name: "local group name" };
+
+    server.use(
+      http.get("http://localhost:50001/rest/v1/groups", () =>
+        HttpResponse.json([remoteGroup]),
+      ),
+    );
+
+    await system.db.insert(tables.groups).values(localGroup);
+
+    // Assert setup
+    const beforeGroups = system.db.select().from(tables.groups).all();
+    expect(beforeGroups.length).toBe(1);
+    expect(beforeGroups[0].name).toBe(localGroup.name);
+
+    // Act
+    await system.db.insert(tables.syncQueue).values({
+      id: generateId(),
+      operationType: "update",
+      entityTable: "groups",
+      entityId: remoteGroup.id,
+      changes: JSON.stringify({ name: "local group name" }),
+      createdAt: new Date().toISOString(),
+    });
+
+    await system.syncEngine.syncTableFromRemote(tables.groups);
+
+    // Assert
+    const afterGroups = system.db.select().from(tables.groups).all();
+    expect(afterGroups.length).toBe(1);
+    expect(afterGroups[0].id).toBe(remoteGroup.id);
+    expect(afterGroups[0].name).toBe(localGroup.name);
+  });
+
+  it("should merge local delete operations with remote entities", async () => {
+    // Setup
+    const remoteGroup = createRemoteGroup();
+
+    server.use(
+      http.get("http://localhost:50001/rest/v1/groups", () =>
+        HttpResponse.json([remoteGroup]),
+      ),
+    );
+
+    // Act
+    await system.db.insert(tables.syncQueue).values({
+      id: generateId(),
+      operationType: "delete",
+      entityTable: "groups",
+      entityId: remoteGroup.id,
+      createdAt: new Date().toISOString(),
+    });
+
+    await system.syncEngine.syncTableFromRemote(tables.groups);
+
+    // Assert
+    const afterGroups = system.db.select().from(tables.groups).all();
+    expect(afterGroups.length).toBe(0);
+  });
+
+  it("should merge local insert operations with remote entities", async () => {
+    // Setup
+    const localGroup = createRemoteGroup();
+
+    server.use(
+      http.get("http://localhost:50001/rest/v1/groups", () =>
+        HttpResponse.json([]),
+      ),
+    );
+
+    // Act
+    await system.db.insert(tables.syncQueue).values({
+      id: generateId(),
+      operationType: "insert",
+      entityTable: "groups",
+      entityId: localGroup.id,
+      changes: JSON.stringify(localGroup),
+      createdAt: new Date().toISOString(),
+    });
+
+    await system.syncEngine.syncTableFromRemote(tables.groups);
+
+    // Assert
+    const afterGroups = system.db.select().from(tables.groups).all();
+    expect(afterGroups.length).toBe(1);
+    expect(afterGroups[0].id).toBe(localGroup.id);
   });
 });

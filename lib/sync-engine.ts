@@ -1,22 +1,22 @@
+import type { Database } from "@/lib/db/schema";
 import {
   SyncableTable,
   syncQueue,
   tables,
   type Transaction,
 } from "@/lib/db/schema";
-import type { Database } from "@/lib/db/schema";
 import { asyncTime, generateId } from "@/lib/utils";
 import NetInfo from "@react-native-community/netinfo";
-import { SupabaseClient } from "@supabase/supabase-js";
-import { eq, getTableName } from "drizzle-orm";
 import * as Sentry from "@sentry/react-native";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { desc, eq, getTableName } from "drizzle-orm";
 
 type SyncOperation = {
   id: string;
-  type: "insert" | "update" | "delete";
-  objectId: string;
-  data: Record<string, any> | undefined;
-  table: keyof typeof tables;
+  operationType: "insert" | "update" | "delete";
+  entityId: string;
+  entityTable: keyof typeof tables;
+  changes: Record<string, any> | undefined;
   createdAt: Date;
 };
 
@@ -35,7 +35,9 @@ const FATAL_RESPONSE_CODES = [
 class SyncEngine {
   supabase: SupabaseClient;
   db: Database;
-  processQueueTimer?: NodeJS.Timeout;
+
+  private processQueueInterval?: NodeJS.Timeout;
+  private isProcessingLocalOperations = false;
 
   constructor(supabase: SupabaseClient, db: Database) {
     this.supabase = supabase;
@@ -43,57 +45,47 @@ class SyncEngine {
   }
 
   async init() {
-    this.log("info", "Init");
+    this.log("info", "Initializing sync engine");
 
-    await this.processQueue();
-    await this.refreshAllTables();
+    await this.syncAllTablesFromRemote();
 
-    this.processQueueSchedule();
+    if (!this.processQueueInterval) {
+      this.processQueueInterval = setInterval(async () => {
+        await this.processLocalOperations();
+      }, 5000);
+    }
+
+    this.log("info", "Sync engine initialized");
   }
 
   async dispose() {
-    if (this.processQueueTimer) {
-      this.log("info", "Disposing");
-      clearTimeout(this.processQueueTimer);
+    if (this.processQueueInterval) {
+      this.log("info", "Clearing process queue interval");
+      clearInterval(this.processQueueInterval);
+      this.processQueueInterval = undefined;
     }
   }
 
-  private async processQueueSchedule() {
-    if (this.processQueueTimer) {
-      clearTimeout(this.processQueueTimer);
-    }
-
-    await this.processQueue();
-
-    this.processQueueTimer = setTimeout(() => {
-      this.processQueueSchedule();
-    }, 5000);
-  }
-
-  async refreshAllTables() {
-    await this.refreshTable(tables.groups);
-    await this.refreshTable(tables.expenses);
+  async syncAllTablesFromRemote() {
+    await this.syncTableFromRemote(tables.groups);
+    await this.syncTableFromRemote(tables.expenses);
   }
 
   async insert(table: SyncableTable, id: string, data: Record<string, any>) {
-    const updateFields = {
-      ...data,
-      id,
-      syncStatus: "pending",
-    };
+    const updateFields = { ...data, id };
 
     try {
       await this.db.transaction(async (tx) => {
         await tx.insert(table).values(updateFields);
         await tx.insert(syncQueue).values({
           id: generateId(),
-          objectId: id,
-          type: "insert",
-          table: getTableName(table),
-          data: JSON.stringify(updateFields),
+          entityId: id,
+          entityTable: getTableName(table),
+          operationType: "insert",
+          changes: JSON.stringify(updateFields),
           createdAt: new Date().toISOString(),
         });
-        this.processQueue();
+        this.processLocalOperations();
       });
     } catch (error) {
       Sentry.captureException(error);
@@ -103,24 +95,20 @@ class SyncEngine {
   }
 
   async update(table: SyncableTable, id: string, data: Record<string, any>) {
-    const updateFields = {
-      ...data,
-      id,
-      syncStatus: "pending",
-    };
+    const updateFields = { ...data, id };
 
     try {
       await this.db.transaction(async (tx) => {
         await tx.update(table).set(updateFields).where(eq(table.id, id));
         await tx.insert(syncQueue).values({
           id: generateId(),
-          objectId: id,
-          type: "update",
-          table: getTableName(table),
-          data: JSON.stringify(updateFields),
+          entityId: id,
+          entityTable: getTableName(table),
+          operationType: "update",
+          changes: JSON.stringify(updateFields),
           createdAt: new Date().toISOString(),
         });
-        this.processQueue();
+        this.processLocalOperations();
       });
     } catch (error) {
       Sentry.captureException(error, { level: "error" });
@@ -135,12 +123,12 @@ class SyncEngine {
         await tx.delete(table).where(eq(table.id, id));
         await tx.insert(syncQueue).values({
           id: generateId(),
-          objectId: id,
-          type: "delete",
-          table: getTableName(table),
+          entityId: id,
+          entityTable: getTableName(table),
+          operationType: "delete",
           createdAt: new Date().toISOString(),
         });
-        this.processQueue();
+        this.processLocalOperations();
       });
     } catch (error) {
       Sentry.captureException(error, { level: "error" });
@@ -149,56 +137,115 @@ class SyncEngine {
     }
   }
 
-  async refreshTable(table: SyncableTable) {
+  async syncTableFromRemote(table: SyncableTable) {
     await asyncTime(
-      `[SYNC ENGINE] refreshTable(${getTableName(table)})`,
-      async () => await this._refreshTable(table),
+      `[SYNC ENGINE] syncTableFromRemote(${getTableName(table)})`,
+      async () => await this._syncTableFromRemote(table),
     );
   }
 
-  private async _refreshTable(table: SyncableTable) {
+  private async _syncTableFromRemote(table: SyncableTable) {
     try {
-      const { data } = await this.supabase.from(getTableName(table)).select();
+      const { data: remoteEntities, error } = await this.supabase
+        .from(getTableName(table))
+        .select();
 
-      if (data) {
+      if (error) {
+        throw error;
+      }
+
+      if (remoteEntities) {
         this.log(
           "info",
-          `refreshTable(${getTableName(table)}) found ${data.length} rows in supabase.`,
+          `syncTableFromRemote(${getTableName(table)}) found ${remoteEntities.length} entities in supabase.`,
         );
 
+        const localOperations = this.getLocalOperationsForTable(table);
+
+        const localEntities = this.db.select().from(table).all();
+
         // Upsert the rows into the database
-        for (const row of data) {
-          const record = { ...row, syncStatus: "synced" };
-          await this.db
-            .insert(table)
-            .values(record)
-            .onConflictDoUpdate({
-              target: [table.id],
-              set: record,
-            });
+        for (const remoteEntity of remoteEntities) {
+          const updatedEntity = this.mergeLocalOperations(
+            remoteEntity,
+            localOperations,
+          );
+
+          if (updatedEntity) {
+            await this.db
+              .insert(table)
+              .values(updatedEntity)
+              .onConflictDoUpdate({
+                target: [table.id],
+                set: updatedEntity,
+              });
+          }
+        }
+
+        // Insert locally created rows that are not in remote
+        for (const localOperation of localOperations) {
+          if (
+            localOperation.operationType === "insert" &&
+            !remoteEntities.some((r) => r.id === localOperation.entityId)
+          ) {
+            const entity: any = {
+              ...localOperation.changes,
+              id: localOperation.entityId,
+            };
+            await this.db.insert(table).values(entity);
+          }
         }
 
         // Delete missing rows from the database
-        const rows = this.db.select().from(table).all();
-        for (const row of rows) {
-          if (!data.some((r) => r.id === row.id)) {
-            await this.db.delete(table).where(eq(table.id, row.id));
+        for (const localEntity of localEntities) {
+          if (!remoteEntities.some((r) => r.id === localEntity.id)) {
+            await this.db.delete(table).where(eq(table.id, localEntity.id));
           }
         }
       } else {
         this.log(
           "warn",
-          `refreshTable(${getTableName(table)}) found no data in supabase.`,
+          `syncTableFromRemote(${getTableName(table)}) found no data in supabase.`,
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       Sentry.captureException(error, { level: "error" });
-      this.log("error", "Error refreshing table", getTableName(table), error);
+      this.log(
+        "error",
+        "Error refreshing table",
+        getTableName(table),
+        error?.message || error,
+      );
       throw error;
     }
   }
 
-  private async processQueue() {
+  private mergeLocalOperations(entity: any, operations: SyncOperation[]) {
+    let result = entity;
+
+    for (const operation of operations) {
+      if (operation.entityId !== entity.id) {
+        continue;
+      }
+
+      if (operation.operationType === "update") {
+        result = { ...entity, ...operation.changes };
+      } else if (operation.operationType === "delete") {
+        return null;
+      }
+    }
+
+    return result;
+  }
+
+  private async processLocalOperations() {
+    if (this.isProcessingLocalOperations) {
+      this.log("info", "Queue is already being processed, skipping");
+      return;
+    }
+
+    this.isProcessingLocalOperations = true;
+
     const networkState = await NetInfo.fetch();
     if (!networkState.isInternetReachable) {
       this.log("info", "Network is disconnected, skipping queue");
@@ -213,40 +260,42 @@ class SyncEngine {
       Sentry.captureException(error, { level: "error" });
       this.log("error", "Error processing queue", error);
       throw error;
+    } finally {
+      this.isProcessingLocalOperations = false;
     }
   }
 
   private async processQueueTransaction(tx: Transaction) {
     // this.log("info", "Processing queue...");
 
-    const operations = this.getAllSyncOperations(tx);
+    const operations = this.getLocaLOperations(tx);
 
     for (const operation of operations) {
       try {
         let result: any;
 
-        if (operation.type === "insert") {
+        if (operation.operationType === "insert") {
           const data: any = {
-            ...operation.data,
-            id: operation.objectId,
+            ...operation.changes,
+            id: operation.entityId,
           };
-          delete data.syncStatus;
-          result = await this.supabase.from(operation.table).insert(data);
-        } else if (operation.type === "update") {
+
+          result = await this.supabase.from(operation.entityTable).insert(data);
+        } else if (operation.operationType === "update") {
           const data: any = {
-            ...operation.data,
-            id: operation.objectId,
+            ...operation.changes,
+            id: operation.entityId,
           };
-          delete data.syncStatus;
+
           result = await this.supabase
-            .from(operation.table)
+            .from(operation.entityTable)
             .update(data)
-            .eq("id", operation.objectId);
-        } else if (operation.type === "delete") {
+            .eq("id", operation.entityId);
+        } else if (operation.operationType === "delete") {
           result = await this.supabase
-            .from(operation.table)
+            .from(operation.entityTable)
             .delete()
-            .eq("id", operation.objectId);
+            .eq("id", operation.entityId);
         }
 
         if (result.error) {
@@ -276,25 +325,25 @@ class SyncEngine {
       this.log("info", "Rolling back operation", operation);
 
       const supabaseRow = await this.supabase
-        .from(operation.table)
+        .from(operation.entityTable)
         .select()
-        .eq("id", operation.objectId)
+        .eq("id", operation.entityId)
         .single();
 
       await this.db.transaction(async (tx) => {
         // Remove the operation from the queue
         await tx.delete(syncQueue).where(eq(syncQueue.id, operation.id));
 
-        const table = tables[operation.table];
+        const table = tables[operation.entityTable];
 
         // If the row exists in supabase, update the row in the database, else delete the row
         if (supabaseRow.data) {
           await tx
             .update(table)
             .set(supabaseRow.data)
-            .where(eq(table.id, operation.objectId));
+            .where(eq(table.id, operation.entityId));
         } else {
-          await tx.delete(table).where(eq(table.id, operation.objectId));
+          await tx.delete(table).where(eq(table.id, operation.entityId));
         }
       });
     } catch (error) {
@@ -303,17 +352,36 @@ class SyncEngine {
     }
   }
 
-  private getAllSyncOperations(tx: Transaction): SyncOperation[] {
-    const rows = tx.select().from(syncQueue).all();
+  private getLocaLOperations(tx: Transaction): SyncOperation[] {
+    const rows = tx
+      .select()
+      .from(syncQueue)
+      .orderBy(desc(syncQueue.createdAt))
+      .all();
 
-    return rows.map((row) => ({
-      type: row.type as SyncOperation["type"],
-      data: row.data ? JSON.parse(row.data) : undefined,
-      createdAt: new Date(row.createdAt),
-      table: row.table as keyof typeof tables,
+    return rows.map((row) => this.decodeOperation(row));
+  }
+
+  private getLocalOperationsForTable(table: SyncableTable): SyncOperation[] {
+    const rows = this.db
+      .select()
+      .from(syncQueue)
+      .where(eq(syncQueue.entityTable, getTableName(table)))
+      .orderBy(desc(syncQueue.createdAt))
+      .all();
+
+    return rows.map((row) => this.decodeOperation(row));
+  }
+
+  private decodeOperation(row: any): SyncOperation {
+    return {
       id: row.id,
-      objectId: row.objectId,
-    }));
+      operationType: row.operationType as SyncOperation["operationType"],
+      changes: row.changes ? JSON.parse(row.changes) : undefined,
+      createdAt: new Date(row.createdAt),
+      entityTable: row.entityTable as keyof typeof tables,
+      entityId: row.entityId,
+    };
   }
 
   private log(level: "info" | "warn" | "error", ...args: any[]) {

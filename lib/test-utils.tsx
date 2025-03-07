@@ -11,7 +11,7 @@ import {
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import React, { type ReactElement } from "react";
-import { System } from "./system";
+import { System } from "@/lib/system";
 import * as jws from "jws";
 
 const AllTheProviders = ({

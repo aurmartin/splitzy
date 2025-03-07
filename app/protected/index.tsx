@@ -41,7 +41,7 @@ const Groups = React.memo(function _Groups() {
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    await system.syncEngine.refreshTable(tables.groups);
+    await system.syncEngine.syncTableFromRemote(tables.groups);
     setRefreshing(false);
   }, [setRefreshing, system.syncEngine]);
 

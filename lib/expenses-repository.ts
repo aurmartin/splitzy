@@ -167,7 +167,6 @@ const decodeReceipt = (encoded: string): Receipt | null => {
 const encodeExpense = (expense: Expense): ExpenseRecord => {
   return {
     ...expense,
-    syncStatus: "synced",
     splitExpense: JSON.stringify(expense.splitExpense),
     receipt: expense.receipt ? JSON.stringify(expense.receipt) : null,
     createdAt: expense.createdAt.toISOString(),
