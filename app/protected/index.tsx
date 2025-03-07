@@ -47,6 +47,7 @@ const Groups = React.memo(function _Groups() {
 
   return (
     <FlatList
+      testID="groups-flat-list"
       data={groups}
       onRefresh={onRefresh}
       refreshing={refreshing}

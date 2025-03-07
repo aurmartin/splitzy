@@ -1,0 +1,177 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GroupsScreen should render snapshot 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <RNCSafeAreaView
+    edges={
+      {
+        "bottom": "additive",
+        "left": "additive",
+        "right": "additive",
+        "top": "additive",
+      }
+    }
+    style={
+      {
+        "flex": 1,
+      }
+    }
+  >
+    <RNCSafeAreaView
+      edges={
+        {
+          "bottom": "additive",
+          "left": "additive",
+          "right": "additive",
+          "top": "additive",
+        }
+      }
+      style={
+        {
+          "backgroundColor": "hsl(200 15% 90%)",
+          "flex": 1,
+          "padding": 8,
+        }
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "fontSize": 32,
+              "fontWeight": "400",
+              "lineHeight": 38,
+            },
+            {
+              "marginBottom": 16,
+              "marginTop": 16,
+            },
+          ]
+        }
+      >
+        Splitzy Dev
+      </Text>
+      <RCTScrollView
+        ListEmptyComponent={
+          <Text
+            style={
+              {
+                "marginVertical": 64,
+                "textAlign": "center",
+              }
+            }
+          >
+            No groups found. Create one by using the '+' button!
+          </Text>
+        }
+        contentContainerStyle={
+          {
+            "gap": 8,
+          }
+        }
+        data={[]}
+        getItem={[Function]}
+        getItemCount={[Function]}
+        keyExtractor={[Function]}
+        onContentSizeChange={[Function]}
+        onLayout={[Function]}
+        onMomentumScrollBegin={[Function]}
+        onMomentumScrollEnd={[Function]}
+        onRefresh={[Function]}
+        onScroll={[Function]}
+        onScrollBeginDrag={[Function]}
+        onScrollEndDrag={[Function]}
+        refreshControl={
+          <RefreshControlMock
+            onRefresh={[Function]}
+            refreshing={false}
+          />
+        }
+        refreshing={false}
+        removeClippedSubviews={false}
+        renderItem={[Function]}
+        scrollEventThrottle={0.0001}
+        stickyHeaderIndices={[]}
+        testID="groups-flat-list"
+        viewabilityConfigCallbackPairs={[]}
+      >
+        <RCTRefreshControl />
+        <View>
+          <Text
+            onLayout={[Function]}
+            style={
+              [
+                {
+                  "fontSize": 16,
+                  "fontWeight": "400",
+                  "lineHeight": 24,
+                },
+                {
+                  "marginVertical": 64,
+                  "textAlign": "center",
+                },
+              ]
+            }
+          >
+            No groups found. Create one by using the '+' button!
+          </Text>
+        </View>
+      </RCTScrollView>
+      <View
+        style={
+          [
+            {
+              "bottom": 20,
+              "position": "absolute",
+              "right": 8,
+              "zIndex": 100,
+            },
+            {
+              "bottom": 20,
+            },
+          ]
+        }
+      >
+        <RNGestureHandlerButton
+          collapsable={false}
+          enabled={true}
+          hitSlop={
+            {
+              "bottom": 0,
+              "left": 0,
+              "right": 0,
+              "top": 0,
+            }
+          }
+          rippleColor={4290302944}
+          style={
+            [
+              {},
+              {
+                "backgroundColor": "hsl(200 40% 50%)",
+                "borderRadius": 16,
+                "elevation": 2,
+                "padding": 16,
+                "shadowColor": "black",
+              },
+            ]
+          }
+          testID="fab-button"
+        >
+          <Text />
+        </RNGestureHandlerButton>
+      </View>
+    </RNCSafeAreaView>
+  </RNCSafeAreaView>
+</RNCSafeAreaProvider>
+`;
