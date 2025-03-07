@@ -255,7 +255,7 @@ describe("useExpense", () => {
     // Assert
     await screen.findByText(testExpense.title);
 
-    expect(didRender).toHaveBeenCalledTimes(3);
+    expect(didRender).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -296,6 +296,6 @@ describe("useExpenses", () => {
     await screen.findByText(testExpense1.title);
     await screen.findByText(testExpense2.title);
 
-    expect(didRender).toHaveBeenCalledTimes(3);
+    expect(didRender).toHaveBeenCalledTimes(1);
   });
 });
