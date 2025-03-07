@@ -11,7 +11,6 @@ import { type FallbackRender } from "@sentry/react";
 import * as Sentry from "@sentry/react-native";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
 import { openDatabaseSync } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
@@ -29,8 +28,6 @@ Sentry.init({
 Aptabase.init("A-EU-5706290686", {
   appVersion: Env.VERSION,
 });
-
-SplashScreen.preventAutoHideAsync();
 
 const sqliteDatabase = openDatabaseSync("sqlite.db", {
   enableChangeListener: true,

@@ -2,6 +2,8 @@ import { type SupabaseClient, createClient } from "@supabase/supabase-js";
 import { Env } from "./env";
 import { System } from "./system";
 
+const storageKey = "supabase.auth.token";
+
 export class SupabaseConnector {
   client: SupabaseClient;
 
@@ -10,6 +12,7 @@ export class SupabaseConnector {
       auth: {
         persistSession: true,
         storage: this.system.kvStorage,
+        storageKey,
       },
     });
   }
@@ -31,5 +34,15 @@ export class SupabaseConnector {
     } = await this.client.auth.getSession();
 
     return session?.user.id;
+  }
+
+  hasLocalSession() {
+    const maybeSession = this.system.kvStorage.getItem(storageKey);
+
+    if (!maybeSession) {
+      return false;
+    }
+
+    return true;
   }
 }
