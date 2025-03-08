@@ -14,7 +14,7 @@ import {
 import { tables } from "@/lib/db/schema";
 import { Env } from "@/lib/env";
 import { Expense, useExpenses } from "@/lib/expenses";
-import { Group, useGroup, useMe } from "@/lib/groups";
+import { Group, useGroup, useMe, getMe } from "@/lib/groups";
 import { getLocale } from "@/lib/locale";
 import { Ionicons } from "@expo/vector-icons";
 import { Redirect, router, useLocalSearchParams, useRouter } from "expo-router";
@@ -182,7 +182,7 @@ const GroupScreen = React.memo(function _GroupScreen() {
   const router = useRouter();
   const { groupId }: { groupId: string } = useLocalSearchParams();
   const group = useGroup(groupId);
-  const me = useMe(groupId);
+  const system = useSystem();
 
   const shareGroup = React.useCallback(() => {
     if (!group) {
@@ -212,7 +212,7 @@ const GroupScreen = React.memo(function _GroupScreen() {
     throw new Error("Group not found");
   }
 
-  if (!me) {
+  if (getMe(system, groupId) === null) {
     return <Redirect href={`/protected/groups/${groupId}/set-me`} />;
   }
 

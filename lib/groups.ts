@@ -125,7 +125,7 @@ export const useMe = (groupId: string): string => {
   return me;
 };
 
-const getMe = (system: System, groupId: string) =>
+export const getMe = (system: System, groupId: string) =>
   system.kvStorage.getItem(`me:${groupId}`);
 
 export const setMe = (system: System, groupId: string, me: string) =>
