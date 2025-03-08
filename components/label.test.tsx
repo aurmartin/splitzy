@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render } from "@testing-library/react-native";
-import Label from "../label";
+import Label from "./label";
 
 describe("Label", () => {
   it("renders correctly", () => {

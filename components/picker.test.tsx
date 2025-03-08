@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
-import Picker from "../picker";
+import Picker from "./picker";
 import { Picker as RNPicker } from "@react-native-picker/picker";
 
 describe("Picker", () => {

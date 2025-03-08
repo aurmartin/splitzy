@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
-import FAB from "../fab";
+import FAB from "./fab";
 import { Text } from "react-native";
 
 describe("FAB", () => {

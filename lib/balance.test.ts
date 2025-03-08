@@ -1,6 +1,6 @@
-import { computeBalance, computeOptimalReimbursements } from "../balance";
-import type { Expense } from "../expenses";
-import { Group } from "../groups";
+import { computeBalance, computeOptimalReimbursements } from "./balance";
+import type { Expense } from "./expenses";
+import { Group } from "./groups";
 import dinero from "dinero.js";
 
 const createExpense = (overrides: Partial<Expense> = {}): Expense => ({

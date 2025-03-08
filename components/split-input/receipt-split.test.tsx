@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
-import { ReceiptSplitInput, createReceiptSplit } from "../receipt-split";
+import { ReceiptSplitInput, createReceiptSplit } from "./receipt-split";
 import dinero from "dinero.js";
 import { type Receipt } from "@/lib/expenses";
 

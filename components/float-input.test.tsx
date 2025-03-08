@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
-import FloatInput from "../float-input";
+import FloatInput from "./float-input";
 
 describe("FloatInput", () => {
   it("renders correctly", () => {

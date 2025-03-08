@@ -3,7 +3,7 @@ import {
   getAmountColor,
   getAbsoluteAmount,
   getBalanceMessage,
-} from "../currency";
+} from "./currency";
 
 describe("getAmountColor", () => {
   it("should return green for positive amounts", () => {

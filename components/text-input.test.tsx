@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
-import TextInput from "../text-input";
+import TextInput from "./text-input";
 
 describe("TextInput", () => {
   it("renders correctly", () => {

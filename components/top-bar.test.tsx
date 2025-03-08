@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
-import { TopBar } from "../top-bar";
+import { TopBar } from "./top-bar";
 import { Text, Pressable } from "react-native";
 
 // Mock expo-router

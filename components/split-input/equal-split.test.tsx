@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render } from "@testing-library/react-native";
-import { EqualSplitInput, createEqualSplit } from "../equal-split";
+import { EqualSplitInput, createEqualSplit } from "./equal-split";
 import dinero from "dinero.js";
 
 describe("EqualSplit", () => {
