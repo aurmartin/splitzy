@@ -19,7 +19,7 @@ import { getLocale } from "@/lib/locale";
 import { Ionicons } from "@expo/vector-icons";
 import { Redirect, router, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { ActivityIndicator, SectionList, Share, View } from "react-native";
+import { SectionList, Share, View } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 
 interface ExpenseSection {
@@ -209,7 +209,7 @@ const GroupScreen = React.memo(function _GroupScreen() {
   }, [group]);
 
   if (!group) {
-    return <ActivityIndicator />;
+    throw new Error("Group not found");
   }
 
   if (!me) {

@@ -8,7 +8,7 @@ import { Group, useGroup, setMe } from "@/lib/groups";
 import { Picker as RNPicker } from "@react-native-picker/picker";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { ActivityIndicator, View } from "react-native";
+import { View } from "react-native";
 
 function SetMeForm(props: { group: Group }) {
   const { group } = props;
@@ -55,7 +55,7 @@ function SetMeScreen() {
   const group = useGroup(groupId);
 
   if (!group) {
-    return <ActivityIndicator />;
+    throw new Error("Group not found");
   }
 
   return (

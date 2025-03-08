@@ -16,7 +16,7 @@ import { Group, useGroup, useMe } from "@/lib/groups";
 import { getLocale } from "@/lib/locale";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
-import { ActivityIndicator, View } from "react-native";
+import { View } from "react-native";
 
 const MyBalance = React.memo(function _MyBalance({
   group,
@@ -138,7 +138,7 @@ const BalanceScreen = () => {
   const group = useGroup(groupId);
 
   if (!group) {
-    return <ActivityIndicator />;
+    throw new Error("Group not found");
   }
 
   return (
