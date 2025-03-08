@@ -4,6 +4,7 @@ import FAB from "@/components/fab";
 import { Screen } from "@/components/screen";
 import { useSystem } from "@/components/system-provider";
 import { Text } from "@/components/text";
+import { TopBar } from "@/components/top-bar";
 import { useBalance } from "@/lib/balance";
 import {
   getAbsoluteAmount,
@@ -132,6 +133,8 @@ const Expenses = React.memo(function _Expenses(props: { group: Group }) {
         setRefreshing(false);
       }}
       refreshing={refreshing}
+      style={{ borderRadius: 8 }}
+      ListFooterComponent={<View style={{ height: 80 }} />}
     />
   );
 });
@@ -214,39 +217,23 @@ const GroupScreen = React.memo(function _GroupScreen() {
   }
 
   return (
-    <Screen>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          marginBottom: 16,
-        }}
-      >
-        <Pressable
-          style={{ backgroundColor: "white", padding: 8, borderRadius: 24 }}
-          onPress={() => router.navigate("/protected")}
-          android_ripple={{}}
-        >
-          <Ionicons name="home-outline" size={24} color="hsl(0 0% 40%)" />
-        </Pressable>
-
-        <Text type="display" style={{ marginLeft: 16 }}>
-          {group.name}
-        </Text>
-
-        <Pressable
-          style={{
-            backgroundColor: "white",
-            padding: 8,
-            borderRadius: 24,
-            marginLeft: "auto",
-          }}
-          onPress={shareGroup}
-          android_ripple={{}}
-        >
-          <Ionicons name="share-outline" size={24} color="hsl(0 0% 40%)" />
-        </Pressable>
-      </View>
+    <Screen style={{ paddingBottom: 0 }}>
+      <TopBar
+        title={group.name}
+        rightActions={[
+          <Pressable
+            style={{
+              backgroundColor: "white",
+              padding: 8,
+              borderRadius: 24,
+            }}
+            onPress={shareGroup}
+            android_ripple={{ color: "hsl(0 0% 90%)" }}
+          >
+            <Ionicons name="share-outline" size={24} color="hsl(0 0% 40%)" />
+          </Pressable>,
+        ]}
+      />
 
       <BalanceDisplay group={group} />
 

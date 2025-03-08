@@ -37,11 +37,14 @@ exports[`LoginScreen should render snapshot 1`] = `
         }
       }
       style={
-        {
-          "backgroundColor": "hsl(200 15% 90%)",
-          "flex": 1,
-          "padding": 8,
-        }
+        [
+          {
+            "backgroundColor": "hsl(200 15% 90%)",
+            "flex": 1,
+            "padding": 8,
+          },
+          undefined,
+        ]
       }
     >
       <View
