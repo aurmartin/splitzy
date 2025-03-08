@@ -6,7 +6,7 @@ import { generateId, time } from "@/lib/utils";
 import { Currency } from "dinero.js";
 import { desc, eq } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 
 export interface Group {
   id: string;
@@ -125,29 +125,10 @@ export const useMe = (groupId: string): string => {
   return me;
 };
 
-export const useControlledMe = (groupId: string) => {
-  const system = useSystem();
-  const [stateMe, setStateMe] = useState<string | null>(getMe(system, groupId));
-
-  const onSetMe = useCallback(
-    (me: string) => {
-      setMe(system, groupId, me);
-      setStateMe(me);
-    },
-    [system, groupId, setStateMe],
-  );
-
-  useEffect(() => {
-    setStateMe(getMe(system, groupId));
-  }, [groupId, system]);
-
-  return [stateMe, onSetMe] as const;
-};
-
 const getMe = (system: System, groupId: string) =>
   system.kvStorage.getItem(`me:${groupId}`);
 
-const setMe = (system: System, groupId: string, me: string) =>
+export const setMe = (system: System, groupId: string, me: string) =>
   system.kvStorage.setItem(`me:${groupId}`, me);
 
 export const getGroupRow = (

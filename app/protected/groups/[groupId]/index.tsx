@@ -1,27 +1,25 @@
 import Button from "@/components/button";
 import Card from "@/components/card";
 import FAB from "@/components/fab";
-import { SetMeScreen } from "@/components/set-me-screen";
-import { Text } from "@/components/text";
+import { Screen } from "@/components/screen";
 import { useSystem } from "@/components/system-provider";
+import { Text } from "@/components/text";
 import { useBalance } from "@/lib/balance";
-import { Colors } from "@/lib/constants";
+import {
+  getAbsoluteAmount,
+  getAmountColor,
+  getBalanceMessage,
+} from "@/lib/currency";
 import { tables } from "@/lib/db/schema";
 import { Env } from "@/lib/env";
 import { Expense, useExpenses } from "@/lib/expenses";
-import { Group, useControlledMe, useGroup, useMe } from "@/lib/groups";
+import { Group, useGroup, useMe } from "@/lib/groups";
+import { getLocale } from "@/lib/locale";
 import { Ionicons } from "@expo/vector-icons";
-import { Stack, router, useLocalSearchParams, useRouter } from "expo-router";
+import { Redirect, router, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { ActivityIndicator, SectionList, Share, View } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
-import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  getAmountColor,
-  getBalanceMessage,
-  getAbsoluteAmount,
-} from "@/lib/currency";
-import { getLocale } from "@/lib/locale";
 
 interface ExpenseSection {
   title: string;
@@ -181,7 +179,7 @@ const GroupScreen = React.memo(function _GroupScreen() {
   const router = useRouter();
   const { groupId }: { groupId: string } = useLocalSearchParams();
   const group = useGroup(groupId);
-  const [me, setMe] = useControlledMe(groupId);
+  const me = useMe(groupId);
 
   const shareGroup = React.useCallback(() => {
     if (!group) {
@@ -212,15 +210,11 @@ const GroupScreen = React.memo(function _GroupScreen() {
   }
 
   if (!me) {
-    return <SetMeScreen group={group} onClose={setMe} />;
+    return <Redirect href={`/protected/groups/${groupId}/set-me`} />;
   }
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: Colors.background, padding: 8 }}
-    >
-      <Stack.Screen options={{ headerShown: false }} />
-
+    <Screen>
       <View
         style={{
           flexDirection: "row",
@@ -265,7 +259,7 @@ const GroupScreen = React.memo(function _GroupScreen() {
       >
         <Ionicons name="add-outline" size={24} color="white" />
       </FAB>
-    </SafeAreaView>
+    </Screen>
   );
 });
 
