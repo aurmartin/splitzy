@@ -1,4 +1,4 @@
-import { tables } from "@/lib/db/schema";
+import { ExpenseRecord, GroupRecord, tables } from "@/lib/db/schema";
 import { System } from "@/lib/system";
 import {
   clearDatabase,
@@ -31,7 +31,9 @@ afterEach(async () => {
   }
 });
 
-const createRemoteGroup = (overrides: Record<string, any> = {}) => ({
+const buildGroupRecord = (
+  overrides: Record<string, any> = {},
+): GroupRecord => ({
   id: generateId(),
   name: "group name",
   currency: "USD",
@@ -42,10 +44,23 @@ const createRemoteGroup = (overrides: Record<string, any> = {}) => ({
   ...overrides,
 });
 
+const buildOperationRecordFromEntity = (
+  type: "insert" | "update" | "delete",
+  table: "groups" | "expenses",
+  entity: GroupRecord | ExpenseRecord,
+) => ({
+  id: generateId(),
+  operationType: type,
+  entityTable: table,
+  entityId: entity.id,
+  changes: JSON.stringify(entity),
+  createdAt: new Date().toISOString(),
+});
+
 describe("init", () => {
   it("should pull data from supabase and insert it into the database", async () => {
     // Setup
-    const remoteGroup = createRemoteGroup();
+    const remoteGroup = buildGroupRecord();
 
     server.use(
       http.get("http://localhost:50001/rest/v1/groups", () =>
@@ -73,7 +88,7 @@ describe("init", () => {
 describe("syncTableFromRemote", () => {
   it("should insert remote entities that don't exist locally", async () => {
     // Setup
-    const remoteGroup = createRemoteGroup();
+    const remoteGroup = buildGroupRecord();
 
     server.use(
       http.get("http://localhost:50001/rest/v1/groups", () =>
@@ -93,7 +108,7 @@ describe("syncTableFromRemote", () => {
 
   it("should update remote entities that exist locally", async () => {
     // Setup
-    const remoteGroup = createRemoteGroup({ name: "remote group name" });
+    const remoteGroup = buildGroupRecord({ name: "remote group name" });
     const localGroup = { ...remoteGroup, name: "local group name" };
 
     server.use(
@@ -121,7 +136,7 @@ describe("syncTableFromRemote", () => {
 
   it("should delete local entities that don't exist remotely", async () => {
     // Setup
-    const localGroup = createRemoteGroup();
+    const localGroup = buildGroupRecord();
 
     server.use(
       http.get("http://localhost:50001/rest/v1/groups", () =>
@@ -146,7 +161,7 @@ describe("syncTableFromRemote", () => {
 
   it("should merge local update operations with remote entities", async () => {
     // Setup
-    const remoteGroup = createRemoteGroup({ name: "remote group name" });
+    const remoteGroup = buildGroupRecord({ name: "remote group name" });
     const localGroup = { ...remoteGroup, name: "local group name" };
 
     server.use(
@@ -183,7 +198,7 @@ describe("syncTableFromRemote", () => {
 
   it("should merge local delete operations with remote entities", async () => {
     // Setup
-    const remoteGroup = createRemoteGroup();
+    const remoteGroup = buildGroupRecord();
 
     server.use(
       http.get("http://localhost:50001/rest/v1/groups", () =>
@@ -209,7 +224,7 @@ describe("syncTableFromRemote", () => {
 
   it("should merge local insert operations with remote entities", async () => {
     // Setup
-    const localGroup = createRemoteGroup();
+    const localGroup = buildGroupRecord();
 
     server.use(
       http.get("http://localhost:50001/rest/v1/groups", () =>
@@ -233,5 +248,44 @@ describe("syncTableFromRemote", () => {
     const afterGroups = system.db.select().from(tables.groups).all();
     expect(afterGroups.length).toBe(1);
     expect(afterGroups[0].id).toBe(localGroup.id);
+  });
+});
+
+describe("processLocalOperations", () => {
+  it("should handle inserting and updating the same entity", async () => {
+    // Setup
+    const initialGroup = buildGroupRecord({ name: "initial group name" });
+    await system.db
+      .insert(tables.syncQueue)
+      .values(buildOperationRecordFromEntity("insert", "groups", initialGroup));
+
+    const updatedGroup = { ...initialGroup, name: "updated group name" };
+    await system.db
+      .insert(tables.syncQueue)
+      .values(buildOperationRecordFromEntity("update", "groups", updatedGroup));
+
+    const didReceivePost = jest.fn();
+    const didReceivePatch = jest.fn();
+    server.use(
+      http.post("http://localhost:50001/rest/v1/groups", async (request) => {
+        const body = await request.request.json();
+        didReceivePost(body);
+        return HttpResponse.json({});
+      }),
+    );
+    server.use(
+      http.patch("http://localhost:50001/rest/v1/groups", async (request) => {
+        const body = await request.request.json();
+        didReceivePatch(body);
+        return HttpResponse.json({});
+      }),
+    );
+
+    // Act
+    await system.syncEngine.processLocalOperations();
+
+    // Assert
+    expect(didReceivePost).toHaveBeenCalledWith(initialGroup);
+    expect(didReceivePatch).toHaveBeenCalledWith(updatedGroup);
   });
 });

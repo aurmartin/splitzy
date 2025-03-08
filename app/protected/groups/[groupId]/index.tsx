@@ -222,6 +222,7 @@ const GroupScreen = React.memo(function _GroupScreen() {
         title={group.name}
         rightActions={[
           <Pressable
+            key="share"
             style={{
               backgroundColor: "white",
               padding: 8,

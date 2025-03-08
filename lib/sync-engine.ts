@@ -1,10 +1,5 @@
 import type { Database } from "@/lib/db/schema";
-import {
-  SyncableTable,
-  syncQueue,
-  tables,
-  type Transaction,
-} from "@/lib/db/schema";
+import { SyncableTable, syncQueue, tables } from "@/lib/db/schema";
 import { asyncTime, generateId } from "@/lib/utils";
 import NetInfo from "@react-native-community/netinfo";
 import * as Sentry from "@sentry/react-native";
@@ -58,7 +53,7 @@ class SyncEngine {
     this.log("info", "Sync engine initialized");
   }
 
-  async dispose() {
+  dispose() {
     if (this.processQueueInterval) {
       this.log("info", "Clearing process queue interval");
       clearInterval(this.processQueueInterval);
@@ -85,8 +80,9 @@ class SyncEngine {
           changes: JSON.stringify(updateFields),
           createdAt: new Date().toISOString(),
         });
-        this.processLocalOperations();
       });
+
+      this.processLocalOperations();
     } catch (error) {
       Sentry.captureException(error);
       this.log("error", "Error inserting row", id, error);
@@ -108,8 +104,9 @@ class SyncEngine {
           changes: JSON.stringify(updateFields),
           createdAt: new Date().toISOString(),
         });
-        this.processLocalOperations();
       });
+
+      this.processLocalOperations();
     } catch (error) {
       Sentry.captureException(error, { level: "error" });
       this.log("error", "Error updating row", id, error);
@@ -128,8 +125,9 @@ class SyncEngine {
           operationType: "delete",
           createdAt: new Date().toISOString(),
         });
-        this.processLocalOperations();
       });
+
+      this.processLocalOperations();
     } catch (error) {
       Sentry.captureException(error, { level: "error" });
       this.log("error", "Error deleting row", id, error);
@@ -238,7 +236,7 @@ class SyncEngine {
     return result;
   }
 
-  private async processLocalOperations() {
+  async processLocalOperations() {
     if (this.isProcessingLocalOperations) {
       this.log("info", "Queue is already being processed, skipping");
       return;
@@ -253,9 +251,7 @@ class SyncEngine {
     }
 
     try {
-      await this.db.transaction(async (tx) => {
-        await this.processQueueTransaction(tx);
-      });
+      await this.doProcessLocalOperations();
     } catch (error) {
       Sentry.captureException(error, { level: "error" });
       this.log("error", "Error processing queue", error);
@@ -265,12 +261,14 @@ class SyncEngine {
     }
   }
 
-  private async processQueueTransaction(tx: Transaction) {
-    // this.log("info", "Processing queue...");
+  private async doProcessLocalOperations() {
+    this.log("debug", "Processing queue...");
 
-    const operations = this.getLocaLOperations(tx);
+    const operations = this.getLocaLOperations();
 
     for (const operation of operations) {
+      this.log("debug", "Processing operation", operation);
+
       try {
         let result: any;
 
@@ -303,7 +301,7 @@ class SyncEngine {
         }
 
         // Remove the operation from the queue
-        await tx.delete(syncQueue).where(eq(syncQueue.id, operation.id));
+        await this.db.delete(syncQueue).where(eq(syncQueue.id, operation.id));
       } catch (error: any) {
         Sentry.captureException(error, { level: "error" });
         this.log("error", "Error processing operation.", operation, error);
@@ -318,6 +316,8 @@ class SyncEngine {
         }
       }
     }
+
+    this.log("debug", "Queue processed successfully");
   }
 
   private async rollback(operation: SyncOperation) {
@@ -352,8 +352,8 @@ class SyncEngine {
     }
   }
 
-  private getLocaLOperations(tx: Transaction): SyncOperation[] {
-    const rows = tx
+  private getLocaLOperations(): SyncOperation[] {
+    const rows = this.db
       .select()
       .from(syncQueue)
       .orderBy(desc(syncQueue.createdAt))
@@ -384,8 +384,8 @@ class SyncEngine {
     };
   }
 
-  private log(level: "info" | "warn" | "error", ...args: any[]) {
-    console[level](`[SYNC ENGINE]`, ...args);
+  private log(level: "debug" | "info" | "warn" | "error", ...args: any[]) {
+    console[level](new Date().toISOString(), `[SYNC ENGINE]`, ...args);
   }
 }
 

@@ -46,6 +46,10 @@ export default function RootLayout() {
     system.init();
 
     Aptabase.trackEvent("open_app");
+
+    return () => {
+      system.dispose();
+    };
   }, []);
 
   return (
