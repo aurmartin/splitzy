@@ -1,35 +1,9 @@
 import RedirectScreen from "@/app/redirect";
-import { System } from "@/lib/system";
-import {
-  clearDatabase,
-  createDatabase,
-  createSupabaseServer,
-  generateAccessToken,
-  renderRouter,
-} from "@/lib/test-utils";
+import { system } from "@/lib/test-setup";
+import { generateAccessToken, renderRouter } from "@/lib/test-utils";
 import { screen, waitFor } from "@testing-library/react-native";
 import * as Linking from "expo-linking";
 import { Text } from "react-native";
-
-const server = createSupabaseServer();
-let system: System;
-
-beforeEach(() => {
-  clearDatabase(system.db);
-});
-
-beforeAll(async () => {
-  server.listen();
-  system = new System(createDatabase());
-  await system.initializeMigrations();
-});
-
-afterEach(() => server.resetHandlers());
-
-afterAll(() => {
-  server.close();
-  system.dispose();
-});
 
 const routerContext = {
   "/redirect": () => <RedirectScreen />,

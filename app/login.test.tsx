@@ -1,35 +1,9 @@
 import LoginScreen from "@/app/login";
-import { System } from "@/lib/system";
-import {
-  clearDatabase,
-  createDatabase,
-  createSupabaseServer,
-  renderRouter,
-  setFakeSession,
-} from "@/lib/test-utils";
+import { server, system } from "@/lib/test-setup";
+import { renderRouter, setFakeSession } from "@/lib/test-utils";
 import { fireEvent, screen, waitFor } from "@testing-library/react-native";
 import { HttpResponse, http } from "msw";
 import { Text } from "react-native";
-
-const server = createSupabaseServer();
-let system: System;
-
-beforeEach(() => {
-  clearDatabase(system.db);
-});
-
-beforeAll(async () => {
-  server.listen();
-  system = new System(createDatabase());
-  await system.initializeMigrations();
-});
-
-afterEach(() => server.resetHandlers());
-
-afterAll(() => {
-  server.close();
-  system.dispose();
-});
 
 const routerContext = {
   "/login": () => <LoginScreen />,

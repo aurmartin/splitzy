@@ -1,8 +1,7 @@
-import * as React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
-import { Text } from "react-native";
-
 import Card from "@/components/card";
+import { fireEvent, render } from "@testing-library/react-native";
+import * as React from "react";
+import { Text } from "react-native";
 
 it("renders correctly with children", () => {
   const tree = render(

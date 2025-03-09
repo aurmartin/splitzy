@@ -1,13 +1,10 @@
 import GroupScreen from "@/app/protected/groups/[groupId]/index";
 import { tables } from "@/lib/db/schema";
 import { removeMe, setMe } from "@/lib/groups";
-import { System } from "@/lib/system";
+import { server, system } from "@/lib/test-setup";
 import {
   buildExpenseRecord,
   buildGroupRecord,
-  clearDatabase,
-  createDatabase,
-  createSupabaseServer,
   renderRouter,
 } from "@/lib/test-utils";
 import { act, fireEvent, screen, waitFor } from "@testing-library/react-native";
@@ -19,28 +16,10 @@ const share = jest.spyOn(Share, "share").mockResolvedValue({
   activityType: null,
 });
 
-const server = createSupabaseServer();
-let system: System;
-
 beforeEach(async () => {
-  clearDatabase(system.db);
-
   const group = buildGroupRecord({ id: "test-group-id" });
   await system.db.insert(tables.groups).values(group);
   setMe(system, group.id, "Alice");
-});
-
-beforeAll(async () => {
-  server.listen();
-  system = new System(createDatabase());
-  await system.initializeMigrations();
-});
-
-afterEach(() => server.resetHandlers());
-
-afterAll(() => {
-  server.close();
-  system.dispose();
 });
 
 const routerContext = {

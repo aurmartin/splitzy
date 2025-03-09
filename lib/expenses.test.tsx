@@ -1,4 +1,3 @@
-import { ValidationError } from "@/lib/validation-error";
 import { expensesTable } from "@/lib/db/schema";
 import {
   addExpense,
@@ -9,43 +8,15 @@ import {
 } from "@/lib/expenses";
 import { ExpensesRepository } from "@/lib/expenses-repository";
 import { System } from "@/lib/system";
-import {
-  clearDatabase,
-  createDatabase,
-  createSupabaseServer,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@/lib/test-utils";
+import { system } from "@/lib/test-setup";
+import { fireEvent, render, screen, waitFor } from "@/lib/test-utils";
 import { generateId } from "@/lib/utils";
+import { ValidationError } from "@/lib/validation-error";
 import dinero, { Currency } from "dinero.js";
 import { eq } from "drizzle-orm";
-import { ReactElement } from "react";
 import { Button } from "react-native";
 
-// Setup
-const server = createSupabaseServer();
-let system: System;
-let didRender: jest.Mock<(rendered: ReactElement) => ReactElement>;
-
-beforeEach(() => {
-  didRender = jest.fn((rendered) => rendered);
-  clearDatabase(system.db);
-});
-
-beforeAll(async () => {
-  server.listen();
-  system = new System(createDatabase());
-  await system.initializeMigrations();
-});
-
-afterEach(() => server.resetHandlers());
-
-afterAll(() => {
-  server.close();
-  system.dispose();
-});
+const didRender = jest.fn();
 
 // Helper functions for creating test data
 const createBasicExpense = (overrides: Partial<Expense> = {}): Expense => {

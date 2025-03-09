@@ -1,36 +1,10 @@
 import { Text } from "@/components/text";
 import { groupsTable } from "@/lib/db/schema";
-import { System } from "@/lib/system";
-import {
-  buildGroupRecord,
-  clearDatabase,
-  createDatabase,
-  createSupabaseServer,
-  renderRouter,
-} from "@/lib/test-utils";
+import { server, system } from "@/lib/test-setup";
+import { buildGroupRecord, renderRouter } from "@/lib/test-utils";
 import { act, fireEvent, screen } from "@testing-library/react-native";
 import { HttpResponse, http } from "msw";
 import GroupsScreen from ".";
-
-const server = createSupabaseServer();
-let system: System;
-
-beforeEach(() => {
-  clearDatabase(system.db);
-});
-
-beforeAll(async () => {
-  server.listen();
-  system = new System(createDatabase());
-  await system.initializeMigrations();
-});
-
-afterEach(() => server.resetHandlers());
-
-afterAll(() => {
-  server.close();
-  system.dispose();
-});
 
 const routerContext = {
   "/protected": () => <GroupsScreen />,

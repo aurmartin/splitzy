@@ -1,7 +1,6 @@
-import * as React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
-
 import Button from "@/components/button";
+import { fireEvent, render } from "@testing-library/react-native";
+import * as React from "react";
 
 it("renders correctly", () => {
   const tree = render(<Button>Press me!</Button>);

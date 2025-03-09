@@ -68,6 +68,7 @@ const createDatabase = () => {
 const clearDatabase = (db: Database) => {
   db.delete(tables.groups).run();
   db.delete(tables.expenses).run();
+  db.delete(tables.syncQueue).run();
 };
 
 const createSupabaseServer = () =>
@@ -97,6 +98,14 @@ const createSupabaseServer = () =>
         confirmation_sent_at: "2025-03-01T00:00:00Z",
         created_at: "2025-03-01T00:00:00Z",
         updated_at: "2025-03-01T00:00:00Z",
+      }),
+    ),
+    http.post("http://localhost:50000/parse-receipt", () =>
+      HttpResponse.json({
+        items: [],
+        currency: "USD",
+        date: "2025-03-01",
+        title: "Test receipt",
       }),
     ),
   );

@@ -1,48 +1,9 @@
 import { ExpenseRecord, GroupRecord, tables } from "@/lib/db/schema";
-import { System } from "@/lib/system";
-import {
-  clearDatabase,
-  createDatabase,
-  createSupabaseServer,
-} from "@/lib/test-utils";
+import { server, system } from "@/lib/test-setup";
 import { generateId } from "@/lib/utils";
+import { buildGroupRecord } from "@/lib/test-utils";
 import { expect } from "@jest/globals";
 import { HttpResponse, http } from "msw";
-
-// Mock server setup
-const server = createSupabaseServer();
-
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
-
-let system: System;
-
-beforeEach(async () => {
-  system = new System(createDatabase());
-  system.initializeMigrations();
-  clearDatabase(system.db);
-  server.resetHandlers();
-});
-
-afterEach(() => {
-  if (system) {
-    system.dispose();
-  }
-});
-
-const buildGroupRecord = (
-  overrides: Record<string, any> = {},
-): GroupRecord => ({
-  id: generateId(),
-  name: "group name",
-  currency: "USD",
-  members: "[]",
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  deletedAt: null,
-  ...overrides,
-});
 
 const buildOperationRecordFromEntity = (
   type: "insert" | "update" | "delete",
