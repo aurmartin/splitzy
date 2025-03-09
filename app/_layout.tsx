@@ -17,17 +17,17 @@ import React from "react";
 import { Platform, View, useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-Sentry.init({
-  dsn: "https://3aee514840b1dc9932c41c86ef30e6cb@o4507203999694848.ingest.de.sentry.io/4508896492060752",
-  environment: Env.APP_ENV,
+if (Env.APP_ENV !== "development") {
+  Sentry.init({
+    dsn: "https://3aee514840b1dc9932c41c86ef30e6cb@o4507203999694848.ingest.de.sentry.io/4508896492060752",
+    environment: Env.APP_ENV,
 
-  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-  // spotlight: __DEV__,
-});
+    // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+    // spotlight: __DEV__,
+  });
 
-Aptabase.init("A-EU-5706290686", {
-  appVersion: Env.VERSION,
-});
+  Aptabase.init("A-EU-5706290686", { appVersion: Env.VERSION });
+}
 
 const sqliteDatabase = openDatabaseSync("sqlite.db", {
   enableChangeListener: true,
