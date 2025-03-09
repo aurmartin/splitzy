@@ -131,6 +131,9 @@ export const getMe = (system: System, groupId: string) =>
 export const setMe = (system: System, groupId: string, me: string) =>
   system.kvStorage.setItem(`me:${groupId}`, me);
 
+export const removeMe = (system: System, groupId: string) =>
+  system.kvStorage.removeItem(`me:${groupId}`);
+
 export const getGroupRow = (
   system: System,
   groupId: string,

@@ -9,7 +9,6 @@ type SnackBarSpec = {
 };
 
 type SnackBarContextState = {
-  snack: SnackBarSpec | null;
   show: (message: string, type: "success" | "error") => void;
 };
 
@@ -65,23 +64,33 @@ const SnackBarProvider = (props: { children: React.ReactNode }) => {
 
   const [snack, setSnack] = React.useState<SnackBarSpec | null>(null);
 
-  const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
+  const timerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
 
   const show = React.useCallback(
     (message: string, type: "success" | "error") => {
       setSnack({ message, type });
 
-      if (timer) {
-        clearTimeout(timer);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
       }
 
-      setTimer(setTimeout(() => setSnack(null), 3000));
+      timerRef.current = setTimeout(() => setSnack(null), 3000);
     },
-    [timer],
+    [],
   );
 
+  const value = React.useMemo(() => ({ show }), [show]);
+
   return (
-    <SnackBarContext.Provider value={{ snack, show }}>
+    <SnackBarContext.Provider value={value}>
       {children}
 
       {snack && <SnackBar snack={snack} />}
@@ -99,10 +108,4 @@ const useSnackBar = () => {
   return context;
 };
 
-const useOptionalSnackBar = () => {
-  const context = React.useContext(SnackBarContext);
-
-  return context;
-};
-
-export { SnackBarProvider, useSnackBar, useOptionalSnackBar };
+export { SnackBarProvider, useSnackBar };

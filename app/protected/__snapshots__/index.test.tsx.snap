@@ -132,17 +132,12 @@ exports[`GroupsScreen should render snapshot 1`] = `
       </RCTScrollView>
       <View
         style={
-          [
-            {
-              "bottom": 20,
-              "position": "absolute",
-              "right": 8,
-              "zIndex": 100,
-            },
-            {
-              "bottom": 20,
-            },
-          ]
+          {
+            "bottom": 20,
+            "position": "absolute",
+            "right": 8,
+            "zIndex": 100,
+          }
         }
       >
         <View

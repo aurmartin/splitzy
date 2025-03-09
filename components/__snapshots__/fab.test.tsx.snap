@@ -3,17 +3,12 @@
 exports[`FAB renders correctly 1`] = `
 <View
   style={
-    [
-      {
-        "bottom": 20,
-        "position": "absolute",
-        "right": 8,
-        "zIndex": 100,
-      },
-      {
-        "bottom": 20,
-      },
-    ]
+    {
+      "bottom": 20,
+      "position": "absolute",
+      "right": 8,
+      "zIndex": 100,
+    }
   }
 >
   <View

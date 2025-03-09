@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`useSnackBar show snackbar error 1`] = `
+[
+  <View />,
+  <RNCSafeAreaView
+    edges={
+      {
+        "bottom": "additive",
+        "left": "additive",
+        "right": "additive",
+        "top": "additive",
+      }
+    }
+    style={
+      {
+        "bottom": 0,
+        "flex": 1,
+        "left": 0,
+        "position": "absolute",
+        "right": 0,
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "backgroundColor": "hsl(0, 100%, 90%)",
+          "borderRadius": 4,
+          "elevation": 3,
+          "margin": 8,
+          "marginTop": 16,
+          "padding": 12,
+        }
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "fontSize": 16,
+              "fontWeight": "400",
+              "lineHeight": 24,
+            },
+            {
+              "color": "hsl(0, 100%, 15%)",
+            },
+          ]
+        }
+      >
+        test message
+      </Text>
+    </View>
+  </RNCSafeAreaView>,
+]
+`;
+
+exports[`useSnackBar show snackbar success 1`] = `
+[
+  <View />,
+  <RNCSafeAreaView
+    edges={
+      {
+        "bottom": "additive",
+        "left": "additive",
+        "right": "additive",
+        "top": "additive",
+      }
+    }
+    style={
+      {
+        "bottom": 0,
+        "flex": 1,
+        "left": 0,
+        "position": "absolute",
+        "right": 0,
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "backgroundColor": "hsl(120, 100%, 90%)",
+          "borderRadius": 4,
+          "elevation": 3,
+          "margin": 8,
+          "marginTop": 16,
+          "padding": 12,
+        }
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "fontSize": 16,
+              "fontWeight": "400",
+              "lineHeight": 24,
+            },
+            {
+              "color": "hsl(120, 100%, 15%)",
+            },
+          ]
+        }
+      >
+        test message
+      </Text>
+    </View>
+  </RNCSafeAreaView>,
+]
+`;

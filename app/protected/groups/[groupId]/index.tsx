@@ -32,10 +32,6 @@ const ExpenseItem = (props: { group: Group; expense: Expense }) => {
   const { group, expense } = props;
   const router = useRouter();
 
-  if (!expense) {
-    throw new Error("Expense not found");
-  }
-
   return (
     <Card
       key={expense.id}
@@ -137,6 +133,7 @@ const Expenses = React.memo(function _Expenses(props: { group: Group }) {
 
   return (
     <SectionList
+      testID="expenses-list"
       contentContainerStyle={{ gap: 8 }}
       sections={sections}
       renderItem={renderItem}
@@ -148,6 +145,7 @@ const Expenses = React.memo(function _Expenses(props: { group: Group }) {
       refreshing={refreshing}
       style={{ borderRadius: 8 }}
       ListFooterComponent={<View style={{ height: 80 }} />}
+      ListEmptyComponent={<Text>Aucune dépense</Text>}
     />
   );
 });
@@ -158,10 +156,6 @@ const BalanceDisplay = React.memo(function _BalanceDisplay(props: {
   const { group } = props;
   const balance = useBalance(group);
   const me = useMe(group.id);
-
-  if (!me) {
-    throw new Error("Me not found");
-  }
 
   const myBalance = balance[me];
 
@@ -235,6 +229,7 @@ const GroupScreen = React.memo(function _GroupScreen() {
         title={group.name}
         rightActions={[
           <Pressable
+            testID="share-group"
             key="share"
             style={{
               backgroundColor: "white",

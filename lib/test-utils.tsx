@@ -1,37 +1,44 @@
 import { SnackBarProvider } from "@/components/snack-bar";
 import { SystemProvider } from "@/components/system-provider";
-import { Database, tables } from "@/lib/db/schema";
+import { Database, ExpenseRecord, GroupRecord, tables } from "@/lib/db/schema";
 import { System } from "@/lib/system";
+import { generateId } from "@/lib/utils";
 import { render, type RenderOptions } from "@testing-library/react-native";
 import BetterSqliteDatabase from "better-sqlite3";
+import dinero from "dinero.js";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import {
   RenderRouterOptions,
   renderRouter,
   type MockContextConfig,
 } from "expo-router/testing-library";
+import * as jws from "jws";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import React, { type ReactElement } from "react";
-import * as jws from "jws";
+import { EqualSplit } from "./expenses";
 
 const AllTheProviders = ({
   children,
   system,
 }: {
   children: ReactElement;
-  system: System;
+  system: System | null;
 }) => {
   return (
     <SnackBarProvider>
-      <SystemProvider system={system}>{children}</SystemProvider>
+      {system !== null ? (
+        <SystemProvider system={system}>{children}</SystemProvider>
+      ) : (
+        children
+      )}
     </SnackBarProvider>
   );
 };
 
 const customRender = (
   ui: ReactElement,
-  system: System,
+  system: System | null,
   options?: Omit<RenderOptions, "wrapper">,
 ) => {
   const wrapper = ({ children }: { children: ReactElement }) => (
@@ -118,13 +125,55 @@ const generateAccessToken = () => {
   });
 };
 
+const buildEqualSplit = (): EqualSplit => {
+  return {
+    type: "equal",
+    total: dinero({ amount: 100, currency: "USD" }),
+    members: ["Alice", "Bob"],
+  };
+};
+
+const buildGroupRecord = (
+  overrides: Partial<GroupRecord> = {},
+): GroupRecord => {
+  return {
+    id: generateId(),
+    name: "test group name",
+    currency: "USD",
+    members: JSON.stringify(["Alice", "Bob"]),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    deletedAt: null,
+    ...overrides,
+  };
+};
+
+const buildExpenseRecord = (
+  overrides: Partial<ExpenseRecord> = {},
+): ExpenseRecord => {
+  return {
+    id: generateId(),
+    groupId: generateId(),
+    title: "test expense title",
+    payerName: "Alice",
+    splitExpense: JSON.stringify(buildEqualSplit()),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    deletedAt: null,
+    receipt: null,
+    ...overrides,
+  };
+};
+
 export * from "@testing-library/react-native";
 export {
+  buildExpenseRecord,
+  buildGroupRecord,
   clearDatabase,
   createDatabase,
   createSupabaseServer,
+  generateAccessToken,
   customRender as render,
   customRenderRouter as renderRouter,
   setFakeSession,
-  generateAccessToken,
 };

@@ -2,7 +2,6 @@ import React, { PropsWithChildren } from "react";
 import { StyleSheet, View } from "react-native";
 import { Pressable } from "@/components/pressable";
 import { Colors } from "../lib/constants";
-import { useOptionalSnackBar } from "./snack-bar";
 
 type Props = PropsWithChildren<{
   onPress: () => void;
@@ -10,12 +9,9 @@ type Props = PropsWithChildren<{
 
 export default function FAB(props: Props) {
   const { children, onPress } = props;
-  const snackBar = useOptionalSnackBar();
-
-  const bottom = snackBar?.snack ? 20 + 40 : 20;
 
   return (
-    <View style={[styles.wrapper, { bottom }]}>
+    <View style={styles.wrapper}>
       <Pressable
         testID="fab-button"
         style={styles.fab}

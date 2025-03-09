@@ -1,6 +1,8 @@
-import { GroupRecord, groupsTable } from "@/lib/db/schema";
+import { Text } from "@/components/text";
+import { groupsTable } from "@/lib/db/schema";
 import { System } from "@/lib/system";
 import {
+  buildGroupRecord,
   clearDatabase,
   createDatabase,
   createSupabaseServer,
@@ -9,7 +11,6 @@ import {
 import { act, fireEvent, screen } from "@testing-library/react-native";
 import { HttpResponse, http } from "msw";
 import GroupsScreen from ".";
-import { Text } from "@/components/text";
 
 const server = createSupabaseServer();
 let system: System;
@@ -37,21 +38,6 @@ const routerContext = {
   "/protected/groups/new": () => <Text>New Group</Text>,
 };
 
-const createGroupRecord = (
-  overrides: Partial<GroupRecord> = {},
-): GroupRecord => {
-  return {
-    id: "a",
-    name: "Group 1",
-    currency: "USD",
-    members: JSON.stringify(["Alice", "Bob"]),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    deletedAt: null,
-    ...overrides,
-  };
-};
-
 describe("GroupsScreen", () => {
   it("should render snapshot", () => {
     renderRouter(routerContext, system, { initialUrl: "/protected" });
@@ -65,7 +51,7 @@ describe("GroupsScreen", () => {
 
   it("should render groups", async () => {
     // Setup
-    const group = createGroupRecord({
+    const group = buildGroupRecord({
       name: "Group 1",
       members: JSON.stringify(["Alice", "Bob"]),
     });
@@ -81,7 +67,7 @@ describe("GroupsScreen", () => {
 
   it("should render no members message", async () => {
     // Setup
-    const group = createGroupRecord({ members: JSON.stringify([]) });
+    const group = buildGroupRecord({ members: JSON.stringify([]) });
     await system.db.insert(groupsTable).values(group);
     // Act
     renderRouter(routerContext, system, { initialUrl: "/protected" });
@@ -98,7 +84,7 @@ describe("GroupsScreen", () => {
 
   it("should allow the user to refresh the groups", async () => {
     // Setup
-    const group = createGroupRecord({ name: "initial group name" });
+    const group = buildGroupRecord({ name: "initial group name" });
     server.use(
       http.get("http://localhost:50001/rest/v1/groups", () =>
         HttpResponse.json([group]),
@@ -130,8 +116,8 @@ describe("GroupsScreen", () => {
   });
 
   it("should navigate to the group details screen", async () => {
-    const group = createGroupRecord();
-    await system.db.insert(groupsTable).values(createGroupRecord());
+    const group = buildGroupRecord();
+    await system.db.insert(groupsTable).values(buildGroupRecord());
 
     renderRouter(routerContext, system, { initialUrl: "/protected" });
     fireEvent.press(screen.getByText(group.name));
