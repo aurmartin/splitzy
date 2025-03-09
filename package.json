@@ -9,7 +9,7 @@
     "web": "EXPO_NO_DOTENV=1 expo start --web",
     "test": "dotenv -e .env.test -- jest",
     "test:watch": "dotenv -e .env.test -- jest --watchAll",
-    "test:ci": "dotenv -e .env.test -- jest --ci",
+    "test:ci": "dotenv -e .env.test -- jest --ci --coverage",
     "format": "prettier --write .",
     "lint": "expo lint",
     "build:dev": "EXPO_NO_DOTENV=1 APP_ENV=development dotenv -e .env.development -- eas build --platform android --profile development --local",
