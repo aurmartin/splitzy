@@ -25,9 +25,9 @@ beforeEach(async () => {
   server.resetHandlers();
 });
 
-afterEach(async () => {
+afterEach(() => {
   if (system) {
-    await system.dispose();
+    system.dispose();
   }
 });
 
@@ -220,34 +220,6 @@ describe("syncTableFromRemote", () => {
     // Assert
     const afterGroups = system.db.select().from(tables.groups).all();
     expect(afterGroups.length).toBe(0);
-  });
-
-  it("should merge local insert operations with remote entities", async () => {
-    // Setup
-    const localGroup = buildGroupRecord();
-
-    server.use(
-      http.get("http://localhost:50001/rest/v1/groups", () =>
-        HttpResponse.json([]),
-      ),
-    );
-
-    // Act
-    await system.db.insert(tables.syncQueue).values({
-      id: generateId(),
-      operationType: "insert",
-      entityTable: "groups",
-      entityId: localGroup.id,
-      changes: JSON.stringify(localGroup),
-      createdAt: new Date().toISOString(),
-    });
-
-    await system.syncEngine.syncTableFromRemote(tables.groups);
-
-    // Assert
-    const afterGroups = system.db.select().from(tables.groups).all();
-    expect(afterGroups.length).toBe(1);
-    expect(afterGroups[0].id).toBe(localGroup.id);
   });
 });
 

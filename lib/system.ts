@@ -112,15 +112,11 @@ export class System {
     }
   }
 
-  async dispose() {
-    await this.syncEngine.dispose();
+  dispose() {
+    this.syncEngine.dispose();
   }
 
   async init() {
-    // this.db.run(`DROP TABLE IF EXISTS groups`);
-    // this.db.run(`DROP TABLE IF EXISTS expenses`);
-    // this.db.run(`DROP TABLE IF EXISTS sync_queue`);
-
     await this.initializeMigrations();
     await this.syncEngine.init();
   }

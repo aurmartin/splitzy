@@ -1,10 +1,12 @@
 import type { Database } from "@/lib/db/schema";
 import { SyncableTable, syncQueue, tables } from "@/lib/db/schema";
-import { asyncTime, generateId } from "@/lib/utils";
+import { asyncTime, generateId, createLogger } from "@/lib/utils";
 import NetInfo from "@react-native-community/netinfo";
 import * as Sentry from "@sentry/react-native";
 import { SupabaseClient } from "@supabase/supabase-js";
-import { desc, eq, getTableName } from "drizzle-orm";
+import { asc, eq, getTableName } from "drizzle-orm";
+
+const logger = createLogger("SyncEngine");
 
 type SyncOperation = {
   id: string;
@@ -28,9 +30,8 @@ const FATAL_RESPONSE_CODES = [
 ];
 
 class SyncEngine {
-  supabase: SupabaseClient;
-  db: Database;
-
+  private supabase: SupabaseClient;
+  private db: Database;
   private processQueueInterval?: NodeJS.Timeout;
   private isProcessingLocalOperations = false;
 
@@ -40,9 +41,7 @@ class SyncEngine {
   }
 
   async init() {
-    this.log("info", "Initializing sync engine");
-
-    await this.syncAllTablesFromRemote();
+    logger.info("Initializing sync engine");
 
     if (!this.processQueueInterval) {
       this.processQueueInterval = setInterval(async () => {
@@ -50,12 +49,14 @@ class SyncEngine {
       }, 5000);
     }
 
-    this.log("info", "Sync engine initialized");
+    await this.syncAllTablesFromRemote();
+
+    logger.info("Sync engine initialized");
   }
 
   dispose() {
     if (this.processQueueInterval) {
-      this.log("info", "Clearing process queue interval");
+      logger.info("Clearing process queue interval");
       clearInterval(this.processQueueInterval);
       this.processQueueInterval = undefined;
     }
@@ -68,6 +69,8 @@ class SyncEngine {
 
   async insert(table: SyncableTable, id: string, data: Record<string, any>) {
     const updateFields = { ...data, id };
+
+    logger.debug("Insert operation table =", getTableName(table), "- id =", id);
 
     try {
       await this.db.transaction(async (tx) => {
@@ -85,13 +88,15 @@ class SyncEngine {
       this.processLocalOperations();
     } catch (error) {
       Sentry.captureException(error);
-      this.log("error", "Error inserting row", id, error);
+      logger.error("Error inserting row", id, error);
       throw error;
     }
   }
 
   async update(table: SyncableTable, id: string, data: Record<string, any>) {
     const updateFields = { ...data, id };
+
+    logger.debug("Update operation table =", getTableName(table), "- id =", id);
 
     try {
       await this.db.transaction(async (tx) => {
@@ -109,12 +114,14 @@ class SyncEngine {
       this.processLocalOperations();
     } catch (error) {
       Sentry.captureException(error, { level: "error" });
-      this.log("error", "Error updating row", id, error);
+      logger.error("Error updating row", id, error);
       throw error;
     }
   }
 
   async delete(table: SyncableTable, id: string) {
+    logger.debug("Delete operation table =", getTableName(table), "- id =", id);
+
     try {
       await this.db.transaction(async (tx) => {
         await tx.delete(table).where(eq(table.id, id));
@@ -130,7 +137,7 @@ class SyncEngine {
       this.processLocalOperations();
     } catch (error) {
       Sentry.captureException(error, { level: "error" });
-      this.log("error", "Error deleting row", id, error);
+      logger.error("Error deleting row", id, error);
       throw error;
     }
   }
@@ -153,8 +160,7 @@ class SyncEngine {
       }
 
       if (remoteEntities) {
-        this.log(
-          "info",
+        logger.info(
           `syncTableFromRemote(${getTableName(table)}) found ${remoteEntities.length} entities in supabase.`,
         );
 
@@ -180,36 +186,29 @@ class SyncEngine {
           }
         }
 
-        // Insert locally created rows that are not in remote
-        for (const localOperation of localOperations) {
-          if (
-            localOperation.operationType === "insert" &&
-            !remoteEntities.some((r) => r.id === localOperation.entityId)
-          ) {
-            const entity: any = {
-              ...localOperation.changes,
-              id: localOperation.entityId,
-            };
-            await this.db.insert(table).values(entity);
-          }
-        }
-
-        // Delete missing rows from the database
+        // Delete missing rows from the database if they are not locally created
         for (const localEntity of localEntities) {
-          if (!remoteEntities.some((r) => r.id === localEntity.id)) {
+          const haveLocalInsertOperation = localOperations.some(
+            ({ entityId, operationType }) =>
+              entityId === localEntity.id && operationType === "insert",
+          );
+
+          const inRemoteEntities = remoteEntities.some(
+            ({ id }) => id === localEntity.id,
+          );
+
+          if (!inRemoteEntities && !haveLocalInsertOperation) {
             await this.db.delete(table).where(eq(table.id, localEntity.id));
           }
         }
       } else {
-        this.log(
-          "warn",
+        logger.warn(
           `syncTableFromRemote(${getTableName(table)}) found no data in supabase.`,
         );
       }
     } catch (error: any) {
       Sentry.captureException(error, { level: "error" });
-      this.log(
-        "error",
+      logger.error(
         "Error refreshing table",
         getTableName(table),
         error?.message || error,
@@ -238,23 +237,23 @@ class SyncEngine {
 
   async processLocalOperations() {
     if (this.isProcessingLocalOperations) {
-      this.log("info", "Queue is already being processed, skipping");
+      logger.info("Queue is already being processed, skipping");
+      return;
+    }
+
+    const networkState = await NetInfo.fetch();
+    if (!networkState.isInternetReachable) {
+      logger.info("Network is disconnected, skipping queue");
       return;
     }
 
     this.isProcessingLocalOperations = true;
 
-    const networkState = await NetInfo.fetch();
-    if (!networkState.isInternetReachable) {
-      this.log("info", "Network is disconnected, skipping queue");
-      return;
-    }
-
     try {
       await this.doProcessLocalOperations();
     } catch (error) {
       Sentry.captureException(error, { level: "error" });
-      this.log("error", "Error processing queue", error);
+      logger.error("Error processing queue", error);
       throw error;
     } finally {
       this.isProcessingLocalOperations = false;
@@ -262,12 +261,25 @@ class SyncEngine {
   }
 
   private async doProcessLocalOperations() {
-    this.log("debug", "Processing queue...");
+    logger.debug("Processing queue...");
 
-    const operations = this.getLocaLOperations();
+    while (true) {
+      const operation = this.getNextLocalOperation();
 
-    for (const operation of operations) {
-      this.log("debug", "Processing operation", operation);
+      if (operation === null) {
+        break;
+      }
+
+      logger.debug(
+        "Processing operation id =",
+        operation.id,
+        "- type =",
+        operation.operationType,
+        "- entity =",
+        operation.entityTable,
+        "- entityId =",
+        operation.entityId,
+      );
 
       try {
         let result: any;
@@ -304,7 +316,7 @@ class SyncEngine {
         await this.db.delete(syncQueue).where(eq(syncQueue.id, operation.id));
       } catch (error: any) {
         Sentry.captureException(error, { level: "error" });
-        this.log("error", "Error processing operation.", operation, error);
+        logger.error("Error processing operation.", operation, error);
 
         if (
           typeof error.code == "string" &&
@@ -317,12 +329,12 @@ class SyncEngine {
       }
     }
 
-    this.log("debug", "Queue processed successfully");
+    logger.debug("Queue processed successfully");
   }
 
   private async rollback(operation: SyncOperation) {
     try {
-      this.log("info", "Rolling back operation", operation);
+      logger.info("Rolling back operation", operation);
 
       const supabaseRow = await this.supabase
         .from(operation.entityTable)
@@ -348,18 +360,23 @@ class SyncEngine {
       });
     } catch (error) {
       Sentry.captureException(error, { level: "error" });
-      this.log("error", "Error rolling back operation", operation, error);
+      logger.error("Error rolling back operation", operation, error);
     }
   }
 
-  private getLocaLOperations(): SyncOperation[] {
+  private getNextLocalOperation(): SyncOperation | null {
     const rows = this.db
       .select()
       .from(syncQueue)
-      .orderBy(desc(syncQueue.createdAt))
+      .orderBy(asc(syncQueue.createdAt))
+      .limit(1)
       .all();
 
-    return rows.map((row) => this.decodeOperation(row));
+    if (rows.length === 0) {
+      return null;
+    }
+
+    return this.decodeOperation(rows[0]);
   }
 
   private getLocalOperationsForTable(table: SyncableTable): SyncOperation[] {
@@ -367,7 +384,7 @@ class SyncEngine {
       .select()
       .from(syncQueue)
       .where(eq(syncQueue.entityTable, getTableName(table)))
-      .orderBy(desc(syncQueue.createdAt))
+      .orderBy(asc(syncQueue.createdAt))
       .all();
 
     return rows.map((row) => this.decodeOperation(row));
