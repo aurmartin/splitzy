@@ -1,3 +1,4 @@
+import { Pressable } from "@/components/pressable";
 import { Screen } from "@/components/screen";
 import { Text } from "@/components/text";
 import { TopBar } from "@/components/top-bar";
@@ -8,7 +9,6 @@ import { getLocale } from "@/lib/locale";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, ScrollView, View } from "react-native";
-import { Pressable } from "react-native-gesture-handler";
 
 export default function ExpenseScreen() {
   const { expenseId, groupId }: { expenseId: string; groupId: string } =

@@ -1,10 +1,9 @@
+import { Pressable, type PressableProps } from "@/components/pressable";
 import { Text } from "@/components/text";
 import { Colors } from "@/lib/constants";
-import { ComponentPropsWithRef } from "react";
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
-import { Pressable } from "react-native-gesture-handler";
 
-interface ButtonProps extends ComponentPropsWithRef<typeof Pressable> {
+interface ButtonProps extends PressableProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   type?: "primary" | "secondary";

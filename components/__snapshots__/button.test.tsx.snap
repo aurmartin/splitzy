@@ -1,21 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
-<RNGestureHandlerButton
-  collapsable={false}
-  enabled={true}
-  hitSlop={
+<View
+  accessibilityState={
     {
-      "bottom": 0,
-      "left": 0,
-      "right": 0,
-      "top": 0,
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
     }
   }
-  rippleColor={4290302944}
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
   style={
     [
-      {},
       [
         {
           "alignItems": "center",
@@ -29,6 +46,9 @@ exports[`renders correctly 1`] = `
         },
         undefined,
       ],
+      {
+        "overflow": "hidden",
+      },
     ]
   }
 >
@@ -48,25 +68,42 @@ exports[`renders correctly 1`] = `
   >
     Press me!
   </Text>
-</RNGestureHandlerButton>
+</View>
 `;
 
 exports[`renders correctly with style 1`] = `
-<RNGestureHandlerButton
-  collapsable={false}
-  enabled={true}
-  hitSlop={
+<View
+  accessibilityState={
     {
-      "bottom": 0,
-      "left": 0,
-      "right": 0,
-      "top": 0,
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
     }
   }
-  rippleColor={4290302944}
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
   style={
     [
-      {},
       [
         {
           "alignItems": "center",
@@ -82,6 +119,9 @@ exports[`renders correctly with style 1`] = `
           "backgroundColor": "red",
         },
       ],
+      {
+        "overflow": "hidden",
+      },
     ]
   }
 >
@@ -101,25 +141,42 @@ exports[`renders correctly with style 1`] = `
   >
     Press me!
   </Text>
-</RNGestureHandlerButton>
+</View>
 `;
 
 exports[`renders correctly with type 1`] = `
-<RNGestureHandlerButton
-  collapsable={false}
-  enabled={true}
-  hitSlop={
+<View
+  accessibilityState={
     {
-      "bottom": 0,
-      "left": 0,
-      "right": 0,
-      "top": 0,
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
     }
   }
-  rippleColor={4290302944}
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
   style={
     [
-      {},
       [
         {
           "alignItems": "center",
@@ -133,6 +190,9 @@ exports[`renders correctly with type 1`] = `
         },
         undefined,
       ],
+      {
+        "overflow": "hidden",
+      },
     ]
   }
 >
@@ -152,25 +212,42 @@ exports[`renders correctly with type 1`] = `
   >
     Press me!
   </Text>
-</RNGestureHandlerButton>
+</View>
 `;
 
 exports[`renders disabled state correctly 1`] = `
-<RNGestureHandlerButton
-  collapsable={false}
-  enabled={false}
-  hitSlop={
+<View
+  accessibilityState={
     {
-      "bottom": 0,
-      "left": 0,
-      "right": 0,
-      "top": 0,
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": true,
+      "expanded": undefined,
+      "selected": undefined,
     }
   }
-  rippleColor={4290302944}
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
   style={
     [
-      {},
       [
         {
           "alignItems": "center",
@@ -184,6 +261,9 @@ exports[`renders disabled state correctly 1`] = `
         },
         undefined,
       ],
+      {
+        "overflow": "hidden",
+      },
     ]
   }
 >
@@ -203,5 +283,5 @@ exports[`renders disabled state correctly 1`] = `
   >
     Press me!
   </Text>
-</RNGestureHandlerButton>
+</View>
 `;

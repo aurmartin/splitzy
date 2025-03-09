@@ -15,7 +15,6 @@ import { openDatabaseSync } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Platform, View, useColorScheme } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 if (Env.APP_ENV !== "development") {
   Sentry.init({
@@ -54,17 +53,15 @@ export default function RootLayout() {
 
   return (
     <Sentry.ErrorBoundary fallback={ErrorBoundary}>
-      <GestureHandlerRootView>
-        <SnackBarProvider>
-          <SystemProvider system={system}>
-            <StatusBar style={colorScheme === "dark" ? "dark" : "light"} />
+      <SnackBarProvider>
+        <SystemProvider system={system}>
+          <StatusBar style={colorScheme === "dark" ? "dark" : "light"} />
 
-            <Stack screenOptions={{ headerShown: false }} />
+          <Stack screenOptions={{ headerShown: false }} />
 
-            {Platform.OS === "web" ? <DevUi /> : null}
-          </SystemProvider>
-        </SnackBarProvider>
-      </GestureHandlerRootView>
+          {Platform.OS === "web" ? <DevUi /> : null}
+        </SystemProvider>
+      </SnackBarProvider>
     </Sentry.ErrorBoundary>
   );
 }

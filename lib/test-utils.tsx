@@ -1,5 +1,7 @@
+import { SnackBarProvider } from "@/components/snack-bar";
 import { SystemProvider } from "@/components/system-provider";
 import { Database, tables } from "@/lib/db/schema";
+import { System } from "@/lib/system";
 import { render, type RenderOptions } from "@testing-library/react-native";
 import BetterSqliteDatabase from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
@@ -11,7 +13,6 @@ import {
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import React, { type ReactElement } from "react";
-import { System } from "@/lib/system";
 import * as jws from "jws";
 
 const AllTheProviders = ({
@@ -21,7 +22,11 @@ const AllTheProviders = ({
   children: ReactElement;
   system: System;
 }) => {
-  return <SystemProvider system={system}>{children}</SystemProvider>;
+  return (
+    <SnackBarProvider>
+      <SystemProvider system={system}>{children}</SystemProvider>
+    </SnackBarProvider>
+  );
 };
 
 const customRender = (

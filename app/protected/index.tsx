@@ -1,16 +1,16 @@
 import Card from "@/components/card";
 import FAB from "@/components/fab";
+import { Screen } from "@/components/screen";
+import { useSnackBar } from "@/components/snack-bar";
 import { useSystem } from "@/components/system-provider";
 import { Text } from "@/components/text";
-import { Colors } from "@/lib/constants";
 import { tables } from "@/lib/db/schema";
 import { Env } from "@/lib/env";
 import { Group, useGroups } from "@/lib/groups";
 import { Ionicons } from "@expo/vector-icons";
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React from "react";
 import { FlatList } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const GroupListItem = ({ group }: { group: Group }) => {
   const router = useRouter();
@@ -33,6 +33,7 @@ const Groups = React.memo(function _Groups() {
   const groups = useGroups();
   const system = useSystem();
   const [refreshing, setRefreshing] = React.useState(false);
+  const snackBar = useSnackBar();
 
   const renderItem = React.useCallback(
     ({ item }: { item: Group }) => <GroupListItem group={item} />,
@@ -41,9 +42,18 @@ const Groups = React.memo(function _Groups() {
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    await system.syncEngine.syncTableFromRemote(tables.groups);
-    setRefreshing(false);
-  }, [setRefreshing, system.syncEngine]);
+
+    try {
+      await system.syncEngine.syncTableFromRemote(tables.groups);
+    } catch {
+      snackBar.show(
+        "Une erreur est survenue lors de la synchronisation des groupes.",
+        "error",
+      );
+    } finally {
+      setRefreshing(false);
+    }
+  }, [system, snackBar]);
 
   return (
     <FlatList
@@ -88,11 +98,7 @@ export default function GroupsScreen() {
   }, [router]);
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: Colors.background, padding: 8 }}
-    >
-      <Stack.Screen options={{ headerShown: false }} />
-
+    <Screen>
       <ScreenTitle />
 
       <Groups />
@@ -100,6 +106,6 @@ export default function GroupsScreen() {
       <FAB onPress={onAddClick}>
         <Ionicons name="add-outline" size={24} color="white" />
       </FAB>
-    </SafeAreaView>
+    </Screen>
   );
 }

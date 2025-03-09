@@ -123,22 +123,39 @@ exports[`LoginScreen should render snapshot 1`] = `
           }
           value=""
         />
-        <RNGestureHandlerButton
+        <View
           accessibilityLabel="Login"
-          collapsable={false}
-          enabled={true}
-          hitSlop={
+          accessibilityState={
             {
-              "bottom": 0,
-              "left": 0,
-              "right": 0,
-              "top": 0,
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
             }
           }
-          rippleColor={4290302944}
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
           style={
             [
-              {},
               [
                 {
                   "alignItems": "center",
@@ -152,6 +169,9 @@ exports[`LoginScreen should render snapshot 1`] = `
                 },
                 undefined,
               ],
+              {
+                "overflow": "hidden",
+              },
             ]
           }
         >
@@ -171,7 +191,7 @@ exports[`LoginScreen should render snapshot 1`] = `
           >
             Login or Create Account
           </Text>
-        </RNGestureHandlerButton>
+        </View>
       </View>
     </RNCSafeAreaView>
   </RNCSafeAreaView>

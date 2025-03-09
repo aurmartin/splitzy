@@ -16,27 +16,47 @@ exports[`FAB renders correctly 1`] = `
     ]
   }
 >
-  <RNGestureHandlerButton
-    collapsable={false}
-    enabled={true}
-    hitSlop={
+  <View
+    accessibilityState={
       {
-        "bottom": 0,
-        "left": 0,
-        "right": 0,
-        "top": 0,
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
       }
     }
-    rippleColor={4290302944}
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
       [
-        {},
         {
           "backgroundColor": "hsl(200 40% 50%)",
           "borderRadius": 16,
           "elevation": 2,
           "padding": 16,
           "shadowColor": "black",
+        },
+        {
+          "overflow": "hidden",
         },
       ]
     }
@@ -45,6 +65,6 @@ exports[`FAB renders correctly 1`] = `
     <Text>
       +
     </Text>
-  </RNGestureHandlerButton>
+  </View>
 </View>
 `;

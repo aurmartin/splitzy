@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from "react";
 import { StyleSheet, View } from "react-native";
-import { Pressable } from "react-native-gesture-handler";
+import { Pressable } from "@/components/pressable";
 import { Colors } from "../lib/constants";
 import { useOptionalSnackBar } from "./snack-bar";
 

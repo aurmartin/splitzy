@@ -37,11 +37,14 @@ exports[`GroupsScreen should render snapshot 1`] = `
         }
       }
       style={
-        {
-          "backgroundColor": "hsl(200 15% 90%)",
-          "flex": 1,
-          "padding": 8,
-        }
+        [
+          {
+            "backgroundColor": "hsl(200 15% 90%)",
+            "flex": 1,
+            "padding": 8,
+          },
+          undefined,
+        ]
       }
     >
       <Text
@@ -142,21 +145,38 @@ exports[`GroupsScreen should render snapshot 1`] = `
           ]
         }
       >
-        <RNGestureHandlerButton
-          collapsable={false}
-          enabled={true}
-          hitSlop={
+        <View
+          accessibilityState={
             {
-              "bottom": 0,
-              "left": 0,
-              "right": 0,
-              "top": 0,
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
             }
           }
-          rippleColor={4290302944}
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
           style={
             [
-              {},
               {
                 "backgroundColor": "hsl(200 40% 50%)",
                 "borderRadius": 16,
@@ -164,12 +184,15 @@ exports[`GroupsScreen should render snapshot 1`] = `
                 "padding": 16,
                 "shadowColor": "black",
               },
+              {
+                "overflow": "hidden",
+              },
             ]
           }
           testID="fab-button"
         >
           <Text />
-        </RNGestureHandlerButton>
+        </View>
       </View>
     </RNCSafeAreaView>
   </RNCSafeAreaView>

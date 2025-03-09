@@ -1,7 +1,9 @@
 import Button from "@/components/button";
 import Card from "@/components/card";
 import FAB from "@/components/fab";
+import { Pressable } from "@/components/pressable";
 import { Screen } from "@/components/screen";
+import { useSnackBar } from "@/components/snack-bar";
 import { useSystem } from "@/components/system-provider";
 import { Text } from "@/components/text";
 import { TopBar } from "@/components/top-bar";
@@ -20,7 +22,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { Redirect, router, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { SectionList, Share, View } from "react-native";
-import { Pressable } from "react-native-gesture-handler";
 
 interface ExpenseSection {
   title: string;
@@ -71,6 +72,7 @@ const Expenses = React.memo(function _Expenses(props: { group: Group }) {
   const expenses = useExpenses(group.id);
   const system = useSystem();
   const [refreshing, setRefreshing] = React.useState(false);
+  const snackBar = useSnackBar();
 
   const formatDate = (date: Date) => {
     const today = new Date();
@@ -78,9 +80,9 @@ const Expenses = React.memo(function _Expenses(props: { group: Group }) {
     yesterday.setDate(yesterday.getDate() - 1);
 
     if (date.toDateString() === today.toDateString()) {
-      return "Today";
+      return "Aujourd'hui";
     } else if (date.toDateString() === yesterday.toDateString()) {
-      return "Yesterday";
+      return "Hier";
     } else {
       return date.toLocaleDateString(undefined, {
         weekday: "long",
@@ -118,6 +120,21 @@ const Expenses = React.memo(function _Expenses(props: { group: Group }) {
     <Text style={{ fontWeight: "bold" }}>{section.title}</Text>
   );
 
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+
+    try {
+      await system.syncEngine.syncTableFromRemote(tables.expenses);
+    } catch {
+      snackBar.show(
+        "Une erreur est survenue lors de la synchronisation des dépenses.",
+        "error",
+      );
+    } finally {
+      setRefreshing(false);
+    }
+  }, [system, snackBar]);
+
   return (
     <SectionList
       contentContainerStyle={{ gap: 8 }}
@@ -127,11 +144,7 @@ const Expenses = React.memo(function _Expenses(props: { group: Group }) {
       maxToRenderPerBatch={10}
       initialNumToRender={10}
       windowSize={10}
-      onRefresh={async () => {
-        setRefreshing(true);
-        await system.syncEngine.syncTableFromRemote(tables.expenses);
-        setRefreshing(false);
-      }}
+      onRefresh={onRefresh}
       refreshing={refreshing}
       style={{ borderRadius: 8 }}
       ListFooterComponent={<View style={{ height: 80 }} />}
