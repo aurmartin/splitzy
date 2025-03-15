@@ -3,22 +3,68 @@ import {
   createAmountSplit,
 } from "@/components/split-input/amount-split";
 import { type AmountSplit } from "@/lib/expenses";
-import { render } from "@testing-library/react-native";
+import {
+  type RenderResult,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react-native";
 import dinero from "dinero.js";
 import * as React from "react";
 
 describe("AmountSplit", () => {
   describe("AmountSplitInput", () => {
-    it("renders correctly", () => {
-      const mockSplit = {
-        type: "amount" as const,
-        amounts: { user1: dinero({ amount: 1000, currency: "USD" }) },
-        total: dinero({ amount: 1000, currency: "USD" }),
-        members: ["user1"],
-      } as AmountSplit;
+    const testSplit = {
+      type: "amount" as const,
+      amounts: { alice: dinero({ amount: 1000, currency: "USD" }) },
+      total: dinero({ amount: 1000, currency: "USD" }),
+      members: ["alice", "bob", "charlie"],
+    } as AmountSplit;
 
-      const tree = render(<AmountSplitInput value={mockSplit} />);
-      expect(tree).toMatchSnapshot();
+    const onChange = jest.fn();
+
+    let tree: RenderResult;
+
+    beforeEach(() => {
+      tree = render(
+        <AmountSplitInput
+          testID="amount-split-input"
+          value={testSplit}
+          onChange={onChange}
+        />,
+      );
+    });
+
+    it("renders correctly", () => {
+      expect(screen).toMatchSnapshot();
+    });
+
+    it("should reset amounts when the reset button is pressed", async () => {
+      fireEvent.press(screen.getByTestId("reset-amount-alice"));
+      expect(onChange).toHaveBeenCalledWith({ ...testSplit, amounts: {} });
+    });
+
+    it("should only display reset buttons for amounts that have been set", () => {
+      expect(screen.queryByTestId("reset-amount-bob")).toBeNull();
+    });
+
+    it("should recompute remaining amounts when total changes", () => {
+      const updatedSplit = {
+        ...testSplit,
+        total: dinero({ amount: 2000, currency: "USD" }),
+      };
+
+      expect(screen.getByTestId("amount-input-bob").props.value).toEqual("0");
+
+      tree.rerender(
+        <AmountSplitInput
+          testID="amount-split-input"
+          value={updatedSplit}
+          onChange={onChange}
+        />,
+      );
+
+      expect(screen.getByTestId("amount-input-bob").props.value).toEqual("5");
     });
   });
 
@@ -30,9 +76,7 @@ describe("AmountSplit", () => {
       const result = createAmountSplit(total, members);
 
       expect(result.type).toBe("amount");
-      expect(Object.keys(result.amounts)).toHaveLength(2);
-      expect(result.amounts["user1"].getAmount()).toBe(1000);
-      expect(result.amounts["user2"].getAmount()).toBe(1000);
+      expect(result.amounts).toEqual({});
     });
 
     it("handles no members", () => {
@@ -42,7 +86,7 @@ describe("AmountSplit", () => {
       const result = createAmountSplit(total, members);
 
       expect(result.type).toBe("amount");
-      expect(Object.keys(result.amounts)).toHaveLength(0);
+      expect(result.amounts).toEqual({});
     });
   });
 });

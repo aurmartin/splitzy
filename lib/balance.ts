@@ -1,5 +1,5 @@
 import dinero, { type Dinero } from "dinero.js";
-import { type Expense, getAmountSplit, useExpenses } from "@/lib/expenses";
+import { type Expense, getAmounts, useExpenses } from "@/lib/expenses";
 import { type Group } from "@/lib/groups";
 
 export type Balance = Record<string, Dinero>;
@@ -22,9 +22,9 @@ export function computeBalance(group: Group, expenses: Expense[]): Balance {
 
     balance[payer] = balance[payer].add(total);
 
-    const amountSplit = getAmountSplit(expense);
+    const amounts = getAmounts(expense);
 
-    Object.entries(amountSplit.amounts).forEach(([name, amount]) => {
+    Object.entries(amounts).forEach(([name, amount]) => {
       balance[name] = balance[name].subtract(amount);
     });
   });

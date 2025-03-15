@@ -52,4 +52,4 @@ const FloatInput = (props: FloatInputProps) => {
   );
 };
 
-export default FloatInput;
+export { FloatInput, type FloatInputProps };

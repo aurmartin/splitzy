@@ -4,11 +4,8 @@ exports[`EqualSplit EqualSplitInput renders correctly 1`] = `
 <View
   style={
     {
-      "backgroundColor": "white",
-      "borderRadius": 4,
       "flex": 1,
       "gap": 8,
-      "padding": 12,
     }
   }
 >

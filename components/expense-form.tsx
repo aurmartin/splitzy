@@ -1,5 +1,5 @@
 import Button from "@/components/button";
-import DineroInput from "@/components/dinero-input";
+import { DineroInput } from "@/components/dinero-input";
 import Label from "@/components/label";
 import Picker from "@/components/picker";
 import {
@@ -192,11 +192,18 @@ const ExpenseForm = (props: {
           )}
         </View>
 
-        <SplitInput
-          value={split}
-          onChange={setSplit}
-          onTypeChange={handleTypeChange}
-        />
+        <View>
+          <SplitInput
+            value={split}
+            onChange={setSplit}
+            onTypeChange={handleTypeChange}
+          />
+          {validationErrors.splitExpense && (
+            <Text style={{ color: "hsl(0, 100%, 30%)" }}>
+              {validationErrors.splitExpense}
+            </Text>
+          )}
+        </View>
 
         <Button onPress={handleSubmit}>
           {expense ? "Modifier la dépense" : "Créer la dépense"}

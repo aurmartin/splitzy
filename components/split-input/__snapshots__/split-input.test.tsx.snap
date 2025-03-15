@@ -60,6 +60,12 @@ exports[`SplitInput SplitInput component renders correctly 1`] = `
                 "textColor": undefined,
                 "value": "percentage",
               },
+              {
+                "label": "En montant",
+                "testID": undefined,
+                "textColor": undefined,
+                "value": "amount",
+              },
             ]
           }
           numberOfLines={1}
@@ -81,11 +87,8 @@ exports[`SplitInput SplitInput component renders correctly 1`] = `
   <View
     style={
       {
-        "backgroundColor": "white",
-        "borderRadius": 4,
         "flex": 1,
         "gap": 8,
-        "padding": 12,
       }
     }
   >

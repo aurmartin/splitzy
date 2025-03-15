@@ -1,31 +1,32 @@
 import { Pressable } from "@/components/pressable";
 import { Screen } from "@/components/screen";
+import { useSnackBar } from "@/components/snack-bar";
 import { Text } from "@/components/text";
 import { TopBar } from "@/components/top-bar";
-import { useSnackBar } from "@/components/snack-bar";
-import { useDelExpense, useExpense, getAmountSplit } from "@/lib/expenses";
-import { useGroup } from "@/lib/groups";
+import {
+  useAmounts,
+  useDelExpense,
+  useExpense,
+  type Expense,
+} from "@/lib/expenses";
 import { getLocale } from "@/lib/locale";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
-export default function ExpenseScreen() {
-  const { expenseId, groupId }: { expenseId: string; groupId: string } =
-    useLocalSearchParams();
+interface ShowExpenseScreenProps {
+  groupId: string;
+  expense: Expense;
+}
 
+function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
   const snackBar = useSnackBar();
-  const group = useGroup(groupId);
-  const expense = useExpense(expenseId);
   const delExpense = useDelExpense();
-
-  if (!expense || !group) {
-    return <ActivityIndicator />;
-  }
+  const amounts = useAmounts(expense);
 
   const handleDelete = async () => {
     try {
-      await delExpense(expenseId);
+      await delExpense(expense.id);
 
       router.back();
 
@@ -38,7 +39,7 @@ export default function ExpenseScreen() {
   };
 
   const handleEdit = () => {
-    router.replace(`/protected/groups/${groupId}/expenses/${expenseId}/edit`);
+    router.replace(`/protected/groups/${groupId}/expenses/${expense.id}/edit`);
   };
 
   return (
@@ -84,26 +85,24 @@ export default function ExpenseScreen() {
           {new Date(expense.createdAt).toLocaleDateString()}
         </Text>
 
-        {Object.entries(getAmountSplit(expense).amounts).map(
-          ([name, amount]) => (
-            <View
-              key={name}
-              style={{
-                marginBottom: 8,
-                backgroundColor: "white",
-                padding: 14,
-                elevation: 1,
-                borderRadius: 8,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text key={name}>{name}</Text>
-              <Text>{amount.setLocale(getLocale()).toFormat()}</Text>
-            </View>
-          ),
-        )}
+        {Object.entries(amounts).map(([name, amount]) => (
+          <View
+            key={name}
+            style={{
+              marginBottom: 8,
+              backgroundColor: "white",
+              padding: 14,
+              elevation: 1,
+              borderRadius: 8,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Text key={name}>{name}</Text>
+            <Text>{amount.setLocale(getLocale()).toFormat()}</Text>
+          </View>
+        ))}
 
         {expense.receipt && (
           <View>
@@ -146,4 +145,17 @@ export default function ExpenseScreen() {
       </ScrollView>
     </Screen>
   );
+}
+
+export default function ShowExpenseRoute() {
+  const { expenseId, groupId }: { expenseId: string; groupId: string } =
+    useLocalSearchParams();
+
+  const expense = useExpense(expenseId);
+
+  if (!expense) {
+    return null;
+  }
+
+  return <ShowExpenseScreen groupId={groupId} expense={expense} />;
 }

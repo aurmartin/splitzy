@@ -341,167 +341,172 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                 </View>
               </View>
             </View>
-            <View
-              style={
-                {
-                  "gap": 8,
-                }
-              }
-            >
-              <View>
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 16,
-                        "fontWeight": "400",
-                        "lineHeight": 24,
-                      },
-                      {
-                        "marginBottom": 4,
-                      },
-                    ]
+            <View>
+              <View
+                style={
+                  {
+                    "gap": 8,
                   }
-                >
-                  Partager la dépense
-                </Text>
+                }
+              >
+                <View>
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontSize": 16,
+                          "fontWeight": "400",
+                          "lineHeight": 24,
+                        },
+                        {
+                          "marginBottom": 4,
+                        },
+                      ]
+                    }
+                  >
+                    Partager la dépense
+                  </Text>
+                  <View
+                    style={
+                      {
+                        "backgroundColor": "white",
+                        "borderColor": "hsl(0 0% 70%)",
+                        "borderRadius": 4,
+                        "borderStyle": "solid",
+                        "borderWidth": 1,
+                      }
+                    }
+                  >
+                    <View
+                      style={
+                        {
+                          "marginBottom": -5,
+                          "marginTop": -5,
+                          "padding": 0,
+                        }
+                      }
+                    >
+                      <RNCPicker
+                        items={
+                          [
+                            {
+                              "label": "Également",
+                              "testID": undefined,
+                              "textColor": undefined,
+                              "value": "equal",
+                            },
+                            {
+                              "label": "En pourcentage",
+                              "testID": undefined,
+                              "textColor": undefined,
+                              "value": "percentage",
+                            },
+                            {
+                              "label": "En montant",
+                              "testID": undefined,
+                              "textColor": undefined,
+                              "value": "amount",
+                            },
+                          ]
+                        }
+                        numberOfLines={1}
+                        onChange={[Function]}
+                        selectedIndex={0}
+                        style={
+                          [
+                            {
+                              "height": 216,
+                            },
+                            undefined,
+                          ]
+                        }
+                        testID="picker"
+                      />
+                    </View>
+                  </View>
+                </View>
                 <View
                   style={
                     {
-                      "backgroundColor": "white",
-                      "borderColor": "hsl(0 0% 70%)",
-                      "borderRadius": 4,
-                      "borderStyle": "solid",
-                      "borderWidth": 1,
+                      "flex": 1,
+                      "gap": 8,
                     }
                   }
                 >
                   <View
                     style={
                       {
-                        "marginBottom": -5,
-                        "marginTop": -5,
-                        "padding": 0,
+                        "display": "flex",
+                        "flexDirection": "row",
+                        "justifyContent": "space-between",
                       }
                     }
                   >
-                    <RNCPicker
-                      items={
-                        [
-                          {
-                            "label": "Également",
-                            "testID": undefined,
-                            "textColor": undefined,
-                            "value": "equal",
-                          },
-                          {
-                            "label": "En pourcentage",
-                            "testID": undefined,
-                            "textColor": undefined,
-                            "value": "percentage",
-                          },
-                        ]
-                      }
+                    <Text
                       numberOfLines={1}
-                      onChange={[Function]}
-                      selectedIndex={0}
                       style={
                         [
                           {
-                            "height": 216,
+                            "fontSize": 16,
+                            "fontWeight": "400",
+                            "lineHeight": 24,
                           },
-                          undefined,
                         ]
                       }
-                      testID="picker"
-                    />
+                    >
+                      Alice
+                    </Text>
+                    <Text
+                      style={
+                        [
+                          {
+                            "fontSize": 16,
+                            "fontWeight": "400",
+                            "lineHeight": 24,
+                          },
+                        ]
+                      }
+                    >
+                      $0.00
+                    </Text>
                   </View>
-                </View>
-              </View>
-              <View
-                style={
-                  {
-                    "backgroundColor": "white",
-                    "borderRadius": 4,
-                    "flex": 1,
-                    "gap": 8,
-                    "padding": 12,
-                  }
-                }
-              >
-                <View
-                  style={
-                    {
-                      "display": "flex",
-                      "flexDirection": "row",
-                      "justifyContent": "space-between",
-                    }
-                  }
-                >
-                  <Text
-                    numberOfLines={1}
+                  <View
                     style={
-                      [
-                        {
-                          "fontSize": 16,
-                          "fontWeight": "400",
-                          "lineHeight": 24,
-                        },
-                      ]
+                      {
+                        "display": "flex",
+                        "flexDirection": "row",
+                        "justifyContent": "space-between",
+                      }
                     }
                   >
-                    Alice
-                  </Text>
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontSize": 16,
-                          "fontWeight": "400",
-                          "lineHeight": 24,
-                        },
-                      ]
-                    }
-                  >
-                    $0.00
-                  </Text>
-                </View>
-                <View
-                  style={
-                    {
-                      "display": "flex",
-                      "flexDirection": "row",
-                      "justifyContent": "space-between",
-                    }
-                  }
-                >
-                  <Text
-                    numberOfLines={1}
-                    style={
-                      [
-                        {
-                          "fontSize": 16,
-                          "fontWeight": "400",
-                          "lineHeight": 24,
-                        },
-                      ]
-                    }
-                  >
-                    Bob
-                  </Text>
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontSize": 16,
-                          "fontWeight": "400",
-                          "lineHeight": 24,
-                        },
-                      ]
-                    }
-                  >
-                    $0.00
-                  </Text>
+                    <Text
+                      numberOfLines={1}
+                      style={
+                        [
+                          {
+                            "fontSize": 16,
+                            "fontWeight": "400",
+                            "lineHeight": 24,
+                          },
+                        ]
+                      }
+                    >
+                      Bob
+                    </Text>
+                    <Text
+                      style={
+                        [
+                          {
+                            "fontSize": 16,
+                            "fontWeight": "400",
+                            "lineHeight": 24,
+                          },
+                        ]
+                      }
+                    >
+                      $0.00
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>

@@ -88,7 +88,7 @@ describe("SplitInput", () => {
   });
 
   describe("changeType", () => {
-    it("converts equal split to percentage", () => {
+    it("creates percentage split", () => {
       const originalSplit: Split = {
         type: "equal",
         total: mockTotal,
@@ -100,15 +100,14 @@ describe("SplitInput", () => {
       expect(result.type).toBe("percentage");
       expect(result.total).toBe(mockTotal);
       expect(result.members).toEqual(mockMembers);
-      expect((result as any).ratios).toEqual({ user1: 50, user2: 50 });
+      expect(result.ratios).toEqual({ user1: 50, user2: 50 });
     });
 
-    it("converts percentage split to amount", () => {
+    it("creates amount split", () => {
       const originalSplit: Split = {
-        type: "percentage",
+        type: "equal",
         total: mockTotal,
         members: mockMembers,
-        ratios: { user1: 50, user2: 50 },
       };
 
       const result = changeType(originalSplit, "amount");
@@ -116,8 +115,7 @@ describe("SplitInput", () => {
       expect(result.type).toBe("amount");
       expect(result.total).toBe(mockTotal);
       expect(result.members).toEqual(mockMembers);
-      expect((result as any).amounts.user1.getAmount()).toBe(1000);
-      expect((result as any).amounts.user2.getAmount()).toBe(1000);
+      expect(result.amounts).toEqual({});
     });
   });
 
@@ -136,7 +134,7 @@ describe("SplitInput", () => {
       expect(result.type).toBe("percentage");
       expect(result.total).toBe(mockTotal);
       expect(result.members).toEqual(mockMembers);
-      expect((result as any).ratios).toEqual({ user1: 50, user2: 50 });
+      expect(result.ratios).toEqual({ user1: 50, user2: 50 });
     });
   });
 });

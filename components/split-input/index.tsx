@@ -41,16 +41,37 @@ function changeTotal<T extends Split>(split: T, total: Dinero): T {
   }
 }
 
-function changeType(split: Split, type: Split["type"]): Split {
+// Depending on the type value, the return type is different. The type should be computed from the type argument
+type ChangeTypeReturn<T extends Split["type"]> = T extends "equal"
+  ? EqualSplit
+  : T extends "percentage"
+    ? PercentageSplit
+    : T extends "amount"
+      ? AmountSplit
+      : ReceiptSplit;
+
+function changeType<Type extends Split["type"]>(
+  split: Split,
+  type: Type,
+): ChangeTypeReturn<Type> {
   switch (type) {
     case "equal":
-      return createEqualSplit(split.total, split.members);
+      return createEqualSplit(
+        split.total,
+        split.members,
+      ) as ChangeTypeReturn<Type>;
     case "percentage":
-      return createPercentageSplit(split.total, split.members);
+      return createPercentageSplit(
+        split.total,
+        split.members,
+      ) as ChangeTypeReturn<Type>;
     case "amount":
-      return convertSplit(split);
-    case "receipt":
-      throw new Error("Cannot change type of receipt split");
+      return createAmountSplit(
+        split.total,
+        split.members,
+      ) as ChangeTypeReturn<Type>;
+    default:
+      throw new Error("Invalid split type");
   }
 }
 
@@ -72,7 +93,9 @@ const SplitInput = (props: {
   } else if (value.type === "equal") {
     splitInput = <EqualSplitInput value={value as EqualSplit} />;
   } else if (value.type === "amount") {
-    splitInput = <AmountSplitInput value={value as AmountSplit} />;
+    splitInput = (
+      <AmountSplitInput value={value as AmountSplit} onChange={onChange} />
+    );
   } else if (value.type === "receipt") {
     splitInput = (
       <ReceiptSplitInput value={value as ReceiptSplit} onChange={onChange} />
@@ -90,7 +113,7 @@ const SplitInput = (props: {
       >
         <RNPicker.Item label="Également" value="equal" />
         <RNPicker.Item label="En pourcentage" value="percentage" />
-        {/* <RNPicker.Item label="En montant" value="amount" /> */}
+        <RNPicker.Item label="En montant" value="amount" />
       </Picker>
 
       {splitInput}
@@ -98,20 +121,28 @@ const SplitInput = (props: {
   );
 };
 
-function createSplit(
-  type: Split["type"],
+type CreateSplitReturn<Type extends Split["type"]> = Type extends "equal"
+  ? EqualSplit
+  : Type extends "percentage"
+    ? PercentageSplit
+    : Type extends "amount"
+      ? AmountSplit
+      : ReceiptSplit;
+
+function createSplit<Type extends Split["type"]>(
+  type: Type,
   total: Dinero,
   members: string[],
-): Split {
+): CreateSplitReturn<Type> {
   switch (type) {
     case "equal":
-      return createEqualSplit(total, members);
+      return createEqualSplit(total, members) as CreateSplitReturn<Type>;
     case "percentage":
-      return createPercentageSplit(total, members);
+      return createPercentageSplit(total, members) as CreateSplitReturn<Type>;
     case "amount":
-      return createAmountSplit(total, members);
-    case "receipt":
-      throw new Error("Cannot create receipt split");
+      return createAmountSplit(total, members) as CreateSplitReturn<Type>;
+    default:
+      throw new Error("Invalid split type");
   }
 }
 

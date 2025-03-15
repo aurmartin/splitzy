@@ -2,7 +2,7 @@ import { fireEvent, render } from "@testing-library/react-native";
 import dinero from "dinero.js";
 import * as React from "react";
 
-import DineroInput from "./dinero-input";
+import { DineroInput } from "./dinero-input";
 
 describe("DineroInput", () => {
   it("renders correctly", () => {

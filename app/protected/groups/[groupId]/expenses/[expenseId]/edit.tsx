@@ -16,46 +16,16 @@ import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { Pressable } from "react-native";
 
-type PromiseState = {
-  loading: boolean;
-  validationErrors: Record<string, string>;
-  error?: string;
-};
-
-type Action =
-  | { type: "start" }
-  | { type: "validationError"; payload: Record<string, string> }
-  | { type: "error"; payload: string }
-  | { type: "success" };
-
-function promiseStateReducer(_state: PromiseState, action: Action) {
-  switch (action.type) {
-    case "start":
-      return { loading: true, validationErrors: {} };
-    case "validationError":
-      return { loading: false, validationErrors: action.payload };
-    case "error":
-      return { loading: false, validationErrors: {}, error: action.payload };
-    case "success":
-      return { loading: false, validationErrors: {} };
-  }
-}
-
 const EditExpenseForm = (props: { group: Group; expense: Expense }) => {
   const { group, expense } = props;
 
   const snackBar = useSnackBar();
   const editExpense = useEditExpense();
 
-  const [promiseState, dispatch] = React.useReducer(promiseStateReducer, {
-    validationErrors: {},
-    loading: false,
-  });
+  const [validationErrors, setValidationErrors] = React.useState({});
 
   const onSubmit = async (fields: ExpenseFormFields) => {
     try {
-      dispatch({ type: "start" });
-
       const params = {
         ...fields,
         groupId: group.id,
@@ -63,37 +33,29 @@ const EditExpenseForm = (props: { group: Group; expense: Expense }) => {
 
       await editExpense(expense.id, params);
 
-      dispatch({ type: "success" });
-
       snackBar.show("Dépense modifiée avec succès", "success");
 
       router.back();
     } catch (error) {
       if (error instanceof ValidationError) {
-        dispatch({ type: "validationError", payload: error.errors });
+        setValidationErrors(error.errors);
       } else {
-        console.error("Edit expense error", error);
-
-        dispatch({ type: "error", payload: "Une erreur est survenue" });
+        snackBar.show("Une erreur est survenue", "error");
       }
     }
   };
-
-  if (promiseState.loading) {
-    return <LoadingScreen message="Modification de la dépense en cours..." />;
-  }
 
   return (
     <ExpenseForm
       group={group}
       expense={expense}
       onSubmit={onSubmit}
-      validationErrors={promiseState.validationErrors}
+      validationErrors={validationErrors}
     />
   );
 };
 
-export default function NewExpenseScreen() {
+export default function EditExpenseScreen() {
   const { groupId, expenseId }: { groupId: string; expenseId: string } =
     useLocalSearchParams();
 

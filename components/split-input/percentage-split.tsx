@@ -1,4 +1,4 @@
-import FloatInput from "@/components/float-input";
+import { FloatInput } from "@/components/float-input";
 import { SplitContainer } from "@/components/split-input/split-container";
 import { Text } from "@/components/text";
 import { type PercentageSplit } from "@/lib/expenses";
@@ -31,12 +31,7 @@ const PercentageSplitInput = (props: {
         >
           <Text style={{ flex: 1 }}>{member}</Text>
           <FloatInput
-            style={{
-              height: 30,
-              padding: 0,
-              paddingHorizontal: 8,
-              minWidth: 50,
-            }}
+            style={{ minWidth: 50 }}
             value={ratio}
             onChange={(value) => handleInputChange(member, value)}
           />

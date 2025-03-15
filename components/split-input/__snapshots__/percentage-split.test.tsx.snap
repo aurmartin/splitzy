@@ -4,11 +4,8 @@ exports[`PercentageSplit PercentageSplitInput renders correctly 1`] = `
 <View
   style={
     {
-      "backgroundColor": "white",
-      "borderRadius": 4,
       "flex": 1,
       "gap": 8,
-      "padding": 12,
     }
   }
 >
@@ -53,10 +50,7 @@ exports[`PercentageSplit PercentageSplitInput renders correctly 1`] = `
             "padding": 10,
           },
           {
-            "height": 30,
             "minWidth": 50,
-            "padding": 0,
-            "paddingHorizontal": 8,
           },
         ]
       }

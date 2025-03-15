@@ -1,9 +1,13 @@
 import { expensesTable } from "@/lib/db/schema";
 import {
   addExpense,
+  getAmounts,
   useAddExpense,
   useDelExpense,
+  type AmountSplit,
+  type EqualSplit,
   type Expense,
+  type PercentageSplit,
   type Receipt,
 } from "@/lib/expenses";
 import { ExpensesRepository } from "@/lib/expenses-repository";
@@ -14,6 +18,7 @@ import { generateId } from "@/lib/utils";
 import { ValidationError } from "@/lib/validation-error";
 import dinero, { Currency } from "dinero.js";
 import { eq } from "drizzle-orm";
+import React from "react";
 import { Button } from "react-native";
 
 const didRender = jest.fn();
@@ -248,5 +253,56 @@ describe("useDelExpense", () => {
     });
 
     expect(didRender).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("getAmounts", () => {
+  it("should compute all amounts when given an amount split with missing amounts", () => {
+    const splitExpense: AmountSplit = {
+      type: "amount",
+      total: dinero({ amount: 1000, currency: "USD" }),
+      members: ["Alice", "Bob"],
+      amounts: {
+        Alice: dinero({ amount: 250, currency: "USD" }),
+      },
+    };
+
+    const expense = createBasicExpense({ splitExpense });
+    const amounts = getAmounts(expense);
+
+    expect(amounts.Alice.getAmount()).toEqual(250);
+    expect(amounts.Bob.getAmount()).toEqual(750);
+  });
+
+  it("should compute all amounts when given a percentage split", () => {
+    const splitExpense: PercentageSplit = {
+      type: "percentage",
+      total: dinero({ amount: 1000, currency: "USD" }),
+      members: ["Alice", "Bob"],
+      ratios: {
+        Alice: 50,
+        Bob: 50,
+      },
+    };
+
+    const expense = createBasicExpense({ splitExpense });
+    const amounts = getAmounts(expense);
+
+    expect(amounts.Alice.getAmount()).toEqual(500);
+    expect(amounts.Bob.getAmount()).toEqual(500);
+  });
+
+  it("should compute all amounts when given an equal split", () => {
+    const splitExpense: EqualSplit = {
+      type: "equal",
+      total: dinero({ amount: 1000, currency: "USD" }),
+      members: ["Alice", "Bob"],
+    };
+
+    const expense = createBasicExpense({ splitExpense });
+    const amounts = getAmounts(expense);
+
+    expect(amounts.Alice.getAmount()).toEqual(500);
+    expect(amounts.Bob.getAmount()).toEqual(500);
   });
 });

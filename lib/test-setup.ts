@@ -20,7 +20,6 @@ beforeAll(async () => {
 
 afterEach(() => {
   server.resetHandlers();
-  jest.clearAllMocks();
 });
 
 afterAll(() => {

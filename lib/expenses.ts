@@ -4,8 +4,9 @@ import { ValidationError } from "@/lib/validation-error";
 import { ExpensesRepository } from "@/lib/expenses-repository";
 import { System } from "@/lib/system";
 import { generateId } from "@/lib/utils";
-import { Currency, Dinero } from "dinero.js";
-import { useCallback } from "react";
+import dinero, { Currency, Dinero } from "dinero.js";
+import { useCallback, useMemo } from "react";
+import { getEffectiveAmounts } from "@/components/split-input/amount-split";
 
 interface BaseSplit {
   type: "percentage" | "amount" | "equal" | "receipt";
@@ -156,6 +157,11 @@ const validateCreateExpenseParams = (params: ExpenseCreateParams) => {
     errors.payerName = "Veuillez sélectionner un membre";
   }
 
+  const splitError = validateSplit(params.splitExpense);
+  if (splitError) {
+    errors.splitExpense = splitError;
+  }
+
   if (Object.keys(errors).length > 0) {
     throw new ValidationError(errors);
   }
@@ -174,11 +180,40 @@ const validateUpdateExpenseParams = (params: ExpenseUpdateParams) => {
     errors.payerName = "Veuillez sélectionner un membre";
   }
 
+  const splitError = validateSplit(params.splitExpense);
+  if (splitError) {
+    errors.splitExpense = splitError;
+  }
+
+  if (Object.keys(errors).length > 0) {
+    throw new ValidationError(errors);
+  }
+
   return params;
 };
 
-const getAmountSplit = (expense: Expense): AmountSplit => {
-  return convertSplit(expense.splitExpense);
+const validateSplit = (split: Split): string | undefined => {
+  if (split.type === "amount") {
+    const effectiveAmounts = getEffectiveAmounts(split);
+
+    const total = Object.values(effectiveAmounts).reduce(
+      (acc, curr) => acc.add(curr),
+      dinero({ amount: 0, currency: split.total.getCurrency() }),
+    );
+
+    if (total.getAmount() !== split.total.getAmount()) {
+      return "La somme des montants ne correspond pas au total";
+    }
+  }
+};
+
+const getAmounts = (expense: Expense): Record<string, Dinero> => {
+  const amountSplit = convertSplit(expense.splitExpense);
+  return getEffectiveAmounts(amountSplit);
+};
+
+const useAmounts = (expense: Expense) => {
+  return useMemo(() => getAmounts(expense), [expense]);
 };
 
 const useExpense = ExpensesRepository.useExpense;
@@ -196,7 +231,8 @@ export type {
 
 export {
   addExpense,
-  getAmountSplit,
+  getAmounts,
+  useAmounts,
   useAddExpense,
   useDelExpense,
   useEditExpense,
