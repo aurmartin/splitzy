@@ -13,13 +13,13 @@ import {
 import { ExpensesRepository } from "@/lib/expenses-repository";
 import { System } from "@/lib/system";
 import { system } from "@/lib/test-setup";
-import { fireEvent, render, screen, waitFor } from "@/lib/test-utils";
+import { render, screen, waitFor, userEvent } from "@/lib/test-utils";
 import { generateId } from "@/lib/utils";
 import { ValidationError } from "@/lib/validation-error";
 import dinero, { Currency } from "dinero.js";
 import { eq } from "drizzle-orm";
 import React from "react";
-import { Button } from "react-native";
+import Button from "@/components/button";
 
 const didRender = jest.fn();
 
@@ -192,6 +192,8 @@ describe("addExpense", () => {
 describe("useAddExpense", () => {
   it("should add an expense", async () => {
     // Arrange
+    const user = userEvent.setup();
+
     const expenseParams = {
       groupId: generateId(),
       title: "title",
@@ -204,15 +206,14 @@ describe("useAddExpense", () => {
       const addExpense = useAddExpense();
       didRender();
       return (
-        <Button title="addExpense" onPress={() => addExpense(expenseParams)} />
+        <Button onPress={() => addExpense(expenseParams)}>addExpense</Button>
       );
     };
 
     // Act
     render(<Test />, system);
 
-    const button = screen.getByText("addExpense");
-    fireEvent.press(button);
+    await user.press(screen.getByText("addExpense"));
 
     // Assert
     await waitFor(() => {
@@ -229,6 +230,7 @@ describe("useAddExpense", () => {
 describe("useDelExpense", () => {
   it("should delete an expense", async () => {
     // Arrange
+    const user = userEvent.setup();
     const testExpense = createBasicExpense();
     await ExpensesRepository.insertExpense(system, testExpense);
 
@@ -236,15 +238,14 @@ describe("useDelExpense", () => {
       const delExpense = useDelExpense();
       didRender();
       return (
-        <Button title="delExpense" onPress={() => delExpense(testExpense.id)} />
+        <Button onPress={() => delExpense(testExpense.id)}>delExpense</Button>
       );
     };
 
     // Act
     render(<Test />, system);
 
-    const button = screen.getByText("delExpense");
-    fireEvent.press(button);
+    await user.press(screen.getByText("delExpense"));
 
     // Assert
     await waitFor(() => {

@@ -1,7 +1,7 @@
 import LoginScreen from "@/app/login";
 import { server, system } from "@/lib/test-setup";
 import { renderRouter, setFakeSession } from "@/lib/test-utils";
-import { fireEvent, screen, waitFor } from "@testing-library/react-native";
+import { screen, userEvent } from "@testing-library/react-native";
 import { HttpResponse, http } from "msw";
 import { Text } from "react-native";
 
@@ -17,22 +17,18 @@ describe("LoginScreen", () => {
   });
 
   it("should allow user to sign in with email", async () => {
+    const user = userEvent.setup();
     renderRouter(routerContext, system, { initialUrl: "/login" });
 
-    const emailInput = screen.getByPlaceholderText("Email");
-    const signInButton = screen.getByText("Login or Create Account");
+    await user.type(screen.getByPlaceholderText("Email"), "test@test.com");
+    await user.press(screen.getByRole("button"));
 
-    fireEvent.changeText(emailInput, "test@test.com");
-    fireEvent.press(signInButton);
-
-    expect(screen.getByText("Signing in..."));
-
-    await waitFor(() =>
-      expect(screen.getByText("Check your email for a magic link to sign in.")),
-    );
+    screen.getByText("Signing in...");
+    await screen.findByText("Check your email for a magic link to sign in.");
   });
 
   it("should handle sign in error", async () => {
+    const user = userEvent.setup();
     renderRouter(routerContext, system, { initialUrl: "/login" });
 
     server.use(
@@ -41,15 +37,12 @@ describe("LoginScreen", () => {
       ),
     );
 
-    const emailInput = screen.getByPlaceholderText("Email");
-    const signInButton = screen.getByText("Login or Create Account");
+    await user.type(screen.getByPlaceholderText("Email"), "test@test.com");
+    await user.press(screen.getByRole("button"));
 
-    fireEvent.changeText(emailInput, "test@test.com");
-    fireEvent.press(signInButton);
+    screen.getByText("Signing in...");
 
-    expect(screen.getByText("Signing in..."));
-
-    await waitFor(() => expect(screen.getByText("Invalid email")));
+    await screen.findByText("Invalid email");
   });
 
   it("should redirect to protected route if user is signed in", async () => {
@@ -57,6 +50,6 @@ describe("LoginScreen", () => {
 
     renderRouter(routerContext, system, { initialUrl: "/login" });
 
-    await waitFor(() => expect(screen.getByText("Protected")));
+    await screen.findByText("Protected");
   });
 });

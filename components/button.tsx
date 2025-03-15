@@ -17,6 +17,7 @@ export default function Button(props: ButtonProps) {
       {...rest}
       style={[styles.button, styles[type], style]}
       android_ripple={{ color: Colors.primaryLight }}
+      accessibilityRole="button"
     >
       <Text style={styles.text}>{children}</Text>
     </Pressable>

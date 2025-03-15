@@ -1,6 +1,5 @@
 import Button from "@/components/button";
 import { DineroInput } from "@/components/dinero-input";
-import Label from "@/components/label";
 import Picker from "@/components/picker";
 import {
   Split,
@@ -11,7 +10,7 @@ import {
   createSplit,
 } from "@/components/split-input";
 import { Text } from "@/components/text";
-import TextInput from "@/components/text-input";
+import { TextInput } from "@/components/text-input";
 import { useSystem } from "@/components/system-provider";
 import { type Expense, type Receipt } from "@/lib/expenses";
 import { Group, useMe } from "@/lib/groups";
@@ -171,8 +170,11 @@ const ExpenseForm = (props: {
         </View>
 
         <View>
-          <Label>Montant (€)</Label>
-          <DineroInput value={total} onChange={handleTotalChange} />
+          <DineroInput
+            label="Montant (€)"
+            value={total}
+            onChange={handleTotalChange}
+          />
         </View>
 
         <View>

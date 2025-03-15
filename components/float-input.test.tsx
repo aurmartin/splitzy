@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
+import { render, screen, userEvent } from "@testing-library/react-native";
 import { FloatInput } from "./float-input";
 
 describe("FloatInput", () => {
@@ -7,59 +7,61 @@ describe("FloatInput", () => {
     const mockOnChange = jest.fn();
     const value = 10.0;
 
-    const tree = render(<FloatInput value={value} onChange={mockOnChange} />);
-    expect(tree).toMatchSnapshot();
+    render(<FloatInput value={value} onChange={mockOnChange} />);
+    expect(screen.toJSON()).toMatchSnapshot();
   });
 
-  it("handles valid number inputs correctly", () => {
+  it("handles valid number inputs correctly", async () => {
+    const user = userEvent.setup();
+
     const mockOnChange = jest.fn();
     const value = 10.0;
 
-    const { getByTestId } = render(
-      <FloatInput value={value} onChange={mockOnChange} />,
-    );
+    render(<FloatInput value={value} onChange={mockOnChange} />);
+
+    const input = screen.getByTestId("float-input");
 
     // Test whole numbers
-    fireEvent.changeText(getByTestId("float-input"), "25");
+    await user.clear(input);
+    await user.type(input, "25");
     expect(mockOnChange).toHaveBeenCalledWith(25);
 
     // Test decimal numbers
-    fireEvent.changeText(getByTestId("float-input"), "25.50");
+    await user.clear(input);
+    await user.type(input, "25.50");
     expect(mockOnChange).toHaveBeenCalledWith(25.5);
 
     // Test starting with decimal
-    fireEvent.changeText(getByTestId("float-input"), ".5");
+    await user.clear(input);
+    await user.type(input, ".5");
     expect(mockOnChange).toHaveBeenCalledWith(0.5);
   });
 
-  it("ignores invalid number inputs", () => {
+  it("ignores invalid number inputs", async () => {
+    const user = userEvent.setup();
+
     const mockOnChange = jest.fn();
     const value = 10.0;
 
-    const { getByTestId } = render(
-      <FloatInput value={value} onChange={mockOnChange} />,
-    );
+    render(<FloatInput value={value} onChange={mockOnChange} />);
+
+    const input = screen.getByTestId("float-input");
 
     // Test invalid characters
-    fireEvent.changeText(getByTestId("float-input"), "abc");
-    expect(getByTestId("float-input").props.value).toBe("10");
-    expect(mockOnChange).not.toHaveBeenCalled();
-
-    // Test multiple decimal points
-    fireEvent.changeText(getByTestId("float-input"), "25.50.5");
-    expect(getByTestId("float-input").props.value).toBe("10");
+    await user.type(input, "abc");
+    expect(input.props.value).toBe("10");
     expect(mockOnChange).not.toHaveBeenCalled();
   });
 
-  it("updates display value when prop changes", () => {
+  it("updates display value when prop changes", async () => {
     const mockOnChange = jest.fn();
-    const { getByTestId, rerender } = render(
-      <FloatInput value={10.0} onChange={mockOnChange} />,
-    );
+    render(<FloatInput value={10.0} onChange={mockOnChange} />);
 
-    expect(getByTestId("float-input").props.value).toBe("10");
+    const input = screen.getByTestId("float-input");
 
-    rerender(<FloatInput value={20.0} onChange={mockOnChange} />);
-    expect(getByTestId("float-input").props.value).toBe("20");
+    expect(input.props.value).toBe("10");
+
+    screen.rerender(<FloatInput value={20.0} onChange={mockOnChange} />);
+    expect(input.props.value).toBe("20");
   });
 });

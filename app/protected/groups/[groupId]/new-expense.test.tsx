@@ -7,7 +7,7 @@ import {
   renderRouter,
   setFakeSession,
 } from "@/lib/test-utils";
-import { fireEvent, screen, waitFor } from "@testing-library/react-native";
+import { screen, userEvent, waitFor } from "@testing-library/react-native";
 import { eq } from "drizzle-orm";
 
 jest.mock("expo-document-picker", () => ({
@@ -44,12 +44,16 @@ describe("NewExpenseScreen", () => {
   });
 
   it("should create an expense", async () => {
+    const user = userEvent.setup();
+
     renderRouter(routerContext, system, { initialUrl: newExpenseScreenUrl });
 
-    fireEvent.changeText(screen.getByText("Titre"), "Test expense");
-    fireEvent.changeText(screen.getByText(/Montant/), "100");
-    fireEvent.changeText(screen.getByText("Payé par"), "Alice");
-    fireEvent.press(screen.getByText("Créer la dépense"));
+    await user.clear(screen.getByLabelText("Titre"));
+    await user.type(screen.getByLabelText("Titre"), "Test expense");
+    await user.type(screen.getByLabelText(/Montant/), "100");
+    await user.press(screen.getByLabelText("Payé par"));
+    await user.press(screen.getByText("Alice"));
+    await user.press(screen.getByRole("button", { name: /Créer/ }));
 
     await waitFor(async () => {
       const expenses = await system.db
@@ -64,12 +68,14 @@ describe("NewExpenseScreen", () => {
   });
 
   it("should show validation errors if the form is invalid", async () => {
+    const user = userEvent.setup();
+
     renderRouter(routerContext, system, { initialUrl: newExpenseScreenUrl });
 
-    fireEvent.changeText(screen.getByText("Titre"), "");
-    fireEvent.press(screen.getByText("Créer la dépense"));
+    await user.clear(screen.getByLabelText("Titre"));
+    await user.press(screen.getByRole("button", { name: /Créer/ }));
 
-    await waitFor(() => expect(screen.getByText("Veuillez entrer un titre")));
+    await screen.findByText("Veuillez entrer un titre");
   });
 
   it("should throw an error if the group is not found", () => {
@@ -81,15 +87,16 @@ describe("NewExpenseScreen", () => {
   });
 
   it("should handle receipt", async () => {
+    const user = userEvent.setup();
+
     setFakeSession(system);
 
     renderRouter(routerContext, system, { initialUrl: newExpenseScreenUrl });
 
-    fireEvent.press(screen.getByText("Télécharger un reçu"));
+    await user.press(
+      screen.getByRole("button", { name: /Télécharger un reçu/ }),
+    );
 
-    await waitFor(() => {
-      const input = screen.getByPlaceholderText("Titre");
-      expect(input.props.value).toBe("Test receipt");
-    });
+    await screen.findByDisplayValue("Test receipt");
   });
 });

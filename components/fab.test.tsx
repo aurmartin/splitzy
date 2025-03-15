@@ -1,28 +1,30 @@
 import * as React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
+import { render, screen, userEvent } from "@testing-library/react-native";
 import FAB from "./fab";
 import { Text } from "react-native";
 
 describe("FAB", () => {
   it("renders correctly", () => {
     const mockOnPress = jest.fn();
-    const tree = render(
+    render(
       <FAB onPress={mockOnPress}>
         <Text>+</Text>
       </FAB>,
     );
-    expect(tree).toMatchSnapshot();
+    expect(screen.toJSON()).toMatchSnapshot();
   });
 
-  it("handles press correctly", () => {
+  it("handles press correctly", async () => {
+    const user = userEvent.setup();
+
     const mockOnPress = jest.fn();
-    const { getByTestId } = render(
+    render(
       <FAB onPress={mockOnPress}>
         <Text>+</Text>
       </FAB>,
     );
 
-    fireEvent.press(getByTestId("fab-button"));
+    await user.press(screen.getByTestId("fab-button"));
     expect(mockOnPress).toHaveBeenCalled();
   });
 });

@@ -1,29 +1,27 @@
 import * as React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
-import TextInput from "./text-input";
+import { render, screen, userEvent } from "@testing-library/react-native";
+import { TextInput } from "./text-input";
 
 describe("TextInput", () => {
   it("renders correctly", () => {
-    const tree = render(<TextInput placeholder="Enter text" />);
-    expect(tree).toMatchSnapshot();
+    render(<TextInput placeholder="Enter text" />);
+    expect(screen.toJSON()).toMatchSnapshot();
   });
 
   it("renders with label when provided", () => {
-    const { getByText } = render(
-      <TextInput label="Test Label" placeholder="Enter text" />,
-    );
-
-    expect(getByText("Test Label")).toBeTruthy();
+    render(<TextInput label="Test Label" placeholder="Enter text" />);
+    screen.getByText("Test Label");
   });
 
-  it("handles text changes correctly", () => {
+  it("handles text changes correctly", async () => {
+    const user = userEvent.setup();
     const mockOnChangeText = jest.fn();
-    const { getByPlaceholderText } = render(
+    render(
       <TextInput placeholder="Enter text" onChangeText={mockOnChangeText} />,
     );
 
-    const input = getByPlaceholderText("Enter text");
-    fireEvent.changeText(input, "Hello World");
+    const input = screen.getByPlaceholderText("Enter text");
+    await user.type(input, "Hello World");
 
     expect(mockOnChangeText).toHaveBeenCalledWith("Hello World");
   });

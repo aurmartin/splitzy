@@ -1,12 +1,12 @@
 import * as React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
+import { render, fireEvent, screen } from "@testing-library/react-native";
 import Picker from "./picker";
 import { Picker as RNPicker } from "@react-native-picker/picker";
 
 describe("Picker", () => {
   it("renders correctly", () => {
     const mockOnValueChange = jest.fn();
-    const tree = render(
+    render(
       <Picker
         label="Test Label"
         selectedValue="option1"
@@ -16,12 +16,12 @@ describe("Picker", () => {
         <RNPicker.Item label="Option 2" value="option2" />
       </Picker>,
     );
-    expect(tree).toMatchSnapshot();
+    expect(screen.toJSON()).toMatchSnapshot();
   });
 
   it("displays the label correctly", () => {
     const mockOnValueChange = jest.fn();
-    const { getByText } = render(
+    render(
       <Picker
         label="Test Label"
         selectedValue="option1"
@@ -31,12 +31,12 @@ describe("Picker", () => {
       </Picker>,
     );
 
-    expect(getByText("Test Label")).toBeTruthy();
+    screen.getByText("Test Label");
   });
 
-  it("handles value changes correctly", () => {
+  it("handles value changes correctly", async () => {
     const mockOnValueChange = jest.fn();
-    const { getByTestId } = render(
+    render(
       <Picker
         label="Test Label"
         selectedValue="option1"
@@ -47,7 +47,7 @@ describe("Picker", () => {
       </Picker>,
     );
 
-    fireEvent(getByTestId("picker"), "onValueChange", "option2");
+    fireEvent(screen.getByTestId("picker"), "onValueChange", "option2");
     expect(mockOnValueChange).toHaveBeenCalledWith("option2");
   });
 });

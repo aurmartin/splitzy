@@ -7,7 +7,7 @@ import {
   buildGroupRecord,
   renderRouter,
 } from "@/lib/test-utils";
-import { act, fireEvent, screen, waitFor } from "@testing-library/react-native";
+import { fireEvent, screen, userEvent } from "@testing-library/react-native";
 import { HttpResponse, http } from "msw";
 import { Share, Text } from "react-native";
 
@@ -38,13 +38,13 @@ describe("GroupScreen", () => {
   it("should render correctly", () => {
     renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
     expect(screen.toJSON()).toMatchSnapshot();
-    expect(screen.getByText("test group name"));
+    screen.getByText("test group name");
   });
 
   it("should redirect to set-me if me is not set", () => {
     removeMe(system, "test-group-id");
     renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
-    expect(screen.getByText("Set me"));
+    screen.getByText("Set me");
   });
 
   it("should throw if group is not found", () => {
@@ -55,9 +55,10 @@ describe("GroupScreen", () => {
     ).toThrow("Group not found");
   });
 
-  it("should share the group", () => {
+  it("should share the group", async () => {
+    const user = userEvent.setup();
     renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
-    fireEvent(screen.getByTestId("share-group"), "press");
+    await user.press(screen.getByTestId("share-group"));
     expect(share).toHaveBeenCalledTimes(1);
   });
 
@@ -86,50 +87,51 @@ describe("GroupScreen", () => {
 
     renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
 
-    expect(screen.getAllByText("test expense title"));
-    expect(screen.getAllByText(/Alice/));
-    expect(screen.getByText("Aujourd'hui"));
-    expect(screen.getByText("Hier"));
-    expect(
-      screen.getByText(
-        twoDaysAgo.toLocaleDateString(undefined, {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }),
-      ),
+    screen.getAllByText("test expense title");
+    screen.getAllByText(/Alice/);
+    screen.getByText("Aujourd'hui");
+    screen.getByText("Hier");
+    screen.getByText(
+      twoDaysAgo.toLocaleDateString(undefined, {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
     );
   });
 
-  it("should navigate to new expense", () => {
+  it("should navigate to new expense", async () => {
+    const user = userEvent.setup();
     renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
-    fireEvent(screen.getByTestId("fab-button"), "press");
-    expect(screen.getByText("New expense"));
+    await user.press(screen.getByTestId("fab-button"));
+    screen.getByText("New expense");
   });
 
   it("should navigate to expense", async () => {
+    const user = userEvent.setup();
     await system.db
       .insert(tables.expenses)
       .values(buildExpenseRecord({ groupId: "test-group-id" }));
     renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
-    fireEvent(screen.getByText("test expense title"), "press");
-    expect(screen.getByText("Expense"));
+
+    await user.press(screen.getByText("test expense title"));
+
+    screen.getByText("Expense");
   });
 
-  it("should navigate to balance", () => {
+  it("should navigate to balance", async () => {
+    const user = userEvent.setup();
     renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
-    fireEvent(screen.getByText("Remboursements"), "press");
-    expect(screen.getByText("Balance"));
+
+    await user.press(screen.getByText("Remboursements"));
+
+    screen.getByText("Balance");
   });
 
   it("should refresh expenses", async () => {
-    renderRouter(routerContext, system, {
-      initialUrl: testGroupScreenUrl,
-      // Don't know why but concurrency breaks test triggering flatlist refresh
-      concurrentRoot: false,
-    });
-    expect(screen.getByText("Aucune dépense"));
+    renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
+    screen.getByText("Aucune dépense");
 
     server.use(
       http.get("http://localhost:50001/rest/v1/expenses", () =>
@@ -137,9 +139,8 @@ describe("GroupScreen", () => {
       ),
     );
 
-    const list = screen.getByTestId("expenses-list");
-    await act(() => list.props.refreshControl.props.onRefresh());
+    fireEvent(screen.getByTestId("expenses-list"), "onRefresh");
 
-    expect(await screen.findByText("test expense title"));
+    await screen.findByText("test expense title");
   });
 });

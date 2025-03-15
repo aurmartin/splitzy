@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
+import { render, screen, userEvent } from "@testing-library/react-native";
 import { ReceiptSplitInput, createReceiptSplit } from "./receipt-split";
 import dinero from "dinero.js";
 import { type Receipt } from "@/lib/expenses";
@@ -35,10 +35,8 @@ describe("ReceiptSplit", () => {
         receipt: mockReceipt,
       };
 
-      const tree = render(
-        <ReceiptSplitInput value={mockSplit} onChange={() => {}} />,
-      );
-      expect(tree).toMatchSnapshot();
+      render(<ReceiptSplitInput value={mockSplit} onChange={() => {}} />);
+      expect(screen.toJSON()).toMatchSnapshot();
     });
 
     it("displays all receipt items", () => {
@@ -49,15 +47,15 @@ describe("ReceiptSplit", () => {
         receipt: mockReceipt,
       };
 
-      const { getByText } = render(
-        <ReceiptSplitInput value={mockSplit} onChange={() => {}} />,
-      );
+      render(<ReceiptSplitInput value={mockSplit} onChange={() => {}} />);
 
-      expect(getByText("Item 1")).toBeTruthy();
-      expect(getByText("Item 2")).toBeTruthy();
+      screen.getByText("Item 1");
+      screen.getByText("Item 2");
     });
 
-    it("handles item selection toggle", () => {
+    it("handles item selection toggle", async () => {
+      const user = userEvent.setup();
+
       const mockSplit = {
         type: "receipt" as const,
         total: mockReceipt.total,
@@ -66,13 +64,11 @@ describe("ReceiptSplit", () => {
       };
 
       const mockOnChange = jest.fn();
-      const splitInput = render(
-        <ReceiptSplitInput value={mockSplit} onChange={mockOnChange} />,
-      );
+      render(<ReceiptSplitInput value={mockSplit} onChange={mockOnChange} />);
 
       // Find and click user2's button for the first item
-      const user2Buttons = splitInput.getAllByText("user2");
-      fireEvent.press(user2Buttons[1]);
+      const user2Buttons = screen.getAllByText("user2");
+      await user.press(user2Buttons[1]);
 
       expect(mockOnChange).toHaveBeenCalledWith(
         expect.objectContaining({

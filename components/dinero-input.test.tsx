@@ -1,5 +1,5 @@
-import { fireEvent, render } from "@testing-library/react-native";
-import dinero from "dinero.js";
+import { render, screen, userEvent } from "@testing-library/react-native";
+import dinero, { type Dinero } from "dinero.js";
 import * as React from "react";
 
 import { DineroInput } from "./dinero-input";
@@ -9,29 +9,25 @@ describe("DineroInput", () => {
     const mockOnChange = jest.fn();
     const value = dinero({ amount: 1000, currency: "USD" }); // $10.00
 
-    const tree = render(<DineroInput value={value} onChange={mockOnChange} />);
-    expect(tree).toMatchSnapshot();
+    render(<DineroInput value={value} onChange={mockOnChange} />);
+    expect(screen.toJSON()).toMatchSnapshot();
   });
 
-  it("converts float input to dinero value correctly", () => {
-    const mockOnChange = jest.fn();
-    const value = dinero({ amount: 1000, currency: "USD" }); // $10.00
+  it("converts float input to dinero value correctly", async () => {
+    const user = userEvent.setup();
 
-    const { getByTestId } = render(
-      <DineroInput value={value} onChange={mockOnChange} />,
+    const mockOnChange = jest.fn((value: Dinero) => value.getAmount());
+    const value = dinero({ amount: 1000, currency: "USD" });
+
+    render(
+      <DineroInput label="test-input" value={value} onChange={mockOnChange} />,
     );
 
-    // Simulate changing the value to $25.50
-    fireEvent.changeText(getByTestId("float-input"), "25.50");
+    const input = screen.getByLabelText("test-input");
 
-    // Test that the onChange function is called with a Dinero object with the correct amount
-    expect(mockOnChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        getAmount: expect.any(Function),
-      }),
-    );
+    await user.clear(input);
+    await user.type(input, "25.50");
 
-    // Verify the converted amount (25.50 -> 2550 cents)
-    expect(mockOnChange.mock.calls[0][0].getAmount()).toBe(2550);
+    expect(mockOnChange).toHaveLastReturnedWith(2550);
   });
 });

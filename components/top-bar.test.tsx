@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
+import { render, screen, userEvent } from "@testing-library/react-native";
 import { TopBar } from "./top-bar";
 import { Text, Pressable } from "react-native";
 
@@ -17,21 +17,22 @@ describe("TopBar", () => {
   });
 
   it("renders correctly", () => {
-    const tree = render(<TopBar />);
-    expect(tree).toMatchSnapshot();
+    render(<TopBar />);
+    expect(screen.toJSON()).toMatchSnapshot();
   });
 
   it("renders title when provided", () => {
     const title = "Test Title";
-    const { getByText } = render(<TopBar title={title} />);
+    render(<TopBar title={title} />);
 
-    expect(getByText(title)).toBeTruthy();
+    screen.getByText(title);
   });
 
-  it("handles back button press correctly", () => {
-    const { getByTestId } = render(<TopBar />);
+  it("handles back button press correctly", async () => {
+    const user = userEvent.setup();
+    render(<TopBar />);
 
-    fireEvent.press(getByTestId("topbar-back-button"));
+    await user.press(screen.getByTestId("topbar-back-button"));
     expect(mockBack).toHaveBeenCalled();
   });
 
@@ -43,11 +44,9 @@ describe("TopBar", () => {
       </Pressable>,
     ];
 
-    const { getByTestId, getByText } = render(
-      <TopBar rightActions={rightActions} />,
-    );
+    render(<TopBar rightActions={rightActions} />);
 
-    expect(getByTestId("right-action")).toBeTruthy();
-    expect(getByText(actionText)).toBeTruthy();
+    screen.getByTestId("right-action");
+    screen.getByText(actionText);
   });
 });

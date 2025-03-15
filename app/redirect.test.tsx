@@ -1,7 +1,7 @@
 import RedirectScreen from "@/app/redirect";
 import { system } from "@/lib/test-setup";
 import { generateAccessToken, renderRouter } from "@/lib/test-utils";
-import { screen, waitFor } from "@testing-library/react-native";
+import { screen } from "@testing-library/react-native";
 import * as Linking from "expo-linking";
 import { Text } from "react-native";
 
@@ -26,20 +26,20 @@ describe("RedirectScreen", () => {
     const url = `/redirect?access_token=${generateAccessToken()}&refresh_token=test-refresh-token`;
     jest.mocked(Linking.useLinkingURL).mockReturnValue(url);
     renderRouter(routerContext, system, { initialUrl: url });
-    await waitFor(() => expect(screen.getByText("Protected")));
+    await screen.findByText("Protected");
   });
 
   it("should redirect to login page when no access_token is provided", async () => {
     const url = `/redirect?refresh_token=test-refresh-token`;
     jest.mocked(Linking.useLinkingURL).mockReturnValue(url);
     renderRouter(routerContext, system, { initialUrl: url });
-    await waitFor(() => expect(screen.getByText("Login Page")));
+    await screen.findByText("Login Page");
   });
 
   it("should redirect to login page when errorCode is provided", async () => {
     const url = `/redirect?errorCode=test-error-code`;
     jest.mocked(Linking.useLinkingURL).mockReturnValue(url);
     renderRouter(routerContext, system, { initialUrl: url });
-    await waitFor(() => expect(screen.getByText("Login Page")));
+    await screen.findByText("Login Page");
   });
 });

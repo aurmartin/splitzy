@@ -145,6 +145,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
             }
           >
             <View
+              accessibilityRole="button"
               accessibilityState={
                 {
                   "busy": undefined,
@@ -230,6 +231,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                 Titre
               </Text>
               <TextInput
+                accessibilityLabel="Titre"
                 label="Titre"
                 onChangeText={[Function]}
                 placeholder="Titre"
@@ -268,7 +270,9 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                 Montant (€)
               </Text>
               <TextInput
+                accessibilityLabel="Montant (€)"
                 keyboardType="numeric"
+                label="Montant (€)"
                 onChangeText={[Function]}
                 placeholder="0.00"
                 placeholderTextColor="#666"
@@ -328,6 +332,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                     }
                   >
                     <RNCPicker
+                      accessibilityLabel="Payé par"
                       items={
                         [
                           {
@@ -407,6 +412,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                       }
                     >
                       <RNCPicker
+                        accessibilityLabel="Partager la dépense"
                         items={
                           [
                             {
@@ -531,6 +537,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
               </View>
             </View>
             <View
+              accessibilityRole="button"
               accessibilityState={
                 {
                   "busy": undefined,

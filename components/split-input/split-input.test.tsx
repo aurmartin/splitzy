@@ -5,7 +5,7 @@ import {
   createSplit,
 } from "@/components/split-input";
 import { type PercentageSplit, type Split } from "@/lib/expenses";
-import { fireEvent, render } from "@testing-library/react-native";
+import { fireEvent, render, screen } from "@testing-library/react-native";
 import dinero from "dinero.js";
 import * as React from "react";
 
@@ -21,14 +21,14 @@ describe("SplitInput", () => {
         members: mockMembers,
       };
 
-      const tree = render(
+      render(
         <SplitInput
           value={mockSplit}
           onChange={() => {}}
           onTypeChange={() => {}}
         />,
       );
-      expect(tree).toMatchSnapshot();
+      expect(screen.toJSON()).toMatchSnapshot();
     });
 
     it("handles type changes", () => {
@@ -39,7 +39,7 @@ describe("SplitInput", () => {
       };
 
       const mockOnTypeChange = jest.fn();
-      const { getByTestId } = render(
+      render(
         <SplitInput
           value={mockSplit}
           onChange={() => {}}
@@ -47,7 +47,7 @@ describe("SplitInput", () => {
         />,
       );
 
-      const picker = getByTestId("picker");
+      const picker = screen.getByTestId("picker");
       fireEvent(picker, "onValueChange", "percentage");
 
       expect(mockOnTypeChange).toHaveBeenCalledWith("percentage");

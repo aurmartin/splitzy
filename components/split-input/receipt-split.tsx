@@ -4,7 +4,7 @@ import { type Receipt, type ReceiptSplit } from "@/lib/expenses";
 import { convertSplit } from "@/components/split-input/convert";
 import { getLocale } from "@/lib/locale";
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { Pressable, View } from "react-native";
 
 const ReceiptSplitInput = (props: {
   value: ReceiptSplit;
@@ -102,7 +102,7 @@ const ReceiptSplitInput = (props: {
 
             <View style={{ flex: 1, flexDirection: "row", gap: 8 }}>
               {value.members.map((member) => (
-                <TouchableOpacity
+                <Pressable
                   key={member}
                   style={{
                     backgroundColor: backgroundColor(item, member),
@@ -112,7 +112,7 @@ const ReceiptSplitInput = (props: {
                   onPress={() => toggleSelect(index, member)}
                 >
                   <Text>{member}</Text>
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           </View>

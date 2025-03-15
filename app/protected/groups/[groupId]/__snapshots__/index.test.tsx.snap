@@ -237,6 +237,7 @@ exports[`GroupScreen should render correctly 1`] = `
           Vous êtes à jour
         </Text>
         <View
+          accessibilityRole="button"
           accessibilityState={
             {
               "busy": undefined,

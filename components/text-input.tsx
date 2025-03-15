@@ -1,18 +1,24 @@
-import { StyleSheet, TextInput as _TextInput } from "react-native";
-import { ComponentPropsWithRef } from "react";
+import {
+  StyleSheet,
+  TextInput as RNTextInput,
+  type TextInputProps as RNTextInputProps,
+} from "react-native";
 import Label from "./label";
 import { Colors } from "@/lib/constants";
 
-export default function TextInput(
-  props: ComponentPropsWithRef<typeof _TextInput> & { label?: string },
-) {
+interface TextInputProps extends RNTextInputProps {
+  label?: string;
+}
+
+function TextInput(props: TextInputProps) {
   return (
     <>
       {props.label && <Label>{props.label}</Label>}
-      <_TextInput
+      <RNTextInput
         {...props}
         style={[styles.textInput, props.style]}
         placeholderTextColor="#666"
+        accessibilityLabel={props.label}
       />
     </>
   );
@@ -28,3 +34,5 @@ const styles = StyleSheet.create({
     height: 45,
   },
 });
+
+export { TextInput, type TextInputProps };

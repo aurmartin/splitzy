@@ -1,6 +1,5 @@
 import React from "react";
-import TextInput from "./text-input";
-import type { TextInputProps } from "react-native";
+import { TextInput, type TextInputProps } from "./text-input";
 
 interface FloatInputProps extends Omit<TextInputProps, "onChange" | "value"> {
   value: number;

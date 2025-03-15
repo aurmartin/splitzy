@@ -125,6 +125,7 @@ exports[`LoginScreen should render snapshot 1`] = `
         />
         <View
           accessibilityLabel="Login"
+          accessibilityRole="button"
           accessibilityState={
             {
               "busy": undefined,

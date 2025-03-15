@@ -2,7 +2,7 @@ import Button from "@/components/button";
 import LoadingScreen from "@/components/loading-screen";
 import { Screen } from "@/components/screen";
 import { Text } from "@/components/text";
-import TextInput from "@/components/text-input";
+import { TextInput } from "@/components/text-input";
 import { useSupabaseAuth } from "@/components/system-provider";
 import { Colors } from "@/lib/constants";
 import { Env } from "@/lib/env";

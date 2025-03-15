@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render } from "@testing-library/react-native";
+import { render, screen } from "@testing-library/react-native";
 import { EqualSplitInput, createEqualSplit } from "./equal-split";
 import dinero from "dinero.js";
 
@@ -12,8 +12,8 @@ describe("EqualSplit", () => {
         members: ["user1", "user2"],
       };
 
-      const tree = render(<EqualSplitInput value={mockSplit} />);
-      expect(tree).toMatchSnapshot();
+      render(<EqualSplitInput value={mockSplit} />);
+      expect(screen.toJSON()).toMatchSnapshot();
     });
   });
 

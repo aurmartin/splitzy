@@ -2,6 +2,7 @@
 
 exports[`renders correctly 1`] = `
 <View
+  accessibilityRole="button"
   accessibilityState={
     {
       "busy": undefined,
@@ -73,6 +74,7 @@ exports[`renders correctly 1`] = `
 
 exports[`renders correctly with style 1`] = `
 <View
+  accessibilityRole="button"
   accessibilityState={
     {
       "busy": undefined,
@@ -146,6 +148,7 @@ exports[`renders correctly with style 1`] = `
 
 exports[`renders correctly with type 1`] = `
 <View
+  accessibilityRole="button"
   accessibilityState={
     {
       "busy": undefined,
@@ -217,6 +220,7 @@ exports[`renders correctly with type 1`] = `
 
 exports[`renders disabled state correctly 1`] = `
 <View
+  accessibilityRole="button"
   accessibilityState={
     {
       "busy": undefined,

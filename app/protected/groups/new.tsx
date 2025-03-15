@@ -1,6 +1,6 @@
 import Button from "@/components/button";
 import Label from "@/components/label";
-import TextInput from "@/components/text-input";
+import { TextInput } from "@/components/text-input";
 import { useAddGroup } from "@/lib/groups";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";

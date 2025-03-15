@@ -3,12 +3,7 @@ import {
   createAmountSplit,
 } from "@/components/split-input/amount-split";
 import { type AmountSplit } from "@/lib/expenses";
-import {
-  type RenderResult,
-  fireEvent,
-  render,
-  screen,
-} from "@testing-library/react-native";
+import { render, screen, userEvent } from "@testing-library/react-native";
 import dinero from "dinero.js";
 import * as React from "react";
 
@@ -23,10 +18,8 @@ describe("AmountSplit", () => {
 
     const onChange = jest.fn();
 
-    let tree: RenderResult;
-
     beforeEach(() => {
-      tree = render(
+      render(
         <AmountSplitInput
           testID="amount-split-input"
           value={testSplit}
@@ -40,7 +33,8 @@ describe("AmountSplit", () => {
     });
 
     it("should reset amounts when the reset button is pressed", async () => {
-      fireEvent.press(screen.getByTestId("reset-amount-alice"));
+      const user = userEvent.setup();
+      await user.press(screen.getByTestId("reset-amount-alice"));
       expect(onChange).toHaveBeenCalledWith({ ...testSplit, amounts: {} });
     });
 
@@ -56,7 +50,7 @@ describe("AmountSplit", () => {
 
       expect(screen.getByTestId("amount-input-bob").props.value).toEqual("0");
 
-      tree.rerender(
+      screen.rerender(
         <AmountSplitInput
           testID="amount-split-input"
           value={updatedSplit}

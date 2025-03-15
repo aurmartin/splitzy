@@ -39,6 +39,7 @@ exports[`Picker renders correctly 1`] = `
       }
     >
       <RNCPicker
+        accessibilityLabel="Test Label"
         items={
           [
             {

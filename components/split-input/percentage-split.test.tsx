@@ -3,7 +3,7 @@ import {
   createPercentageSplit,
 } from "@/components/split-input/percentage-split";
 import { type PercentageSplit } from "@/lib/expenses";
-import { fireEvent, render } from "@testing-library/react-native";
+import { render, userEvent, screen } from "@testing-library/react-native";
 import dinero from "dinero.js";
 import * as React from "react";
 
@@ -17,13 +17,13 @@ describe("PercentageSplit", () => {
         members: ["user1"],
       } as PercentageSplit;
 
-      const tree = render(
-        <PercentageSplitInput value={mockSplit} onChange={() => {}} />,
-      );
-      expect(tree).toMatchSnapshot();
+      render(<PercentageSplitInput value={mockSplit} onChange={() => {}} />);
+      expect(screen.toJSON()).toMatchSnapshot();
     });
 
-    it("handles percentage changes", () => {
+    it("handles percentage changes", async () => {
+      const user = userEvent.setup();
+
       const mockSplit = {
         type: "percentage" as const,
         total: dinero({ amount: 1000, currency: "USD" }),
@@ -32,12 +32,13 @@ describe("PercentageSplit", () => {
       } as PercentageSplit;
 
       const mockOnChange = jest.fn();
-      const { getByDisplayValue } = render(
+      render(
         <PercentageSplitInput value={mockSplit} onChange={mockOnChange} />,
       );
 
-      const input = getByDisplayValue("60");
-      fireEvent.changeText(input, "65");
+      const input = screen.getByDisplayValue("60");
+      await user.clear(input);
+      await user.type(input, "65");
 
       expect(mockOnChange).toHaveBeenCalledWith(
         expect.objectContaining({
