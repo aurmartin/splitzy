@@ -1,21 +1,13 @@
 import type { Database } from "@/lib/db/schema";
 import { SyncableTable, syncQueue, tables } from "@/lib/db/schema";
-import { asyncTime, generateId, createLogger } from "@/lib/utils";
+import { RemoteOperation, type SyncOperation } from "@/lib/operation";
+import type { SupabaseConnector } from "@/lib/supabase-connector";
+import { asyncTime, createLogger, generateId } from "@/lib/utils";
 import NetInfo from "@react-native-community/netinfo";
 import * as Sentry from "@sentry/react-native";
-import { SupabaseClient } from "@supabase/supabase-js";
 import { asc, eq, getTableName } from "drizzle-orm";
 
 const logger = createLogger("SyncEngine");
-
-type SyncOperation = {
-  id: string;
-  operationType: "insert" | "update" | "delete";
-  entityId: string;
-  entityTable: keyof typeof tables;
-  changes: Record<string, any> | undefined;
-  createdAt: Date;
-};
 
 /// Postgres Response codes that we cannot recover from by retrying.
 const FATAL_RESPONSE_CODES = [
@@ -30,13 +22,13 @@ const FATAL_RESPONSE_CODES = [
 ];
 
 class SyncEngine {
-  private supabase: SupabaseClient;
+  private supabaseConnector: SupabaseConnector;
   private db: Database;
   private processQueueInterval?: NodeJS.Timeout;
   private isProcessingLocalOperations = false;
 
-  constructor(supabase: SupabaseClient, db: Database) {
-    this.supabase = supabase;
+  constructor(supabaseConnector: SupabaseConnector, db: Database) {
+    this.supabaseConnector = supabaseConnector;
     this.db = db;
   }
 
@@ -51,6 +43,22 @@ class SyncEngine {
 
     await this.syncAllTablesFromRemote();
 
+    this.supabaseConnector.addRealtimeEventListener(
+      "expenses",
+      async (remoteOperation) => {
+        try {
+          await this.handleRemoteOperation(remoteOperation);
+        } catch (error) {
+          Sentry.captureException(error, { level: "error" });
+          logger.error(
+            "Error handling remote operation",
+            remoteOperation,
+            error,
+          );
+        }
+      },
+    );
+
     logger.info("Sync engine initialized");
   }
 
@@ -60,11 +68,62 @@ class SyncEngine {
       clearInterval(this.processQueueInterval);
       this.processQueueInterval = undefined;
     }
+
+    this.supabaseConnector.client.removeAllChannels();
   }
 
   async syncAllTablesFromRemote() {
     await this.syncTableFromRemote(tables.groups);
     await this.syncTableFromRemote(tables.expenses);
+  }
+
+  private async handleRemoteOperation(remoteOperation: RemoteOperation) {
+    const table = tables[remoteOperation.entityTable] as SyncableTable;
+
+    logger.debug(
+      "Handling remote operation table =",
+      remoteOperation.entityTable,
+      "operation =",
+      remoteOperation.operationType,
+      "id =",
+      remoteOperation.entityId,
+    );
+
+    switch (remoteOperation.operationType) {
+      case "insert":
+        const insertFields = {
+          ...remoteOperation.changes,
+          id: remoteOperation.entityId,
+        };
+
+        await this.db
+          .insert(table)
+          .values(insertFields)
+          .onConflictDoUpdate({
+            target: [table.id],
+            set: insertFields,
+          });
+
+        break;
+
+      case "update":
+        const updateFields = {
+          ...remoteOperation.changes,
+          id: remoteOperation.entityId,
+        };
+
+        await this.db
+          .update(table)
+          .set(updateFields)
+          .where(eq(table.id, remoteOperation.entityId));
+        break;
+
+      case "delete":
+        await this.db
+          .delete(table)
+          .where(eq(table.id, remoteOperation.entityId));
+        break;
+    }
   }
 
   async insert(table: SyncableTable, id: string, data: Record<string, any>) {
@@ -151,9 +210,8 @@ class SyncEngine {
 
   private async _syncTableFromRemote(table: SyncableTable) {
     try {
-      const { data: remoteEntities, error } = await this.supabase
-        .from(getTableName(table))
-        .select();
+      const { data: remoteEntities, error } =
+        await this.supabaseConnector.client.from(getTableName(table)).select();
 
       if (error) {
         throw error;
@@ -290,19 +348,21 @@ class SyncEngine {
             id: operation.entityId,
           };
 
-          result = await this.supabase.from(operation.entityTable).insert(data);
+          result = await this.supabaseConnector.client
+            .from(operation.entityTable)
+            .insert(data);
         } else if (operation.operationType === "update") {
           const data: any = {
             ...operation.changes,
             id: operation.entityId,
           };
 
-          result = await this.supabase
+          result = await this.supabaseConnector.client
             .from(operation.entityTable)
             .update(data)
             .eq("id", operation.entityId);
         } else if (operation.operationType === "delete") {
-          result = await this.supabase
+          result = await this.supabaseConnector.client
             .from(operation.entityTable)
             .delete()
             .eq("id", operation.entityId);
@@ -336,7 +396,7 @@ class SyncEngine {
     try {
       logger.info("Rolling back operation", operation);
 
-      const supabaseRow = await this.supabase
+      const supabaseRow = await this.supabaseConnector.client
         .from(operation.entityTable)
         .select()
         .eq("id", operation.entityId)

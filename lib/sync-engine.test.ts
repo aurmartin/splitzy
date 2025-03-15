@@ -1,8 +1,13 @@
 import { ExpenseRecord, GroupRecord, tables } from "@/lib/db/schema";
 import { server, system } from "@/lib/test-setup";
+import {
+  buildExpenseRecord,
+  buildGroupRecord,
+  waitFor,
+} from "@/lib/test-utils";
 import { generateId } from "@/lib/utils";
-import { buildGroupRecord } from "@/lib/test-utils";
 import { expect } from "@jest/globals";
+import { type RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import { HttpResponse, http } from "msw";
 
 const buildOperationRecordFromEntity = (
@@ -16,6 +21,20 @@ const buildOperationRecordFromEntity = (
   entityId: entity.id,
   changes: JSON.stringify(entity),
   createdAt: new Date().toISOString(),
+});
+
+const buildRealtimeMessage = (
+  eventType: "INSERT" | "UPDATE" | "DELETE",
+  table: "groups" | "expenses",
+  entity: GroupRecord | ExpenseRecord,
+): RealtimePostgresChangesPayload<any> => ({
+  eventType,
+  new: entity,
+  old: eventType === "DELETE" ? entity : {},
+  schema: "public",
+  table,
+  commit_timestamp: new Date().toISOString(),
+  errors: [],
 });
 
 describe("init", () => {
@@ -220,5 +239,59 @@ describe("processLocalOperations", () => {
     // Assert
     expect(didReceivePost).toHaveBeenCalledWith(initialGroup);
     expect(didReceivePatch).toHaveBeenCalledWith(updatedGroup);
+  });
+});
+
+describe("realtime updates", () => {
+  it("should handle insert operations", async () => {
+    await system.syncEngine.init();
+
+    const remoteExpense = buildExpenseRecord();
+    const message = buildRealtimeMessage("INSERT", "expenses", remoteExpense);
+    system.supabaseConnector.handleRealtimeMessage("expenses", message);
+
+    await waitFor(() => {
+      const expenses = system.db.select().from(tables.expenses).all();
+      expect(expenses.length).toBe(1);
+      expect(expenses[0].id).toBe(remoteExpense.id);
+    });
+  });
+
+  it("should handle update operations", async () => {
+    await system.syncEngine.init();
+
+    const initialExpense = buildExpenseRecord({
+      title: "initial expense title",
+    });
+    await system.db.insert(tables.expenses).values(initialExpense);
+
+    const updatedExpense = {
+      ...initialExpense,
+      title: "updated expense title",
+    };
+    const message = buildRealtimeMessage("UPDATE", "expenses", updatedExpense);
+    system.supabaseConnector.handleRealtimeMessage("expenses", message);
+
+    await waitFor(() => {
+      const expenses = system.db.select().from(tables.expenses).all();
+      expect(expenses.length).toBe(1);
+      expect(expenses[0].id).toBe(updatedExpense.id);
+      expect(expenses[0].title).toBe(updatedExpense.title);
+    });
+  });
+
+  it("should handle delete operations", async () => {
+    await system.syncEngine.init();
+
+    const initialExpense = buildExpenseRecord();
+    await system.db.insert(tables.expenses).values(initialExpense);
+
+    const message = buildRealtimeMessage("DELETE", "expenses", initialExpense);
+    system.supabaseConnector.handleRealtimeMessage("expenses", message);
+
+    await waitFor(() => {
+      const expenses = system.db.select().from(tables.expenses).all();
+      expect(expenses.length).toBe(0);
+    });
   });
 });

@@ -69,7 +69,7 @@ export class System {
 
     this.db = database;
 
-    this.syncEngine = new SyncEngine(this.supabaseConnector.client, this.db);
+    this.syncEngine = new SyncEngine(this.supabaseConnector, this.db);
   }
 
   async initializeMigrations() {
