@@ -49,7 +49,27 @@ exports[`TopBar renders correctly 1`] = `
     }
     testID="topbar-back-button"
   >
-    <Text />
+    <Text
+      allowFontScaling={false}
+      selectable={false}
+      style={
+        [
+          {
+            "color": "hsl(0 0% 40%)",
+            "fontSize": 24,
+          },
+          undefined,
+          {
+            "fontFamily": "ionicons",
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+          },
+          {},
+        ]
+      }
+    >
+      
+    </Text>
   </View>
 </View>
 `;

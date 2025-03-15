@@ -124,7 +124,11 @@ describe("GroupScreen", () => {
   });
 
   it("should refresh expenses", async () => {
-    renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
+    renderRouter(routerContext, system, {
+      initialUrl: testGroupScreenUrl,
+      // Don't know why but concurrency breaks test triggering flatlist refresh
+      concurrentRoot: false,
+    });
     expect(screen.getByText("Aucune dépense"));
 
     server.use(
@@ -136,6 +140,6 @@ describe("GroupScreen", () => {
     const list = screen.getByTestId("expenses-list");
     await act(() => list.props.refreshControl.props.onRefresh());
 
-    await waitFor(() => expect(screen.getByText("test expense title")));
+    expect(await screen.findByText("test expense title"));
   });
 });

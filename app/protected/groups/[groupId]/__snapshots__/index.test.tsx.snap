@@ -97,7 +97,27 @@ exports[`GroupScreen should render correctly 1`] = `
           }
           testID="topbar-back-button"
         >
-          <Text />
+          <Text
+            allowFontScaling={false}
+            selectable={false}
+            style={
+              [
+                {
+                  "color": "hsl(0 0% 40%)",
+                  "fontSize": 24,
+                },
+                undefined,
+                {
+                  "fontFamily": "ionicons",
+                  "fontStyle": "normal",
+                  "fontWeight": "normal",
+                },
+                {},
+              ]
+            }
+          >
+            
+          </Text>
         </View>
         <Text
           style={
@@ -168,7 +188,27 @@ exports[`GroupScreen should render correctly 1`] = `
             }
             testID="share-group"
           >
-            <Text />
+            <Text
+              allowFontScaling={false}
+              selectable={false}
+              style={
+                [
+                  {
+                    "color": "hsl(0 0% 40%)",
+                    "fontSize": 24,
+                  },
+                  undefined,
+                  {
+                    "fontFamily": "ionicons",
+                    "fontStyle": "normal",
+                    "fontWeight": "normal",
+                  },
+                  {},
+                ]
+              }
+            >
+              
+            </Text>
           </View>
         </View>
       </View>
@@ -404,7 +444,27 @@ exports[`GroupScreen should render correctly 1`] = `
           }
           testID="fab-button"
         >
-          <Text />
+          <Text
+            allowFontScaling={false}
+            selectable={false}
+            style={
+              [
+                {
+                  "color": "white",
+                  "fontSize": 24,
+                },
+                undefined,
+                {
+                  "fontFamily": "ionicons",
+                  "fontStyle": "normal",
+                  "fontWeight": "normal",
+                },
+                {},
+              ]
+            }
+          >
+            
+          </Text>
         </View>
       </View>
     </RNCSafeAreaView>

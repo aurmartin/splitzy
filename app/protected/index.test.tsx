@@ -66,7 +66,11 @@ describe("GroupsScreen", () => {
     );
     await system.syncEngine.syncTableFromRemote(groupsTable);
     // Act
-    renderRouter(routerContext, system, { initialUrl: "/protected" });
+    renderRouter(routerContext, system, {
+      initialUrl: "/protected",
+      // Don't know why but concurrency breaks test triggering flatlist refresh
+      concurrentRoot: false,
+    });
     // Assert
     expect(screen.getByText("initial group name"));
     // Setup - Update the group on the server
