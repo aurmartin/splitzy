@@ -146,6 +146,7 @@ const Expenses = React.memo(function _Expenses(props: { group: Group }) {
       style={{ borderRadius: 8 }}
       ListFooterComponent={<View style={{ height: 80 }} />}
       ListEmptyComponent={<Text>Aucune dépense</Text>}
+      showsVerticalScrollIndicator={false}
     />
   );
 });

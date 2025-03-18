@@ -68,6 +68,7 @@ const Groups = React.memo(function _Groups() {
           No groups found. Create one by using the '+' button!
         </Text>
       }
+      showsVerticalScrollIndicator={false}
     />
   );
 });

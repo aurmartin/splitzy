@@ -104,6 +104,7 @@ exports[`GroupsScreen should render snapshot 1`] = `
         removeClippedSubviews={false}
         renderItem={[Function]}
         scrollEventThrottle={0.0001}
+        showsVerticalScrollIndicator={false}
         stickyHeaderIndices={[]}
         testID="groups-flat-list"
         viewabilityConfigCallbackPairs={[]}

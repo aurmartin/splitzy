@@ -351,6 +351,7 @@ exports[`GroupScreen should render correctly 1`] = `
         refreshing={false}
         renderItem={[Function]}
         scrollEventThrottle={0.0001}
+        showsVerticalScrollIndicator={false}
         stickyHeaderIndices={[]}
         style={
           {
