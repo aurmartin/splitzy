@@ -1,5 +1,5 @@
 import { expensesTable } from "@/lib/db/schema";
-import type { Expense, Receipt } from "@/lib/expenses";
+import type { Expense, Receipt, ReceiptSplit } from "@/lib/expenses";
 import { ExpensesRepository } from "@/lib/expenses-repository";
 import { System } from "@/lib/system";
 import { system } from "@/lib/test-setup";
@@ -76,6 +76,23 @@ const getExpensesByGroupId = (system: System, groupId: string) => {
     .all();
 };
 
+const expectReceiptEqual = (left: Receipt, right: Receipt) => {
+  expect(left.title).toEqual(right.title);
+  expect(left.currency).toEqual(right.currency);
+  expect(left.total.getAmount()).toEqual(right.total.getAmount());
+  expect(left.items.length).toEqual(right.items.length);
+  left.items.forEach((item, index) => {
+    expect(item.description).toEqual(right.items[index].description);
+    expect(item.humanReadableDescription).toEqual(
+      right.items[index].humanReadableDescription,
+    );
+    expect(item.price.getAmount()).toEqual(
+      right.items[index].price.getAmount(),
+    );
+    expect(item.paid_for).toEqual(right.items[index].paid_for);
+  });
+};
+
 describe("getExpense", () => {
   it("should return an expense", async () => {
     const testExpense = createBasicExpense();
@@ -83,8 +100,32 @@ describe("getExpense", () => {
 
     const result = ExpensesRepository.getExpense(system, testExpense.id);
 
-    expect(result).toBeDefined();
+    expect(result).not.toBeNull();
     expect(result?.id).toEqual(testExpense.id);
+  });
+
+  it("should return the receipt and the split expense", async () => {
+    const testReceipt = createReceipt();
+    const testSplitExpense: ReceiptSplit = {
+      type: "receipt",
+      receipt: testReceipt,
+      total: testReceipt.total,
+      members: testReceipt.items.flatMap((item) => item.paid_for),
+    };
+    const testExpense = createBasicExpense({
+      receipt: testReceipt,
+      splitExpense: testSplitExpense,
+    });
+    await ExpensesRepository.insertExpense(system, testExpense);
+
+    const resultExpense = ExpensesRepository.getExpense(system, testExpense.id);
+    const resultReceipt = resultExpense?.receipt!;
+    const resultSplitExpense = resultExpense?.splitExpense! as ReceiptSplit;
+
+    expect(resultExpense).not.toBeNull();
+    expectReceiptEqual(resultReceipt, testExpense.receipt!);
+    expect(resultSplitExpense.type).toEqual("receipt");
+    expectReceiptEqual(resultSplitExpense.receipt, testExpense.receipt!);
   });
 });
 

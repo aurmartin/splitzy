@@ -68,13 +68,19 @@ const useExpense = (id: string): Expense | null => {
 };
 
 const decodeExpenseRecord = (record: ExpenseRecord): Expense => {
+  const decodedReceipt = decodeReceipt(record.receipt as string);
+  const decodedSplitExpense = decodeSplitExpense(
+    record.splitExpense as string,
+    decodedReceipt,
+  );
+
   return {
     id: record.id,
     groupId: record.groupId as string,
     title: record.title as string,
     payerName: record.payerName as string,
-    splitExpense: decodeSplitExpense(record.splitExpense as string),
-    receipt: decodeReceipt(record.receipt as string),
+    splitExpense: decodedSplitExpense,
+    receipt: decodedReceipt,
     createdAt: new Date(record.createdAt as string),
     updatedAt: new Date(record.updatedAt as string),
     deletedAt: record.deletedAt
@@ -83,7 +89,10 @@ const decodeExpenseRecord = (record: ExpenseRecord): Expense => {
   };
 };
 
-const decodeSplitExpense = (encoded: string): Expense["splitExpense"] => {
+const decodeSplitExpense = (
+  encoded: string,
+  receipt: Receipt | null,
+): Expense["splitExpense"] => {
   const decoded = JSON.parse(encoded);
 
   const total = dinero({
@@ -120,7 +129,7 @@ const decodeSplitExpense = (encoded: string): Expense["splitExpense"] => {
         ),
       };
     case "receipt":
-      return { type, total, members, receipt: decoded.receipt };
+      return { type, total, members, receipt: receipt! };
   }
 };
 
