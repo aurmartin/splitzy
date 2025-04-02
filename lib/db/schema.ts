@@ -76,4 +76,6 @@ export type Transaction = SQLiteTransaction<
   ExtractTablesWithRelations<Record<string, unknown>>
 >;
 
-export type Database = ExpoSQLiteDatabase | BetterSQLite3Database;
+export type Database =
+  | ExpoSQLiteDatabase<typeof tables>
+  | BetterSQLite3Database<typeof tables>;

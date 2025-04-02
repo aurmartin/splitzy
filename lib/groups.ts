@@ -5,8 +5,7 @@ import { System } from "@/lib/system";
 import { generateId, time } from "@/lib/utils";
 import { Currency } from "dinero.js";
 import { desc, eq } from "drizzle-orm";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export interface Group {
   id: string;
@@ -98,13 +97,29 @@ const checkGroupCreateParams = (params: GroupCreateParams) => {
   return params;
 };
 
+function getGroups(system: System): Group[] {
+  return system.db
+    .select()
+    .from(groupsTable)
+    .orderBy(desc(groupsTable.createdAt))
+    .all()
+    .map(decodeGroup);
+}
+
 const _useGroups = (): Group[] => {
   const system = useSystem();
-  const { data } = useLiveQuery(
-    system.db.select().from(groupsTable).orderBy(desc(groupsTable.createdAt)),
-  );
 
-  return data.map(decodeGroup);
+  const initialGroups = useMemo(() => getGroups(system), [system]);
+
+  const [groups, setGroups] = useState<Group[]>(initialGroups);
+
+  useEffect(() => {
+    return system.syncEngine.watchTable(groupsTable, () =>
+      setGroups(getGroups(system)),
+    );
+  }, [system]);
+
+  return groups;
 };
 
 export const useGroups = () => time("useGroups", _useGroups);

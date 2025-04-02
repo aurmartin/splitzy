@@ -62,7 +62,7 @@ const customRenderRouter = (
 
 const createDatabase = () => {
   const db = new BetterSqliteDatabase(":memory:");
-  return drizzle(db);
+  return drizzle(db, { schema: tables });
 };
 
 const clearDatabase = (db: Database) => {

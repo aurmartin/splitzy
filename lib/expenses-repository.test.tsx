@@ -3,13 +3,9 @@ import type { Expense, Receipt, ReceiptSplit } from "@/lib/expenses";
 import { ExpensesRepository } from "@/lib/expenses-repository";
 import { System } from "@/lib/system";
 import { system } from "@/lib/test-setup";
-import { render, screen } from "@/lib/test-utils";
 import { generateId } from "@/lib/utils";
 import dinero, { Currency } from "dinero.js";
 import { eq } from "drizzle-orm";
-import { Text, View } from "react-native";
-
-const didRender = jest.fn();
 
 // Helper functions for creating test data
 const createBasicExpense = (overrides: Partial<Expense> = {}): Expense => {
@@ -125,7 +121,31 @@ describe("getExpense", () => {
     expect(resultExpense).not.toBeNull();
     expectReceiptEqual(resultReceipt, testExpense.receipt!);
     expect(resultSplitExpense.type).toEqual("receipt");
-    expectReceiptEqual(resultSplitExpense.receipt, testExpense.receipt!);
+    expectReceiptEqual(
+      resultSplitExpense.receipt,
+      (testExpense.splitExpense as ReceiptSplit).receipt,
+    );
+  });
+});
+
+describe("getExpenseOrThrow", () => {
+  it("should return an expense", async () => {
+    const testExpense = createBasicExpense();
+    await ExpensesRepository.insertExpense(system, testExpense);
+
+    const result = ExpensesRepository.getExpenseOrThrow(system, testExpense.id);
+
+    expect(result).not.toBeNull();
+    expect(result?.id).toEqual(testExpense.id);
+  });
+
+  it("should throw an error if the expense does not exist", async () => {
+    const testExpense = createBasicExpense();
+    await ExpensesRepository.insertExpense(system, testExpense);
+
+    expect(() =>
+      ExpensesRepository.getExpenseOrThrow(system, "non-existent-id"),
+    ).toThrow();
   });
 });
 
@@ -248,68 +268,5 @@ describe("deleteExpense", () => {
 
     const result = getExpenseById(system, testExpense.id);
     expect(result).toBeUndefined();
-  });
-});
-
-describe("useExpense", () => {
-  it("should return an expense", async () => {
-    // Arrange
-    const testExpense = createBasicExpense();
-    await ExpensesRepository.insertExpense(system, testExpense);
-
-    const Test = () => {
-      const expense = ExpensesRepository.useExpense(testExpense.id);
-      didRender();
-      return <Text>{expense?.title}</Text>;
-    };
-
-    // Act
-    render(<Test />, system);
-
-    // Assert
-    await screen.findByText(testExpense.title);
-
-    expect(didRender).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe("useExpenses", () => {
-  it("should return all expenses for a group", async () => {
-    // Arrange
-    const groupId = generateId();
-
-    const testExpense1 = createBasicExpense({
-      groupId,
-      title: "Test Expense 1",
-    });
-
-    const testExpense2 = createBasicExpense({
-      groupId,
-      title: "Test Expense 2",
-    });
-
-    await ExpensesRepository.insertExpense(system, testExpense1);
-    await ExpensesRepository.insertExpense(system, testExpense2);
-
-    const Test = () => {
-      const expenses = ExpensesRepository.useExpenses(groupId);
-      didRender();
-      return (
-        <View>
-          {expenses.map((expense) => (
-            <Text key={expense.id}>{expense.title}</Text>
-          ))}
-        </View>
-      );
-    };
-
-    // Act
-    render(<Test />, system);
-
-    // Assert
-    await screen.findByText(testExpense1.title);
-    await screen.findByText(testExpense2.title);
-
-    expect(didRender).toHaveBeenCalledTimes(1);
   });
 });

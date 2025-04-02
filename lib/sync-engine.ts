@@ -7,6 +7,8 @@ import NetInfo from "@react-native-community/netinfo";
 import * as Sentry from "@sentry/react-native";
 import { asc, eq, getTableName } from "drizzle-orm";
 
+type TableListener = () => void;
+
 const logger = createLogger("SyncEngine");
 
 /// Postgres Response codes that we cannot recover from by retrying.
@@ -26,6 +28,7 @@ class SyncEngine {
   private db: Database;
   private processQueueInterval?: NodeJS.Timeout;
   private isProcessingLocalOperations = false;
+  private tableListeners: Record<string, TableListener[]> = {};
 
   constructor(supabaseConnector: SupabaseConnector, db: Database) {
     this.supabaseConnector = supabaseConnector;
@@ -124,6 +127,8 @@ class SyncEngine {
           .where(eq(table.id, remoteOperation.entityId));
         break;
     }
+
+    this.notifyTableListeners(table);
   }
 
   async insert(table: SyncableTable, id: string, data: Record<string, any>) {
@@ -144,6 +149,7 @@ class SyncEngine {
         });
       });
 
+      this.notifyTableListeners(table);
       this.processLocalOperations();
     } catch (error) {
       Sentry.captureException(error);
@@ -170,6 +176,7 @@ class SyncEngine {
         });
       });
 
+      this.notifyTableListeners(table);
       this.processLocalOperations();
     } catch (error) {
       Sentry.captureException(error, { level: "error" });
@@ -193,6 +200,7 @@ class SyncEngine {
         });
       });
 
+      this.notifyTableListeners(table);
       this.processLocalOperations();
     } catch (error) {
       Sentry.captureException(error, { level: "error" });
@@ -259,6 +267,8 @@ class SyncEngine {
             await this.db.delete(table).where(eq(table.id, localEntity.id));
           }
         }
+
+        this.notifyTableListeners(table);
       } else {
         logger.warn(
           `syncTableFromRemote(${getTableName(table)}) found no data in supabase.`,
@@ -461,8 +471,28 @@ class SyncEngine {
     };
   }
 
-  private log(level: "debug" | "info" | "warn" | "error", ...args: any[]) {
-    console[level](new Date().toISOString(), `[SYNC ENGINE]`, ...args);
+  watchTable(table: SyncableTable, listener: TableListener) {
+    const tableName = getTableName(table);
+
+    if (!this.tableListeners[tableName]) {
+      this.tableListeners[tableName] = [];
+    }
+
+    this.tableListeners[tableName].push(listener);
+
+    return () => {
+      this.tableListeners[tableName] = this.tableListeners[tableName].filter(
+        (l) => l !== listener,
+      );
+    };
+  }
+
+  private notifyTableListeners(table: SyncableTable) {
+    const tableName = getTableName(table);
+
+    if (this.tableListeners[tableName]) {
+      this.tableListeners[tableName].forEach((listener) => listener());
+    }
   }
 }
 

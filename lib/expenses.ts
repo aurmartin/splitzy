@@ -1,12 +1,13 @@
 import { convertSplit } from "@/components/split-input";
+import { getEffectiveAmounts } from "@/components/split-input/amount-split";
 import { useSystem } from "@/components/system-provider";
-import { ValidationError } from "@/lib/validation-error";
+import { useExpense, useExpenses } from "@/lib/expenses-hooks";
 import { ExpensesRepository } from "@/lib/expenses-repository";
 import { System } from "@/lib/system";
 import { generateId } from "@/lib/utils";
+import { ValidationError } from "@/lib/validation-error";
 import dinero, { Currency, Dinero } from "dinero.js";
 import { useCallback, useMemo } from "react";
-import { getEffectiveAmounts } from "@/components/split-input/amount-split";
 
 interface BaseSplit {
   type: "percentage" | "amount" | "equal" | "receipt";
@@ -115,13 +116,14 @@ const editExpense = async (
   id: string,
   params: ExpenseUpdateParams,
 ) => {
-  const expense = ExpensesRepository.getExpense(system, id);
-  if (expense === null) {
-    throw new Error("Expense not found");
-  }
+  const expense = ExpensesRepository.getExpenseOrThrow(system, id);
 
   const validParams = validateUpdateExpenseParams(params);
-  const updatedExpense = modifyExpense(expense, validParams);
+  const updatedExpense = {
+    ...expense,
+    ...validParams,
+    updatedAt: new Date(),
+  };
   await ExpensesRepository.updateExpense(system, updatedExpense);
 };
 
@@ -132,17 +134,6 @@ const createExpense = (validParams: ExpenseCreateParams): Expense => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: undefined,
-  };
-};
-
-const modifyExpense = (
-  expense: Expense,
-  params: ExpenseUpdateParams,
-): Expense => {
-  return {
-    ...expense,
-    ...params,
-    updatedAt: new Date(),
   };
 };
 
@@ -216,9 +207,6 @@ const useAmounts = (expense: Expense) => {
   return useMemo(() => getAmounts(expense), [expense]);
 };
 
-const useExpense = ExpensesRepository.useExpense;
-const useExpenses = ExpensesRepository.useExpenses;
-
 export type {
   AmountSplit,
   EqualSplit,
@@ -232,8 +220,8 @@ export type {
 export {
   addExpense,
   getAmounts,
-  useAmounts,
   useAddExpense,
+  useAmounts,
   useDelExpense,
   useEditExpense,
   useExpense,

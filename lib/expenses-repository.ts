@@ -1,18 +1,16 @@
-import { useSystem } from "@/components/system-provider";
 import { expensesTable, type ExpenseRecord } from "@/lib/db/schema";
 import { Receipt, type Expense, type Split } from "@/lib/expenses";
 import { System } from "@/lib/system";
 import dinero, { type Currency, type Dinero } from "dinero.js";
 import { desc, eq } from "drizzle-orm";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
-type DineroRecord = {
+interface DineroRecord {
   amount: number;
   currency: Currency;
   precision: number;
-};
+}
 
-const getExpense = (system: System, id: string): Expense | null => {
+function getExpense(system: System, id: string): Expense | null {
   const rows = system.db
     .select()
     .from(expensesTable)
@@ -25,53 +23,65 @@ const getExpense = (system: System, id: string): Expense | null => {
   }
 
   return decodeExpenseRecord(rows[0]);
-};
+}
 
-const insertExpense = async (system: System, expense: Expense) => {
+function getExpenseOrThrow(system: System, id: string): Expense {
+  const expense = getExpense(system, id);
+  if (expense === null) {
+    throw new Error("Expense not found");
+  }
+  return expense;
+}
+
+async function insertExpense(system: System, expense: Expense): Promise<void> {
   const row = encodeExpense(expense);
   await system.syncEngine.insert(expensesTable, expense.id, row);
-};
+}
 
-const updateExpense = async (system: System, expense: Expense) => {
+async function updateExpense(system: System, expense: Expense): Promise<void> {
   const row = encodeExpense(expense);
   await system.syncEngine.update(expensesTable, expense.id, row);
-};
+}
 
-const deleteExpense = async (system: System, id: string) => {
+async function deleteExpense(system: System, id: string): Promise<void> {
   await system.syncEngine.delete(expensesTable, id);
-};
+}
 
-const useExpenses = (groupId: string) => {
-  const system = useSystem();
-  const { data } = useLiveQuery(
-    system.db
-      .select()
-      .from(expensesTable)
-      .where(eq(expensesTable.groupId, groupId))
-      .orderBy(desc(expensesTable.createdAt)),
-  );
+function getGroupExpenses(system: System, groupId: string): Expense[] {
+  const expenses = system.db
+    .select()
+    .from(expensesTable)
+    .where(eq(expensesTable.groupId, groupId))
+    .orderBy(desc(expensesTable.createdAt))
+    .all();
 
-  return data.map(decodeExpenseRecord);
-};
+  return expenses.map(decodeExpenseRecord);
+}
 
-const useExpense = (id: string): Expense | null => {
-  const system = useSystem();
-  const { data } = useLiveQuery(
-    system.db.select().from(expensesTable).where(eq(expensesTable.id, id)),
-  );
+function watchGroupExpenses(
+  system: System,
+  groupId: string,
+  callback: (expenses: Expense[]) => void,
+): () => void {
+  return system.syncEngine.watchTable(expensesTable, () => {
+    callback(getGroupExpenses(system, groupId));
+  });
+}
 
-  if (data.length === 0) {
-    return null;
-  }
+function watchExpense(
+  system: System,
+  id: string,
+  callback: (expense: Expense) => void,
+): () => void {
+  return system.syncEngine.watchTable(expensesTable, () => {
+    callback(getExpenseOrThrow(system, id));
+  });
+}
 
-  return decodeExpenseRecord(data[0]);
-};
-
-const decodeExpenseRecord = (record: ExpenseRecord): Expense => {
-  const decodedReceipt = decodeReceipt(record.receipt as string);
+function decodeExpenseRecord(record: ExpenseRecord): Expense {
+  const decodedReceipt = decodeReceipt(JSON.parse(record.receipt as string));
   const decodedSplitExpense = decodeSplitExpense(
-    record.splitExpense as string,
-    decodedReceipt,
+    JSON.parse(record.splitExpense as string),
   );
 
   return {
@@ -87,14 +97,9 @@ const decodeExpenseRecord = (record: ExpenseRecord): Expense => {
       ? new Date(record.deletedAt as string)
       : undefined,
   };
-};
+}
 
-const decodeSplitExpense = (
-  encoded: string,
-  receipt: Receipt | null,
-): Expense["splitExpense"] => {
-  const decoded = JSON.parse(encoded);
-
+function decodeSplitExpense(decoded: any): Expense["splitExpense"] {
   const total = dinero({
     amount: decoded.total.amount,
     currency: decoded.total.currency,
@@ -129,24 +134,16 @@ const decodeSplitExpense = (
         ),
       };
     case "receipt":
-      return { type, total, members, receipt: receipt! };
+      return {
+        type,
+        total,
+        members,
+        receipt: decodeReceipt(decoded.receipt)!,
+      };
   }
-};
+}
 
-const decodeReceipt = (encoded: string): Receipt | null => {
-  const decoded = JSON.parse(encoded) as {
-    date: string;
-    total: DineroRecord;
-    title: string;
-    currency: Currency;
-    items: {
-      description: string;
-      humanReadableDescription: string;
-      price: DineroRecord;
-      paid_for: string[];
-    }[];
-  } | null;
-
+function decodeReceipt(decoded: any): Receipt | null {
   if (decoded === null) {
     return null;
   }
@@ -160,7 +157,7 @@ const decodeReceipt = (encoded: string): Receipt | null => {
       currency: decoded.total.currency,
       precision: decoded.total.precision,
     }),
-    items: decoded.items.map((item) => ({
+    items: decoded.items.map((item: any) => ({
       description: item.description,
       humanReadableDescription: item.humanReadableDescription,
       price: dinero({
@@ -171,9 +168,9 @@ const decodeReceipt = (encoded: string): Receipt | null => {
       paid_for: item.paid_for,
     })),
   };
-};
+}
 
-const encodeExpense = (expense: Expense): ExpenseRecord => {
+function encodeExpense(expense: Expense): ExpenseRecord {
   return {
     ...expense,
     splitExpense: JSON.stringify(expense.splitExpense),
@@ -182,14 +179,16 @@ const encodeExpense = (expense: Expense): ExpenseRecord => {
     updatedAt: expense.updatedAt.toISOString(),
     deletedAt: expense.deletedAt?.toISOString() ?? null,
   };
-};
+}
 
 export const ExpensesRepository = {
   getExpense,
+  watchExpense,
+  getExpenseOrThrow,
   insertExpense,
   updateExpense,
   deleteExpense,
 
-  useExpenses,
-  useExpense,
+  getGroupExpenses,
+  watchGroupExpenses,
 };

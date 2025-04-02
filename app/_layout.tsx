@@ -4,6 +4,7 @@ import { SnackBarProvider } from "@/components/snack-bar";
 import { SystemProvider } from "@/components/system-provider";
 import { Text } from "@/components/text";
 import { Colors } from "@/lib/constants";
+import { tables } from "@/lib/db/schema";
 import { Env } from "@/lib/env";
 import { System } from "@/lib/system";
 import Aptabase from "@aptabase/react-native";
@@ -34,7 +35,7 @@ const sqliteDatabase = openDatabaseSync("sqlite.db", {
 
 sqliteDatabase.runSync("PRAGMA journal_mode = WAL");
 
-const db = drizzle(sqliteDatabase);
+const db = drizzle(sqliteDatabase, { schema: { ...tables } });
 
 const system = new System(db);
 
