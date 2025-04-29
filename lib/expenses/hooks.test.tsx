@@ -1,11 +1,12 @@
-import type { Expense } from "@/lib/expenses";
-import { useExpense, useExpenses } from "@/lib/expenses-hooks";
-import { ExpensesRepository } from "@/lib/expenses-repository";
 import { system } from "@/lib/test-setup";
 import { act, render, screen } from "@/lib/test-utils";
 import { generateId } from "@/lib/utils";
 import dinero from "dinero.js";
 import { Text, View } from "react-native";
+
+import { useExpense, useExpenses } from "./hooks";
+import { ExpensesRepository } from "./repository";
+import type { Expense } from "./types";
 
 const didRender = jest.fn();
 

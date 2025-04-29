@@ -1,8 +1,9 @@
 import { expensesTable, type ExpenseRecord } from "@/lib/db/schema";
-import { Receipt, type Expense, type Split } from "@/lib/expenses";
 import { System } from "@/lib/system";
 import dinero, { type Currency, type Dinero } from "dinero.js";
 import { desc, eq } from "drizzle-orm";
+
+import type { Expense, Receipt, Split } from "./types";
 
 interface DineroRecord {
   amount: number;

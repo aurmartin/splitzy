@@ -2,7 +2,6 @@ import Button from "@/components/button";
 import { DineroInput } from "@/components/dinero-input";
 import Picker from "@/components/picker";
 import {
-  Split,
   SplitInput,
   changeTotal,
   changeType,
@@ -12,7 +11,7 @@ import {
 import { Text } from "@/components/text";
 import { TextInput } from "@/components/text-input";
 import { useSystem } from "@/components/system-provider";
-import { type Expense, type Receipt } from "@/lib/expenses";
+import type { Expense, Receipt, Split } from "@/lib/expenses";
 import { Group, useMe } from "@/lib/groups";
 import { Picker as RNPicker } from "@react-native-picker/picker";
 import dinero, { type Dinero } from "dinero.js";

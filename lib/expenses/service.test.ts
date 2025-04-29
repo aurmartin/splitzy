@@ -1,27 +1,19 @@
 import { expensesTable } from "@/lib/db/schema";
-import {
-  addExpense,
-  getAmounts,
-  useAddExpense,
-  useDelExpense,
-  type AmountSplit,
-  type EqualSplit,
-  type Expense,
-  type PercentageSplit,
-  type Receipt,
-} from "@/lib/expenses";
-import { ExpensesRepository } from "@/lib/expenses-repository";
+import { ExpenseService } from "@/lib/expenses";
+import type {
+  AmountSplit,
+  EqualSplit,
+  Expense,
+  PercentageSplit,
+  Receipt,
+} from "@/lib/expenses/types";
+import { ExpensesRepository } from "@/lib/expenses/repository";
 import { System } from "@/lib/system";
 import { system } from "@/lib/test-setup";
-import { render, screen, waitFor, userEvent } from "@/lib/test-utils";
 import { generateId } from "@/lib/utils";
 import { ValidationError } from "@/lib/validation-error";
 import dinero, { Currency } from "dinero.js";
 import { eq } from "drizzle-orm";
-import React from "react";
-import Button from "@/components/button";
-
-const didRender = jest.fn();
 
 // Helper functions for creating test data
 const createBasicExpense = (overrides: Partial<Expense> = {}): Expense => {
@@ -86,7 +78,7 @@ const getExpensesByGroupId = (system: System, groupId: string) => {
     .all();
 };
 
-describe("addExpense", () => {
+describe("insertExpense", () => {
   it("should create and insert a valid expense", async () => {
     // Create test expense params
     const expenseParams = {
@@ -98,7 +90,7 @@ describe("addExpense", () => {
     };
 
     // Call the function
-    await addExpense(system, expenseParams);
+    await ExpenseService.insertExpense(system, expenseParams);
 
     // Verify the expense was added to the database
     const expenses = getExpensesByGroupId(system, expenseParams.groupId);
@@ -127,7 +119,7 @@ describe("addExpense", () => {
     };
 
     // Call the function
-    await addExpense(system, expenseParams);
+    await ExpenseService.insertExpense(system, expenseParams);
 
     // Verify the expense was added to the database
     const expenses = getExpensesByGroupId(system, expenseParams.groupId);
@@ -156,12 +148,12 @@ describe("addExpense", () => {
       receipt: null,
     };
 
-    await expect(addExpense(system, invalidTitleParams)).rejects.toThrow(
-      ValidationError,
-    );
-    await expect(addExpense(system, invalidTitleParams)).rejects.toThrow(
-      /titre/,
-    );
+    await expect(
+      ExpenseService.insertExpense(system, invalidTitleParams),
+    ).rejects.toThrow(ValidationError);
+    await expect(
+      ExpenseService.insertExpense(system, invalidTitleParams),
+    ).rejects.toThrow(/titre/);
 
     // Empty payer name
     const invalidPayerGroupId = generateId();
@@ -173,12 +165,12 @@ describe("addExpense", () => {
       receipt: null,
     };
 
-    await expect(addExpense(system, invalidPayerParams)).rejects.toThrow(
-      ValidationError,
-    );
-    await expect(addExpense(system, invalidPayerParams)).rejects.toThrow(
-      /membre/,
-    );
+    await expect(
+      ExpenseService.insertExpense(system, invalidPayerParams),
+    ).rejects.toThrow(ValidationError);
+    await expect(
+      ExpenseService.insertExpense(system, invalidPayerParams),
+    ).rejects.toThrow(/membre/);
 
     // Verify no expenses were added with these groupIds
     const titleExpenses = getExpensesByGroupId(system, invalidTitleGroupId);
@@ -189,71 +181,15 @@ describe("addExpense", () => {
   });
 });
 
-describe("useAddExpense", () => {
-  it("should add an expense", async () => {
-    // Arrange
-    const user = userEvent.setup();
-
-    const expenseParams = {
-      groupId: generateId(),
-      title: "title",
-      payerName: "payerName",
-      splitExpense: createSplitExpense(),
-      receipt: null,
-    };
-
-    const Test = () => {
-      const addExpense = useAddExpense();
-      didRender();
-      return (
-        <Button onPress={() => addExpense(expenseParams)}>addExpense</Button>
-      );
-    };
-
-    // Act
-    render(<Test />, system);
-
-    await user.press(screen.getByText("addExpense"));
-
-    // Assert
-    await waitFor(() => {
-      const expenses = getExpensesByGroupId(system, expenseParams.groupId);
-      expect(expenses).toHaveLength(1);
-      expect(expenses[0].title).toEqual(expenseParams.title);
-      expect(expenses[0].payerName).toEqual(expenseParams.payerName);
-    });
-
-    expect(didRender).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe("useDelExpense", () => {
+describe("deleteExpense", () => {
   it("should delete an expense", async () => {
-    // Arrange
-    const user = userEvent.setup();
     const testExpense = createBasicExpense();
     await ExpensesRepository.insertExpense(system, testExpense);
 
-    const Test = () => {
-      const delExpense = useDelExpense();
-      didRender();
-      return (
-        <Button onPress={() => delExpense(testExpense.id)}>delExpense</Button>
-      );
-    };
+    await ExpenseService.deleteExpense(system, testExpense.id);
 
-    // Act
-    render(<Test />, system);
-
-    await user.press(screen.getByText("delExpense"));
-
-    // Assert
-    await waitFor(() => {
-      const expenses = getExpensesByGroupId(system, testExpense.groupId);
-      expect(expenses).toHaveLength(0);
-    });
-
-    expect(didRender).toHaveBeenCalledTimes(1);
+    const expenses = getExpensesByGroupId(system, testExpense.groupId);
+    expect(expenses).toHaveLength(0);
   });
 });
 
@@ -269,7 +205,7 @@ describe("getAmounts", () => {
     };
 
     const expense = createBasicExpense({ splitExpense });
-    const amounts = getAmounts(expense);
+    const amounts = ExpenseService.getAmounts(expense);
 
     expect(amounts.Alice.getAmount()).toEqual(250);
     expect(amounts.Bob.getAmount()).toEqual(750);
@@ -287,7 +223,7 @@ describe("getAmounts", () => {
     };
 
     const expense = createBasicExpense({ splitExpense });
-    const amounts = getAmounts(expense);
+    const amounts = ExpenseService.getAmounts(expense);
 
     expect(amounts.Alice.getAmount()).toEqual(500);
     expect(amounts.Bob.getAmount()).toEqual(500);
@@ -301,7 +237,7 @@ describe("getAmounts", () => {
     };
 
     const expense = createBasicExpense({ splitExpense });
-    const amounts = getAmounts(expense);
+    const amounts = ExpenseService.getAmounts(expense);
 
     expect(amounts.Alice.getAmount()).toEqual(500);
     expect(amounts.Bob.getAmount()).toEqual(500);

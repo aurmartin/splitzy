@@ -1,5 +1,5 @@
 import { useSystem } from "@/components/system-provider";
-import { ExpensesRepository } from "@/lib/expenses-repository";
+import { ExpensesRepository } from "@/lib/expenses/repository";
 import { getGroupRow, useAddGroup } from "@/lib/groups";
 import { System } from "@/lib/system";
 import { generateId } from "@/lib/utils";

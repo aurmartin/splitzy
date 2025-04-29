@@ -1,11 +1,12 @@
 import { expensesTable } from "@/lib/db/schema";
-import type { Expense, Receipt, ReceiptSplit } from "@/lib/expenses";
-import { ExpensesRepository } from "@/lib/expenses-repository";
 import { System } from "@/lib/system";
 import { system } from "@/lib/test-setup";
 import { generateId } from "@/lib/utils";
 import dinero, { Currency } from "dinero.js";
 import { eq } from "drizzle-orm";
+
+import { ExpensesRepository } from "./repository";
+import type { Expense, Receipt, ReceiptSplit } from "./types";
 
 // Helper functions for creating test data
 const createBasicExpense = (overrides: Partial<Expense> = {}): Expense => {

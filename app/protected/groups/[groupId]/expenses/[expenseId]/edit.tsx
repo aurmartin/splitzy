@@ -1,16 +1,12 @@
+import { ExpenseForm, type ExpenseFormFields } from "@/components/expense-form";
 import LoadingScreen from "@/components/loading-screen";
 import { Screen } from "@/components/screen";
-import { TopBar } from "@/components/top-bar";
-import { ExpenseForm, type ExpenseFormFields } from "@/components/expense-form";
 import { useSnackBar } from "@/components/snack-bar";
-import { ValidationError } from "@/lib/validation-error";
-import {
-  type Expense,
-  useDelExpense,
-  useEditExpense,
-  useExpense,
-} from "@/lib/expenses";
+import { useSystem } from "@/components/system-provider";
+import { TopBar } from "@/components/top-bar";
+import { type Expense, ExpenseService, useExpense } from "@/lib/expenses";
 import { Group, useGroup } from "@/lib/groups";
+import { ValidationError } from "@/lib/validation-error";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
@@ -20,8 +16,7 @@ const EditExpenseForm = (props: { group: Group; expense: Expense }) => {
   const { group, expense } = props;
 
   const snackBar = useSnackBar();
-  const editExpense = useEditExpense();
-
+  const system = useSystem();
   const [validationErrors, setValidationErrors] = React.useState({});
 
   const onSubmit = async (fields: ExpenseFormFields) => {
@@ -31,7 +26,7 @@ const EditExpenseForm = (props: { group: Group; expense: Expense }) => {
         groupId: group.id,
       };
 
-      await editExpense(expense.id, params);
+      await ExpenseService.updateExpense(system, expense.id, params);
 
       snackBar.show("Dépense modifiée avec succès", "success");
 
@@ -61,7 +56,7 @@ export default function EditExpenseScreen() {
 
   const group = useGroup(groupId);
   const expense = useExpense(expenseId);
-  const delExpense = useDelExpense();
+  const system = useSystem();
 
   if (!group) {
     throw new Error("Group not found");
@@ -72,7 +67,7 @@ export default function EditExpenseScreen() {
   }
 
   const handleDelete = async () => {
-    await delExpense(expenseId);
+    await ExpenseService.deleteExpense(system, expenseId);
 
     router.back();
   };

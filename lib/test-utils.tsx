@@ -16,7 +16,7 @@ import * as jws from "jws";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import React, { type ReactElement } from "react";
-import { EqualSplit } from "./expenses";
+import { EqualSplit } from "@/lib/expenses";
 
 const AllTheProviders = ({
   children,

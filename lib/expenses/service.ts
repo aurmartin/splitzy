@@ -1,117 +1,24 @@
 import { convertSplit } from "@/components/split-input";
 import { getEffectiveAmounts } from "@/components/split-input/amount-split";
-import { useSystem } from "@/components/system-provider";
-import { useExpense, useExpenses } from "@/lib/expenses-hooks";
-import { ExpensesRepository } from "@/lib/expenses-repository";
+import { ExpensesRepository } from "@/lib/expenses/repository";
 import { System } from "@/lib/system";
 import { generateId } from "@/lib/utils";
 import { ValidationError } from "@/lib/validation-error";
-import dinero, { Currency, Dinero } from "dinero.js";
-import { useCallback, useMemo } from "react";
+import dinero, { Dinero } from "dinero.js";
+import {
+  Expense,
+  ExpenseCreateParams,
+  ExpenseUpdateParams,
+  Split,
+} from "./types";
 
-interface BaseSplit {
-  type: "percentage" | "amount" | "equal" | "receipt";
-  total: Dinero;
-  members: string[];
-}
-
-interface PercentageSplit extends BaseSplit {
-  type: "percentage";
-  ratios: { [member: string]: number };
-}
-
-interface EqualSplit extends BaseSplit {
-  type: "equal";
-}
-
-interface AmountSplit extends BaseSplit {
-  type: "amount";
-  amounts: { [member: string]: Dinero };
-}
-
-interface ReceiptSplit extends BaseSplit {
-  type: "receipt";
-  receipt: Receipt;
-}
-
-type Split = PercentageSplit | EqualSplit | AmountSplit | ReceiptSplit;
-
-interface Receipt {
-  date: Date;
-  total: Dinero;
-  title: string;
-  currency: Currency;
-
-  items: {
-    description: string;
-    humanReadableDescription: string;
-    price: Dinero;
-    paid_for: string[];
-  }[];
-}
-
-interface Expense {
-  id: string;
-  groupId: string;
-  title: string;
-  payerName: string;
-  splitExpense: Split;
-
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date | undefined;
-
-  receipt: Receipt | null;
-}
-
-interface ExpenseCreateParams {
-  groupId: Expense["groupId"];
-  title: Expense["title"];
-  payerName: Expense["payerName"];
-  splitExpense: Expense["splitExpense"];
-  receipt: Expense["receipt"];
-}
-
-interface ExpenseUpdateParams {
-  title: Expense["title"];
-  payerName: Expense["payerName"];
-  splitExpense: Expense["splitExpense"];
-  receipt: Expense["receipt"];
-}
-
-const useAddExpense = () => {
-  const system = useSystem();
-
-  return useCallback(
-    (params: ExpenseCreateParams) => addExpense(system, params),
-    [system],
-  );
-};
-
-const useEditExpense = () => {
-  const system = useSystem();
-  return useCallback(
-    (id: string, params: ExpenseUpdateParams) =>
-      editExpense(system, id, params),
-    [system],
-  );
-};
-
-const useDelExpense = () => {
-  const system = useSystem();
-  return useCallback(
-    (id: string) => ExpensesRepository.deleteExpense(system, id),
-    [system],
-  );
-};
-
-const addExpense = async (system: System, params: ExpenseCreateParams) => {
+const insertExpense = async (system: System, params: ExpenseCreateParams) => {
   const validParams = validateCreateExpenseParams(params);
   const expense = createExpense(validParams);
   await ExpensesRepository.insertExpense(system, expense);
 };
 
-const editExpense = async (
+const updateExpense = async (
   system: System,
   id: string,
   params: ExpenseUpdateParams,
@@ -125,6 +32,10 @@ const editExpense = async (
     updatedAt: new Date(),
   };
   await ExpensesRepository.updateExpense(system, updatedExpense);
+};
+
+const deleteExpense = async (system: System, id: string) => {
+  await ExpensesRepository.deleteExpense(system, id);
 };
 
 const createExpense = (validParams: ExpenseCreateParams): Expense => {
@@ -203,27 +114,9 @@ const getAmounts = (expense: Expense): Record<string, Dinero> => {
   return getEffectiveAmounts(amountSplit);
 };
 
-const useAmounts = (expense: Expense) => {
-  return useMemo(() => getAmounts(expense), [expense]);
-};
-
-export type {
-  AmountSplit,
-  EqualSplit,
-  Expense,
-  PercentageSplit,
-  Receipt,
-  ReceiptSplit,
-  Split,
-};
-
-export {
-  addExpense,
+export const ExpenseService = {
+  insertExpense,
+  updateExpense,
+  deleteExpense,
   getAmounts,
-  useAddExpense,
-  useAmounts,
-  useDelExpense,
-  useEditExpense,
-  useExpense,
-  useExpenses,
 };

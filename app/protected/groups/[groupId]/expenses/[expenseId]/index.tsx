@@ -1,11 +1,12 @@
 import { Pressable } from "@/components/pressable";
 import { Screen } from "@/components/screen";
 import { useSnackBar } from "@/components/snack-bar";
+import { useSystem } from "@/components/system-provider";
 import { Text } from "@/components/text";
 import { TopBar } from "@/components/top-bar";
 import {
+  ExpenseService,
   useAmounts,
-  useDelExpense,
   useExpense,
   type Expense,
 } from "@/lib/expenses";
@@ -21,12 +22,12 @@ interface ShowExpenseScreenProps {
 
 function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
   const snackBar = useSnackBar();
-  const delExpense = useDelExpense();
+  const system = useSystem();
   const amounts = useAmounts(expense);
 
   const handleDelete = async () => {
     try {
-      await delExpense(expense.id);
+      await ExpenseService.deleteExpense(system, expense.id);
 
       router.back();
 

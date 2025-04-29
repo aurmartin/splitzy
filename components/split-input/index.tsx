@@ -147,7 +147,6 @@ function createSplit<Type extends Split["type"]>(
 }
 
 export {
-  Split,
   SplitInput,
   changeTotal,
   changeType,

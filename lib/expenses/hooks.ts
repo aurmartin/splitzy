@@ -1,7 +1,9 @@
 import { useSystem } from "@/components/system-provider";
-import { Expense } from "@/lib/expenses";
-import { ExpensesRepository } from "@/lib/expenses-repository";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import { ExpensesRepository } from "./repository";
+import type { Expense } from "./types";
+import { ExpenseService } from "./service";
 
 function useExpenses(groupId: string): Expense[] {
   const system = useSystem();
@@ -33,4 +35,8 @@ function useExpense(id: string): Expense | null {
   return expense;
 }
 
-export { useExpense, useExpenses };
+function useAmounts(expense: Expense) {
+  return useMemo(() => ExpenseService.getAmounts(expense), [expense]);
+}
+
+export { useExpense, useExpenses, useAmounts };

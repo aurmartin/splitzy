@@ -1,9 +1,10 @@
 import { ExpenseForm, type ExpenseFormFields } from "@/components/expense-form";
 import { Screen } from "@/components/screen";
 import { useSnackBar } from "@/components/snack-bar";
+import { useSystem } from "@/components/system-provider";
 import { TopBar } from "@/components/top-bar";
 import { getMajorUnitAmount } from "@/lib/currency";
-import { useAddExpense } from "@/lib/expenses";
+import { ExpenseService } from "@/lib/expenses";
 import { Group, useGroup } from "@/lib/groups";
 import { ValidationError } from "@/lib/validation-error";
 import { trackEvent } from "@aptabase/react-native";
@@ -14,7 +15,7 @@ const NewExpenseForm = (props: { group: Group }) => {
   const { group } = props;
 
   const snackBar = useSnackBar();
-  const addExpense = useAddExpense();
+  const system = useSystem();
 
   const [validationErrors, setValidationErrors] = React.useState({});
 
@@ -36,7 +37,7 @@ const NewExpenseForm = (props: { group: Group }) => {
         groupId: group.id,
       };
 
-      await addExpense(params);
+      await ExpenseService.insertExpense(system, params);
 
       snackBar.show("Dépense créée avec succès", "success");
 
