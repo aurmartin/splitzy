@@ -19,6 +19,7 @@ web-build/
 *.sqlite
 
 android/
+ios/
 
 .env*
 

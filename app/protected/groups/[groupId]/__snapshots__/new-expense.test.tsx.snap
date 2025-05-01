@@ -357,7 +357,9 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                           {
                             "height": 216,
                           },
-                          undefined,
+                          {
+                            "color": "black",
+                          },
                         ]
                       }
                       testID="picker"
@@ -443,7 +445,9 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                             {
                               "height": 216,
                             },
-                            undefined,
+                            {
+                              "color": "black",
+                            },
                           ]
                         }
                         testID="picker"

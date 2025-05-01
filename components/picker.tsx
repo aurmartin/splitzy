@@ -33,6 +33,7 @@ export default function Picker<T>(props: PickerProps<T>) {
             marginTop: -5,
             marginBottom: -5,
           }}
+          itemStyle={{ color: "black" }}
           accessibilityLabel={label}
         >
           {children}

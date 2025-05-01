@@ -64,7 +64,9 @@ exports[`Picker renders correctly 1`] = `
             {
               "height": 216,
             },
-            undefined,
+            {
+              "color": "black",
+            },
           ]
         }
         testID="picker"
