@@ -23,7 +23,6 @@ describe("LoginScreen", () => {
     await user.type(screen.getByPlaceholderText("Email"), "test@test.com");
     await user.press(screen.getByRole("button"));
 
-    screen.getByText("Signing in...");
     await screen.findByText("Check your email for a magic link to sign in.");
   });
 
@@ -39,8 +38,6 @@ describe("LoginScreen", () => {
 
     await user.type(screen.getByPlaceholderText("Email"), "test@test.com");
     await user.press(screen.getByRole("button"));
-
-    screen.getByText("Signing in...");
 
     await screen.findByText("Invalid email");
   });

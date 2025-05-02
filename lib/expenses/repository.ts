@@ -75,7 +75,11 @@ function watchExpense(
   callback: (expense: Expense) => void,
 ): () => void {
   return system.syncEngine.watchTable(expensesTable, () => {
-    callback(getExpenseOrThrow(system, id));
+    const expense = getExpense(system, id);
+
+    if (expense) {
+      callback(expense);
+    }
   });
 }
 

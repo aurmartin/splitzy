@@ -64,7 +64,7 @@ const SnackBarProvider = (props: { children: React.ReactNode }) => {
 
   const [snack, setSnack] = React.useState<SnackBarSpec | null>(null);
 
-  const timerRef = React.useRef<NodeJS.Timeout | null>(null);
+  const timerRef = React.useRef<number | null>(null);
 
   React.useEffect(() => {
     return () => {

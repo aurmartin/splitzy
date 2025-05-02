@@ -63,7 +63,7 @@ const ExpenseItem = (props: { group: Group; expense: Expense }) => {
   );
 };
 
-const Expenses = React.memo(function _Expenses(props: { group: Group }) {
+const Expenses = React.memo(function Expenses(props: { group: Group }) {
   const { group } = props;
   const expenses = useExpenses(group.id);
   const system = useSystem();
@@ -151,7 +151,7 @@ const Expenses = React.memo(function _Expenses(props: { group: Group }) {
   );
 });
 
-const BalanceDisplay = React.memo(function _BalanceDisplay(props: {
+const BalanceDisplay = React.memo(function BalanceDisplay(props: {
   group: Group;
 }) {
   const { group } = props;
@@ -186,7 +186,7 @@ const BalanceDisplay = React.memo(function _BalanceDisplay(props: {
   );
 });
 
-const GroupScreen = React.memo(function _GroupScreen() {
+const GroupScreen = React.memo(function GroupScreen() {
   const router = useRouter();
   const { groupId }: { groupId: string } = useLocalSearchParams();
   const group = useGroup(groupId);

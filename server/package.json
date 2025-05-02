@@ -2,25 +2,29 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
+  "type": "module",
   "scripts": {
-    "start": "ts-node index.ts",
-    "watch": "nodemon --ext 'ts' --exec 'ts-node index.ts'"
+    "start": "tsx index.ts",
+    "watch": "nodemon --ext 'ts' --exec 'tsx index.ts'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
+    "@supabase/supabase-js": "^2.49.4",
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "tsx": "^4.19.3"
   },
+  "private": true,
+  "packageManager": "pnpm@10.8.1+sha512.c50088ba998c67b8ca8c99df8a5e02fd2ae2e2b29aaf238feaa9e124248d3f48f9fb6db2424949ff901cffbb5e0f0cc1ad6aedb602cd29450751d11c35023677",
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/morgan": "^1.9.9",
     "nodemon": "^3.1.7",
-    "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   }
 }

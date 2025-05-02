@@ -29,7 +29,7 @@ const GroupListItem = ({ group }: { group: Group }) => {
   );
 };
 
-const Groups = React.memo(function _Groups() {
+const Groups = React.memo(function Groups() {
   const groups = useGroups();
   const system = useSystem();
   const [refreshing, setRefreshing] = React.useState(false);
@@ -73,7 +73,7 @@ const Groups = React.memo(function _Groups() {
   );
 });
 
-const ScreenTitle = React.memo(function _ScreenTitle() {
+const ScreenTitle = React.memo(function ScreenTitle() {
   const title = React.useMemo(() => {
     if (Env.APP_ENV === "development") {
       return "Splitzy Dev";

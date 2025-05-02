@@ -18,7 +18,7 @@ import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 
-const MyBalance = React.memo(function _MyBalance({
+const MyBalance = React.memo(function MyBalance({
   group,
   balance,
 }: {
@@ -49,7 +49,7 @@ const MyBalance = React.memo(function _MyBalance({
   );
 });
 
-const GroupBalance = React.memo(function _GroupBalance({
+const GroupBalance = React.memo(function GroupBalance({
   balance,
 }: {
   balance: Balance;
@@ -77,7 +77,7 @@ const GroupBalance = React.memo(function _GroupBalance({
   );
 });
 
-const Reimbursements = React.memo(function _Reimbursements({
+const Reimbursements = React.memo(function Reimbursements({
   balance,
 }: {
   balance: Balance;
@@ -117,7 +117,7 @@ const Reimbursements = React.memo(function _Reimbursements({
   );
 });
 
-const BalanceScreenContent = React.memo(function _BalanceScreenContent({
+const BalanceScreenContent = React.memo(function BalanceScreenContent({
   group,
 }: {
   group: Group;

@@ -36,6 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#F7F3ED",
     },
     package: Env.PACKAGE,
+    edgeToEdgeEnabled: true,
   },
   web: {
     bundler: "metro",
@@ -44,6 +45,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: [
     "expo-router",
     "expo-localization",
+    "expo-sqlite",
+    "expo-web-browser",
     [
       "@sentry/react-native/expo",
       {

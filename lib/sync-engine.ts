@@ -26,7 +26,7 @@ const FATAL_RESPONSE_CODES = [
 class SyncEngine {
   private supabaseConnector: SupabaseConnector;
   private db: Database;
-  private processQueueInterval?: NodeJS.Timeout;
+  private processQueueInterval?: number;
   private isProcessingLocalOperations = false;
   private tableListeners: Record<string, TableListener[]> = {};
 
