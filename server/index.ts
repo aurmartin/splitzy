@@ -8,11 +8,11 @@ import {
   InlineDataPart,
 } from "@google/generative-ai";
 
-const host = process.env.SERVER_HOST;
-if (!host) throw new Error("SERVER_HOST is not set");
+const bind_ip = process.env.SERVER_BIND_IP;
+if (!bind_ip) throw new Error("SERVER_BIND_IP is not set");
 
-const port = parseInt(process.env.SERVER_PORT || "");
-if (!port) throw new Error("SERVER_PORT is not set");
+const bind_port = parseInt(process.env.SERVER_BIND_PORT || "");
+if (!bind_port) throw new Error("SERVER_BIND_PORT is not set");
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 if (!SUPABASE_URL) throw new Error("SUPABASE_URL is not set");
@@ -153,6 +153,6 @@ app.post("/parse-receipt", async (req, res) => {
   res.json(result);
 });
 
-app.listen(port, host, () => {
-  console.log(`Server is running on http://${host}:${port}`);
+app.listen(bind_port, bind_ip, () => {
+  console.log(`Server is running on http://${bind_ip}:${bind_port}`);
 });
