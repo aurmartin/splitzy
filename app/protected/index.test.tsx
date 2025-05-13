@@ -1,9 +1,8 @@
 import { Text } from "@/components/text";
 import { groupsTable } from "@/lib/db/schema";
-import { server, system } from "@/lib/test-setup";
+import { system } from "@/lib/test-setup";
 import { buildGroupRecord, renderRouter } from "@/lib/test-utils";
 import { fireEvent, screen, userEvent } from "@testing-library/react-native";
-import { HttpResponse, http } from "msw";
 import GroupsScreen from ".";
 
 const routerContext = {
@@ -53,11 +52,10 @@ describe("GroupsScreen", () => {
 
   it("should allow the user to refresh the groups", async () => {
     const group = buildGroupRecord({ name: "initial group name" });
-    server.use(
-      http.get("http://localhost:50001/rest/v1/groups", () =>
-        HttpResponse.json([group]),
-      ),
-    );
+    (system.supabaseConnector.selectAll as jest.Mock).mockResolvedValueOnce({
+      data: [group],
+      error: null,
+    });
     await system.syncEngine.syncTableFromRemote(groupsTable);
 
     renderRouter(routerContext, system, { initialUrl: "/protected" });
@@ -65,11 +63,10 @@ describe("GroupsScreen", () => {
     screen.getByText("initial group name");
 
     const updatedGroup = { ...group, name: "updated group name" };
-    server.use(
-      http.get("http://localhost:50001/rest/v1/groups", () =>
-        HttpResponse.json([updatedGroup]),
-      ),
-    );
+    (system.supabaseConnector.selectAll as jest.Mock).mockResolvedValueOnce({
+      data: [updatedGroup],
+      error: null,
+    });
 
     fireEvent(screen.getByTestId("groups-flat-list"), "onRefresh");
 

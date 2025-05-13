@@ -1,6 +1,6 @@
 import RedirectScreen from "@/app/redirect";
 import { system } from "@/lib/test-setup";
-import { generateAccessToken, renderRouter } from "@/lib/test-utils";
+import { renderRouter } from "@/lib/test-utils";
 import { screen } from "@testing-library/react-native";
 import * as Linking from "expo-linking";
 import { Text } from "react-native";
@@ -23,7 +23,7 @@ describe("RedirectScreen", () => {
   });
 
   it("should redirect to protected route when correct link is provided", async () => {
-    const url = `/redirect?access_token=${generateAccessToken()}&refresh_token=test-refresh-token`;
+    const url = `/redirect?access_token=token&refresh_token=test-refresh-token`;
     jest.mocked(Linking.useLinkingURL).mockReturnValue(url);
     renderRouter(routerContext, system, { initialUrl: url });
     await screen.findByText("Protected");

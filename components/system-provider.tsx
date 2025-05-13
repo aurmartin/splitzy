@@ -25,13 +25,4 @@ const useSystem = () => {
   return system;
 };
 
-const useSupabaseAuth = () => {
-  const system = useSystem();
-
-  return React.useMemo(
-    () => system.supabaseConnector.client.auth,
-    [system.supabaseConnector.client.auth],
-  );
-};
-
-export { SystemContext, SystemProvider, useSupabaseAuth, useSystem };
+export { SystemContext, SystemProvider, useSystem };

@@ -1,5 +1,8 @@
-import { type RealtimePostgresChangesPayload } from "@supabase/realtime-js";
-import { type SupabaseClient, createClient } from "@supabase/supabase-js";
+import {
+  createClient,
+  type SupabaseClient,
+  type RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
 import { tables } from "./db/schema";
 import { Env } from "./env";
 import type { OperationType, RemoteOperation } from "./operation";
@@ -11,7 +14,7 @@ type TableName = Exclude<keyof typeof tables, "syncQueue">;
 type RealtimeEventListener = (operation: RemoteOperation) => void;
 
 export class SupabaseConnector {
-  client: SupabaseClient;
+  private client: SupabaseClient;
   private realtimeEventListeners: Record<TableName, RealtimeEventListener[]>;
 
   constructor(protected system: System) {
@@ -93,6 +96,10 @@ export class SupabaseConnector {
     this.realtimeEventListeners[table].push(listener);
   }
 
+  removeAllChannels() {
+    return this.client.removeAllChannels();
+  }
+
   hasLocalSession() {
     const maybeSession = this.system.kvStorage.getItem(storageKey);
 
@@ -102,4 +109,48 @@ export class SupabaseConnector {
 
     return true;
   }
+
+  getSession() {
+    return this.client.auth.getSession();
+  }
+
+  setSession(session: { access_token: string; refresh_token: string }) {
+    return this.client.auth.setSession(session);
+  }
+
+  getUser() {
+    return this.client.auth.getUser();
+  }
+
+  signInWithOtp(email: string) {
+    return this.client.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${Env.SCHEME}://redirect?`,
+        shouldCreateUser: true,
+      },
+    });
+  }
+
+  selectSingle(table: string, id: string) {
+    return this.client.from(table).select().eq("id", id).single();
+  }
+
+  selectAll(table: string) {
+    return this.client.from(table).select();
+  }
+
+  insert(table: string, data: Record<string, any>) {
+    return this.client.from(table).insert(data);
+  }
+
+  update(table: string, id: string, data: Record<string, any>) {
+    return this.client.from(table).update(data).eq("id", id);
+  }
+
+  delete(table: string, id: string) {
+    return this.client.from(table).delete().eq("id", id);
+  }
 }
+
+export type { RealtimePostgresChangesPayload };

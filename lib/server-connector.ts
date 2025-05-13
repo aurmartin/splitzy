@@ -200,9 +200,7 @@ class ServerConnector {
   constructor(private system: System) {}
 
   private async authHeaders() {
-    const auth = this.system.supabaseConnector.client.auth;
-
-    const session = await auth.getSession();
+    const session = await this.system.supabaseConnector.getSession();
     const accessToken = session.data.session?.access_token;
     const refreshToken = session.data.session?.refresh_token;
 

@@ -122,8 +122,7 @@ export class System {
   }
 
   async setSession(session: { access_token: string; refresh_token: string }) {
-    const authResponse =
-      await this.supabaseConnector.client.auth.setSession(session);
+    const authResponse = await this.supabaseConnector.setSession(session);
 
     if (authResponse.error) {
       return authResponse;

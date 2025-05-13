@@ -1,5 +1,5 @@
 import { ExpenseRecord, GroupRecord, tables } from "@/lib/db/schema";
-import { server, system } from "@/lib/test-setup";
+import { system } from "@/lib/test-setup";
 import {
   buildExpenseRecord,
   buildGroupRecord,
@@ -7,8 +7,7 @@ import {
 } from "@/lib/test-utils";
 import { generateId } from "@/lib/utils";
 import { expect } from "@jest/globals";
-import { type RealtimePostgresChangesPayload } from "@supabase/supabase-js";
-import { HttpResponse, http } from "msw";
+import { type RealtimePostgresChangesPayload } from "@/lib/supabase-connector";
 
 const buildOperationRecordFromEntity = (
   type: "insert" | "update" | "delete",
@@ -42,11 +41,10 @@ describe("init", () => {
     // Setup
     const remoteGroup = buildGroupRecord();
 
-    server.use(
-      http.get("http://localhost:50001/rest/v1/groups", () =>
-        HttpResponse.json([remoteGroup]),
-      ),
-    );
+    (system.supabaseConnector.selectAll as jest.Mock).mockResolvedValueOnce({
+      data: [remoteGroup],
+      error: null,
+    });
 
     // Act
     await system.syncEngine.init();
@@ -70,11 +68,11 @@ describe("syncTableFromRemote", () => {
     // Setup
     const remoteGroup = buildGroupRecord();
 
-    server.use(
-      http.get("http://localhost:50001/rest/v1/groups", () =>
-        HttpResponse.json([remoteGroup]),
-      ),
-    );
+    // Mock selectAll to return the remoteGroup
+    (system.supabaseConnector.selectAll as jest.Mock).mockResolvedValueOnce({
+      data: [remoteGroup],
+      error: null,
+    });
 
     // Act
     await system.syncEngine.syncTableFromRemote(tables.groups);
@@ -91,11 +89,11 @@ describe("syncTableFromRemote", () => {
     const remoteGroup = buildGroupRecord({ name: "remote group name" });
     const localGroup = { ...remoteGroup, name: "local group name" };
 
-    server.use(
-      http.get("http://localhost:50001/rest/v1/groups", () =>
-        HttpResponse.json([remoteGroup]),
-      ),
-    );
+    // Mock selectAll to return the remoteGroup
+    (system.supabaseConnector.selectAll as jest.Mock).mockResolvedValueOnce({
+      data: [remoteGroup],
+      error: null,
+    });
 
     await system.db.insert(tables.groups).values(localGroup);
 
@@ -118,11 +116,11 @@ describe("syncTableFromRemote", () => {
     // Setup
     const localGroup = buildGroupRecord();
 
-    server.use(
-      http.get("http://localhost:50001/rest/v1/groups", () =>
-        HttpResponse.json([]),
-      ),
-    );
+    // Mock selectAll to return an empty array
+    (system.supabaseConnector.selectAll as jest.Mock).mockResolvedValueOnce({
+      data: [],
+      error: null,
+    });
 
     await system.db.insert(tables.groups).values(localGroup);
 
@@ -144,11 +142,11 @@ describe("syncTableFromRemote", () => {
     const remoteGroup = buildGroupRecord({ name: "remote group name" });
     const localGroup = { ...remoteGroup, name: "local group name" };
 
-    server.use(
-      http.get("http://localhost:50001/rest/v1/groups", () =>
-        HttpResponse.json([remoteGroup]),
-      ),
-    );
+    // Mock selectAll to return the remoteGroup
+    (system.supabaseConnector.selectAll as jest.Mock).mockResolvedValueOnce({
+      data: [remoteGroup],
+      error: null,
+    });
 
     await system.db.insert(tables.groups).values(localGroup);
 
@@ -180,11 +178,11 @@ describe("syncTableFromRemote", () => {
     // Setup
     const remoteGroup = buildGroupRecord();
 
-    server.use(
-      http.get("http://localhost:50001/rest/v1/groups", () =>
-        HttpResponse.json([remoteGroup]),
-      ),
-    );
+    // Mock selectAll to return an empty array
+    (system.supabaseConnector.selectAll as jest.Mock).mockResolvedValueOnce({
+      data: [],
+      error: null,
+    });
 
     // Act
     await system.db.insert(tables.syncQueue).values({
@@ -216,29 +214,19 @@ describe("processLocalOperations", () => {
       .insert(tables.syncQueue)
       .values(buildOperationRecordFromEntity("update", "groups", updatedGroup));
 
-    const didReceivePost = jest.fn();
-    const didReceivePatch = jest.fn();
-    server.use(
-      http.post("http://localhost:50001/rest/v1/groups", async (request) => {
-        const body = await request.request.json();
-        didReceivePost(body);
-        return HttpResponse.json({});
-      }),
-    );
-    server.use(
-      http.patch("http://localhost:50001/rest/v1/groups", async (request) => {
-        const body = await request.request.json();
-        didReceivePatch(body);
-        return HttpResponse.json({});
-      }),
-    );
-
     // Act
     await system.syncEngine.processLocalOperations();
 
     // Assert
-    expect(didReceivePost).toHaveBeenCalledWith(initialGroup);
-    expect(didReceivePatch).toHaveBeenCalledWith(updatedGroup);
+    expect(system.supabaseConnector.insert).toHaveBeenCalledWith(
+      "groups",
+      initialGroup,
+    );
+    expect(system.supabaseConnector.update).toHaveBeenCalledWith(
+      "groups",
+      initialGroup.id,
+      updatedGroup,
+    );
   });
 });
 

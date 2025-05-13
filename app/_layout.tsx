@@ -7,7 +7,7 @@ import { Colors } from "@/lib/constants";
 import { tables } from "@/lib/db/schema";
 import { Env } from "@/lib/env";
 import { System } from "@/lib/system";
-import Aptabase from "@aptabase/react-native";
+import * as Aptabase from "@aptabase/react-native";
 import { type FallbackRender } from "@sentry/react";
 import * as Sentry from "@sentry/react-native";
 import { drizzle } from "drizzle-orm/expo-sqlite";

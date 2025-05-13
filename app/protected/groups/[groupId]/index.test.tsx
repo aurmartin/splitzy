@@ -1,14 +1,13 @@
 import GroupScreen from "@/app/protected/groups/[groupId]/index";
 import { tables } from "@/lib/db/schema";
 import { removeMe, setMe } from "@/lib/groups";
-import { server, system } from "@/lib/test-setup";
+import { system } from "@/lib/test-setup";
 import {
   buildExpenseRecord,
   buildGroupRecord,
   renderRouter,
 } from "@/lib/test-utils";
 import { fireEvent, screen, userEvent } from "@testing-library/react-native";
-import { HttpResponse, http } from "msw";
 import { Share, Text } from "react-native";
 
 const share = jest.spyOn(Share, "share").mockResolvedValue({
@@ -133,11 +132,10 @@ describe("GroupScreen", () => {
     renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
     screen.getByText("Aucune dépense");
 
-    server.use(
-      http.get("http://localhost:50001/rest/v1/expenses", () =>
-        HttpResponse.json([buildExpenseRecord({ groupId: "test-group-id" })]),
-      ),
-    );
+    (system.supabaseConnector.selectAll as jest.Mock).mockResolvedValueOnce({
+      data: [buildExpenseRecord({ groupId: "test-group-id" })],
+      error: null,
+    });
 
     fireEvent(screen.getByTestId("expenses-list"), "onRefresh");
 

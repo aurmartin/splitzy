@@ -64,9 +64,9 @@ export const useImportGroup = () => {
 
   return useCallback(
     async (groupId: string) => {
-      const user = await system.supabaseConnector.client.auth.getUser();
+      const user = await system.supabaseConnector.getUser();
 
-      await system.supabaseConnector.client.from("members").insert({
+      await system.supabaseConnector.insert("members", {
         user_id: user.data.user!.id,
         group_id: groupId,
       });

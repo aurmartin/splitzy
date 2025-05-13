@@ -65,7 +65,7 @@ const Groups = React.memo(function Groups() {
       renderItem={renderItem}
       ListEmptyComponent={
         <Text style={{ textAlign: "center", marginVertical: 64 }}>
-          No groups found. Create one by using the '+' button!
+          No groups found. Create one by using the &apos;+&apos; button!
         </Text>
       }
       showsVerticalScrollIndicator={false}

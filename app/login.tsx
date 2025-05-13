@@ -3,9 +3,8 @@ import LoadingScreen from "@/components/loading-screen";
 import { Screen } from "@/components/screen";
 import { Text } from "@/components/text";
 import { TextInput } from "@/components/text-input";
-import { useSupabaseAuth } from "@/components/system-provider";
+import { useSystem } from "@/components/system-provider";
 import { Colors } from "@/lib/constants";
-import { Env } from "@/lib/env";
 import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -34,7 +33,7 @@ function promiseStateReducer(_state: PromiseState, action: Action) {
 
 export default function LoginScreen() {
   const router = useRouter();
-  const auth = useSupabaseAuth();
+  const system = useSystem();
 
   const [email, setEmail] = React.useState("");
   const [state, dispatch] = React.useReducer(promiseStateReducer, {
@@ -42,24 +41,18 @@ export default function LoginScreen() {
   });
 
   React.useEffect(() => {
-    auth.getSession().then(({ data }) => {
+    system.supabaseConnector.getSession().then(({ data }) => {
       if (data.session) {
         router.replace("/protected");
       }
     });
-  }, [router, auth]);
+  }, [router, system.supabaseConnector]);
 
   const signInWithEmail = React.useCallback(async () => {
     try {
       dispatch({ type: "start" });
 
-      const { error } = await auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${Env.SCHEME}://redirect?`,
-          shouldCreateUser: false,
-        },
-      });
+      const { error } = await system.supabaseConnector.signInWithOtp(email);
 
       if (error) {
         throw error;
@@ -77,7 +70,7 @@ export default function LoginScreen() {
         payload: error?.message || "Something went wrong",
       });
     }
-  }, [dispatch, auth, email]);
+  }, [dispatch, system.supabaseConnector, email]);
 
   if (state.loading) {
     return <LoadingScreen message="Signing in..." />;
@@ -104,8 +97,8 @@ export default function LoginScreen() {
         )}
 
         <Text>
-          Enter your email address below. If you don't have an account yet,
-          we'll automatically create one for you when you first sign in!
+          Enter your email address below. If you don&apos;t have an account yet,
+          we&apos;ll automatically create one for you when you first sign in!
         </Text>
 
         <TextInput

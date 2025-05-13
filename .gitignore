@@ -30,6 +30,7 @@ expo-env.d.ts
 # @end expo-cli
 
 *.apk
+*.ipa
 
 coverage/
 

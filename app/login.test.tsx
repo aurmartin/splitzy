@@ -1,8 +1,7 @@
 import LoginScreen from "@/app/login";
-import { server, system } from "@/lib/test-setup";
-import { renderRouter, setFakeSession } from "@/lib/test-utils";
+import { system } from "@/lib/test-setup";
+import { renderRouter } from "@/lib/test-utils";
 import { screen, userEvent } from "@testing-library/react-native";
-import { HttpResponse, http } from "msw";
 import { Text } from "react-native";
 
 const routerContext = {
@@ -30,10 +29,10 @@ describe("LoginScreen", () => {
     const user = userEvent.setup();
     renderRouter(routerContext, system, { initialUrl: "/login" });
 
-    server.use(
-      http.post("http://localhost:50001/auth/v1/otp", () =>
-        HttpResponse.json({ error: "Invalid email" }, { status: 401 }),
-      ),
+    (system.supabaseConnector.signInWithOtp as jest.Mock).mockImplementation(
+      () => {
+        throw new Error("Invalid email");
+      },
     );
 
     await user.type(screen.getByPlaceholderText("Email"), "test@test.com");
@@ -43,7 +42,13 @@ describe("LoginScreen", () => {
   });
 
   it("should redirect to protected route if user is signed in", async () => {
-    setFakeSession(system);
+    (system.supabaseConnector.getSession as jest.Mock).mockResolvedValueOnce({
+      data: {
+        session: {
+          user: { email: "test@test.com" },
+        },
+      },
+    });
 
     renderRouter(routerContext, system, { initialUrl: "/login" });
 

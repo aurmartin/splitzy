@@ -72,7 +72,7 @@ class SyncEngine {
       this.processQueueInterval = undefined;
     }
 
-    this.supabaseConnector.client.removeAllChannels();
+    this.supabaseConnector.removeAllChannels();
   }
 
   async syncAllTablesFromRemote() {
@@ -219,7 +219,7 @@ class SyncEngine {
   private async _syncTableFromRemote(table: SyncableTable) {
     try {
       const { data: remoteEntities, error } =
-        await this.supabaseConnector.client.from(getTableName(table)).select();
+        await this.supabaseConnector.selectAll(getTableName(table));
 
       if (error) {
         throw error;
@@ -358,24 +358,26 @@ class SyncEngine {
             id: operation.entityId,
           };
 
-          result = await this.supabaseConnector.client
-            .from(operation.entityTable)
-            .insert(data);
+          result = await this.supabaseConnector.insert(
+            operation.entityTable,
+            data,
+          );
         } else if (operation.operationType === "update") {
           const data: any = {
             ...operation.changes,
             id: operation.entityId,
           };
 
-          result = await this.supabaseConnector.client
-            .from(operation.entityTable)
-            .update(data)
-            .eq("id", operation.entityId);
+          result = await this.supabaseConnector.update(
+            operation.entityTable,
+            operation.entityId,
+            data,
+          );
         } else if (operation.operationType === "delete") {
-          result = await this.supabaseConnector.client
-            .from(operation.entityTable)
-            .delete()
-            .eq("id", operation.entityId);
+          result = await this.supabaseConnector.delete(
+            operation.entityTable,
+            operation.entityId,
+          );
         }
 
         if (result.error) {
@@ -406,11 +408,10 @@ class SyncEngine {
     try {
       logger.info("Rolling back operation", operation);
 
-      const supabaseRow = await this.supabaseConnector.client
-        .from(operation.entityTable)
-        .select()
-        .eq("id", operation.entityId)
-        .single();
+      const supabaseRow = await this.supabaseConnector.selectSingle(
+        operation.entityTable,
+        operation.entityId,
+      );
 
       await this.db.transaction(async (tx) => {
         // Remove the operation from the queue

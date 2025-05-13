@@ -2,11 +2,7 @@ import NewExpenseScreen from "@/app/protected/groups/[groupId]/new-expense";
 import { tables } from "@/lib/db/schema";
 import { setMe } from "@/lib/groups";
 import { system } from "@/lib/test-setup";
-import {
-  buildGroupRecord,
-  renderRouter,
-  setFakeSession,
-} from "@/lib/test-utils";
+import { buildGroupRecord, renderRouter } from "@/lib/test-utils";
 import { screen, userEvent, waitFor } from "@testing-library/react-native";
 import { eq } from "drizzle-orm";
 
@@ -88,8 +84,6 @@ describe("NewExpenseScreen", () => {
 
   it("should handle receipt", async () => {
     const user = userEvent.setup();
-
-    setFakeSession(system);
 
     renderRouter(routerContext, system, { initialUrl: newExpenseScreenUrl });
 

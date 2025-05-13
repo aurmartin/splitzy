@@ -1,32 +1,20 @@
-const { defineConfig, globalIgnores } = require("eslint/config");
+const { defineConfig } = require("eslint/config");
 
-const prettier = require("eslint-plugin-prettier");
-const js = require("@eslint/js");
-
-const { FlatCompat } = require("@eslint/eslintrc");
-
-const compat = new FlatCompat({
-  // eslint-disable-next-line no-undef
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
+const expoConfig = require("eslint-config-expo/flat");
+const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommended");
 
 module.exports = defineConfig([
+  expoConfig,
+  eslintPluginPrettierRecommended,
   {
-    extends: compat.extends("expo", "prettier"),
-    plugins: { prettier },
-    rules: {
-      "prettier/prettier": "error",
-    },
+    ignores: [
+      "**/node_modules",
+      "**/.expo",
+      "dist/**/*",
+      "android/**/*",
+      "ios/**/*",
+      "server/**/*",
+      "coverage/**/*",
+    ],
   },
-  globalIgnores([
-    "**/node_modules",
-    "**/.expo",
-    "dist/**/*",
-    "android/**/*",
-    "ios/**/*",
-    "server/**/*",
-    "coverage/**/*",
-  ]),
 ]);

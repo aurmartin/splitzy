@@ -45,7 +45,7 @@ function SetMeForm(props: { group: Group }) {
         </Picker>
       </View>
 
-      <Button onPress={handleSubmit}>C'est moi!</Button>
+      <Button onPress={handleSubmit}>C&apos;est moi!</Button>
     </View>
   );
 }
