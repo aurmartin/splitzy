@@ -1,42 +1,18 @@
 import Button from "@/components/button";
 import Label from "@/components/label";
+import { ListGroup } from "@/components/list-group";
+import { Screen } from "@/components/screen";
 import { TextInput } from "@/components/text-input";
+import { TopBar } from "@/components/top-bar";
+import { TopBarSaveAction } from "@/components/top-bar-action";
 import { useAddGroup } from "@/lib/groups";
+import { ValidationError } from "@/lib/validation-error";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React from "react";
-import { View } from "react-native";
-import { ValidationError } from "@/lib/validation-error";
-import { Screen } from "@/components/screen";
-import { TopBar } from "@/components/top-bar";
-import { Text } from "@/components/text";
+import { Alert, ScrollView, View } from "react-native";
 
 const DEFAULT_CURRENCY = "EUR";
-
-type PromiseState = {
-  loading: boolean;
-  validationErrors?: Record<string, string>;
-  error?: string;
-};
-
-type Action =
-  | { type: "start" }
-  | { type: "validationError"; payload: Record<string, string> }
-  | { type: "error"; payload: string }
-  | { type: "success" };
-
-function promiseStateReducer(_state: PromiseState, action: Action) {
-  switch (action.type) {
-    case "start":
-      return { loading: true };
-    case "validationError":
-      return { loading: false, validationErrors: action.payload };
-    case "error":
-      return { loading: false, error: action.payload };
-    case "success":
-      return { loading: false };
-  }
-}
 
 const GroupForm = () => {
   const router = useRouter();
@@ -45,29 +21,25 @@ const GroupForm = () => {
   const [name, setName] = React.useState("");
   const [members, setMembers] = React.useState<string[]>([""]);
 
-  const [promiseState, dispatch] = React.useReducer(promiseStateReducer, {
-    loading: false,
-  });
-
   const handleSubmit = async () => {
     try {
-      dispatch({ type: "start" });
-
       await addGroup({ name, currency: DEFAULT_CURRENCY, members });
-
-      dispatch({ type: "success" });
 
       router.navigate("/");
     } catch (error) {
       if (error instanceof ValidationError) {
-        dispatch({ type: "validationError", payload: error.errors });
+        if (error.errors.name) {
+          Alert.alert("Le nom est invalide", error.errors.name);
+        } else if (error.errors.members) {
+          Alert.alert("Les membres sont invalides", error.errors.members);
+        }
       } else {
         console.error("Error adding group", error);
 
         const errorMessage =
           error instanceof Error ? error.message : "Une erreur est survenue";
 
-        dispatch({ type: "error", payload: errorMessage });
+        Alert.alert("Une erreur est survenue", errorMessage);
       }
     }
   };
@@ -87,76 +59,42 @@ const GroupForm = () => {
 
   return (
     <Screen>
-      <TopBar title="Nouveau groupe" />
+      <TopBar
+        title="Créer un groupe"
+        rightActions={<TopBarSaveAction key="create" onPress={handleSubmit} />}
+      />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        alwaysBounceVertical={false}
+      >
+        <TextInput value={name} onChangeText={setName} placeholder="Nom" />
 
-      <View style={{ flex: 1, gap: 16 }}>
-        {promiseState.error && (
-          <Text style={{ color: "hsl(0, 100%, 30%)" }}>
-            {promiseState.error}
-          </Text>
-        )}
+        <Label style={{ marginTop: 16 }}>Membres</Label>
+        <ListGroup>
+          {members.map((member, index) => (
+            <TextInput
+              key={index}
+              value={member}
+              placeholder="Nouveau membre"
+              onChangeText={(text) => changeMember(index, text)}
+              right={
+                index > 0 && (
+                  <Ionicons
+                    name="trash-outline"
+                    size={20}
+                    color="hsl(0 0% 50%)"
+                    onPress={() => removeMember(index)}
+                  />
+                )
+              }
+            />
+          ))}
+        </ListGroup>
 
-        <View>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            label="Nom du groupe"
-            placeholder="Nom du groupe"
-          />
-          {promiseState.validationErrors?.name && (
-            <Text style={{ color: "hsl(0, 100%, 30%)" }}>
-              {promiseState.validationErrors.name}
-            </Text>
-          )}
-        </View>
-
-        <View>
-          <Label>Membres</Label>
-          <View
-            style={{
-              gap: 8,
-              borderRadius: 4,
-            }}
-          >
-            {members.map((member, index) => (
-              <View
-                key={index}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 8,
-                }}
-              >
-                <TextInput
-                  style={{ flex: 1 }}
-                  value={member}
-                  onChangeText={(text) => changeMember(index, text)}
-                  placeholder="Nouveau membre"
-                />
-
-                <Ionicons
-                  name="trash-outline"
-                  size={20}
-                  color={index === 0 ? "hsl(0 0% 50%)" : "black"}
-                  onPress={() => removeMember(index)}
-                />
-              </View>
-            ))}
-            <Button onPress={addMember} type="secondary">
-              Ajouter un membre
-            </Button>
-          </View>
-          {promiseState.validationErrors?.members && (
-            <Text style={{ color: "hsl(0, 100%, 30%)" }}>
-              {promiseState.validationErrors.members}
-            </Text>
-          )}
-        </View>
-
-        <Button onPress={handleSubmit} style={{ marginTop: 16 }}>
-          Créer le groupe
+        <Button onPress={addMember} type="secondary" style={{ marginTop: 8 }}>
+          Ajouter un membre
         </Button>
-      </View>
+      </ScrollView>
     </Screen>
   );
 };

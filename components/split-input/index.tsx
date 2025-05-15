@@ -1,8 +1,8 @@
-import Picker from "@/components/picker";
 import {
   AmountSplitInput,
   createAmountSplit,
 } from "@/components/split-input/amount-split";
+import { convertSplit } from "@/components/split-input/convert";
 import {
   EqualSplitInput,
   createEqualSplit,
@@ -15,7 +15,6 @@ import {
   ReceiptSplitInput,
   createReceiptSplit,
 } from "@/components/split-input/receipt-split";
-import { convertSplit } from "@/components/split-input/convert";
 import {
   type AmountSplit,
   type EqualSplit,
@@ -23,10 +22,11 @@ import {
   type ReceiptSplit,
   type Split,
 } from "@/lib/expenses";
-import { Picker as RNPicker } from "@react-native-picker/picker";
 import { Dinero } from "dinero.js";
 import React from "react";
 import { View } from "react-native";
+import { ChipList } from "../chip-list";
+import Label from "../label";
 
 function changeTotal<T extends Split>(split: T, total: Dinero): T {
   switch (split.type) {
@@ -106,15 +106,17 @@ const SplitInput = (props: {
 
   return (
     <View style={{ gap: 8 }}>
-      <Picker
-        selectedValue={value.type}
-        onValueChange={onTypeChange}
-        label="Partager la dépense"
-      >
-        <RNPicker.Item label="Également" value="equal" />
-        <RNPicker.Item label="En pourcentage" value="percentage" />
-        <RNPicker.Item label="En montant" value="amount" />
-      </Picker>
+      <Label>Partager la dépense</Label>
+      <ChipList
+        value={value.type}
+        onChange={(type) => onTypeChange(type as Split["type"])}
+        items={[
+          { label: "Également", value: "equal" },
+          { label: "Pourcentage", value: "percentage" },
+          { label: "Montant", value: "amount" },
+        ]}
+        style={{ justifyContent: "center" }}
+      />
 
       {splitInput}
     </View>

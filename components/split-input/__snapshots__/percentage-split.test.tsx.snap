@@ -3,19 +3,39 @@
 exports[`PercentageSplit PercentageSplitInput renders correctly 1`] = `
 <View
   style={
-    {
-      "flex": 1,
-      "gap": 8,
-    }
+    [
+      {
+        "gap": 1,
+      },
+      undefined,
+    ]
   }
 >
   <View
     style={
-      {
-        "alignItems": "center",
-        "flexDirection": "row",
-        "gap": 8,
-      }
+      [
+        {
+          "alignItems": "center",
+          "backgroundColor": "#fff",
+          "borderRadius": 8,
+          "flexDirection": "row",
+          "height": 55,
+          "paddingHorizontal": 16,
+        },
+        {
+          "alignItems": "center",
+          "backgroundColor": "white",
+          "borderBottomLeftRadius": 8,
+          "borderBottomRightRadius": 8,
+          "borderTopLeftRadius": 8,
+          "borderTopRightRadius": 8,
+          "flexDirection": "row",
+          "height": 55,
+          "minWidth": 50,
+          "padding": 0,
+          "paddingHorizontal": 16,
+        },
+      ]
     }
   >
     <Text
@@ -26,50 +46,59 @@ exports[`PercentageSplit PercentageSplitInput renders correctly 1`] = `
             "fontWeight": "400",
             "lineHeight": 24,
           },
-          {
-            "flex": 1,
-          },
         ]
       }
     >
       user1
     </Text>
-    <TextInput
-      keyboardType="numeric"
-      onChangeText={[Function]}
-      placeholder="0.00"
-      placeholderTextColor="#666"
+    <View
       style={
-        [
-          {
-            "backgroundColor": "#fff",
-            "borderColor": "hsl(0 0% 70%)",
-            "borderRadius": 4,
-            "borderWidth": 1,
-            "height": 45,
-            "padding": 10,
-          },
-          {
-            "minWidth": 50,
-          },
-        ]
-      }
-      testID="float-input"
-      value="100"
-    />
-    <Text
-      style={
-        [
-          {
-            "fontSize": 16,
-            "fontWeight": "400",
-            "lineHeight": 24,
-          },
-        ]
+        {
+          "flex": 1,
+          "justifyContent": "center",
+        }
       }
     >
-      %
-    </Text>
+      <TextInput
+        accessibilityLabel="user1"
+        keyboardType="numeric"
+        onChangeText={[Function]}
+        placeholder="0.00"
+        placeholderTextColor="#888"
+        style={
+          {
+            "flex": 1,
+            "fontSize": 16,
+            "paddingBottom": 0,
+            "paddingTop": 0,
+            "textAlign": "right",
+          }
+        }
+        testID="float-input"
+        value="100"
+      />
+    </View>
+    <View
+      style={
+        {
+          "marginLeft": 2,
+        }
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "fontSize": 16,
+              "fontWeight": "400",
+              "lineHeight": 24,
+            },
+          ]
+        }
+      >
+        %
+      </Text>
+    </View>
   </View>
 </View>
 `;

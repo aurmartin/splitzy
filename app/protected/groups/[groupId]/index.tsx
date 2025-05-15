@@ -1,12 +1,12 @@
 import Button from "@/components/button";
 import Card from "@/components/card";
 import FAB from "@/components/fab";
-import { Pressable } from "@/components/pressable";
 import { Screen } from "@/components/screen";
 import { useSnackBar } from "@/components/snack-bar";
 import { useSystem } from "@/components/system-provider";
 import { Text } from "@/components/text";
 import { TopBar } from "@/components/top-bar";
+import { TopBarAction } from "@/components/top-bar-action";
 import { useBalance } from "@/lib/balance";
 import {
   getAbsoluteAmount,
@@ -147,6 +147,7 @@ const Expenses = React.memo(function Expenses(props: { group: Group }) {
       ListFooterComponent={<View style={{ height: 80 }} />}
       ListEmptyComponent={<Text>Aucune dépense</Text>}
       showsVerticalScrollIndicator={false}
+      stickySectionHeadersEnabled={false}
     />
   );
 });
@@ -228,21 +229,14 @@ const GroupScreen = React.memo(function GroupScreen() {
     <Screen style={{ paddingBottom: 0 }}>
       <TopBar
         title={group.name}
-        rightActions={[
-          <Pressable
-            testID="share-group"
+        rightActions={
+          <TopBarAction
             key="share"
-            style={{
-              backgroundColor: "white",
-              padding: 8,
-              borderRadius: 24,
-            }}
+            label="Partager"
+            iconName="share-outline"
             onPress={shareGroup}
-            android_ripple={{ color: "hsl(0 0% 90%)" }}
-          >
-            <Ionicons name="share-outline" size={24} color="hsl(0 0% 40%)" />
-          </Pressable>,
-        ]}
+          />
+        }
       />
 
       <BalanceDisplay group={group} />

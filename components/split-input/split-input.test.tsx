@@ -47,8 +47,7 @@ describe("SplitInput", () => {
         />,
       );
 
-      const picker = screen.getByTestId("picker");
-      fireEvent(picker, "onValueChange", "percentage");
+      fireEvent.press(screen.getByRole("button", { name: "Pourcentage" }));
 
       expect(mockOnTypeChange).toHaveBeenCalledWith("percentage");
     });

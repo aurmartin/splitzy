@@ -33,12 +33,15 @@ exports[`renders as Pressable when onPress provided 1`] = `
   onStartShouldSetResponder={[Function]}
   style={
     [
-      {
-        "backgroundColor": "white",
-        "borderRadius": 8,
-        "overflow": "hidden",
-        "padding": 14,
-      },
+      [
+        {
+          "backgroundColor": "white",
+          "borderRadius": 8,
+          "overflow": "hidden",
+          "padding": 14,
+        },
+        undefined,
+      ],
       {
         "overflow": "hidden",
       },
@@ -54,11 +57,14 @@ exports[`renders as Pressable when onPress provided 1`] = `
 exports[`renders as View when no onPress provided 1`] = `
 <View
   style={
-    {
-      "backgroundColor": "white",
-      "borderRadius": 8,
-      "padding": 14,
-    }
+    [
+      {
+        "backgroundColor": "white",
+        "borderRadius": 8,
+        "padding": 14,
+      },
+      undefined,
+    ]
   }
 >
   <Text>
@@ -70,11 +76,14 @@ exports[`renders as View when no onPress provided 1`] = `
 exports[`renders correctly with children 1`] = `
 <View
   style={
-    {
-      "backgroundColor": "white",
-      "borderRadius": 8,
-      "padding": 14,
-    }
+    [
+      {
+        "backgroundColor": "white",
+        "borderRadius": 8,
+        "padding": 14,
+      },
+      undefined,
+    ]
   }
 >
   <Text>

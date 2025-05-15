@@ -8,99 +8,225 @@ exports[`SplitInput SplitInput component renders correctly 1`] = `
     }
   }
 >
-  <View>
-    <Text
-      style={
+  <Text
+    style={
+      [
+        {
+          "fontSize": 16,
+          "fontWeight": "500",
+          "lineHeight": 24,
+        },
         [
           {
-            "fontSize": 16,
-            "fontWeight": "400",
-            "lineHeight": 24,
+            "marginBottom": 2,
+            "textTransform": "uppercase",
           },
-          {
-            "marginBottom": 4,
-          },
-        ]
-      }
-    >
-      Partager la dépense
-    </Text>
+          undefined,
+        ],
+      ]
+    }
+  >
+    Partager la dépense
+  </Text>
+  <View
+    style={
+      [
+        {
+          "flexDirection": "row",
+          "gap": 8,
+        },
+        {
+          "justifyContent": "center",
+        },
+      ]
+    }
+  >
     <View
+      accessibilityLabel="Également"
+      accessibilityRole="button"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
         {
-          "backgroundColor": "white",
-          "borderColor": "hsl(0 0% 70%)",
-          "borderRadius": 4,
-          "borderStyle": "solid",
-          "borderWidth": 1,
+          "backgroundColor": "hsl(200, 50%, 80%)",
+          "borderRadius": 16,
+          "padding": 8,
         }
       }
     >
-      <View
+      <Text
         style={
-          {
-            "marginBottom": -5,
-            "marginTop": -5,
-            "padding": 0,
-          }
+          [
+            {
+              "fontSize": 14,
+              "fontWeight": "400",
+              "lineHeight": 20,
+            },
+          ]
         }
       >
-        <RNCPicker
-          accessibilityLabel="Partager la dépense"
-          items={
-            [
-              {
-                "label": "Également",
-                "testID": undefined,
-                "textColor": undefined,
-                "value": "equal",
-              },
-              {
-                "label": "En pourcentage",
-                "testID": undefined,
-                "textColor": undefined,
-                "value": "percentage",
-              },
-              {
-                "label": "En montant",
-                "testID": undefined,
-                "textColor": undefined,
-                "value": "amount",
-              },
-            ]
-          }
-          numberOfLines={1}
-          onChange={[Function]}
-          selectedIndex={0}
-          style={
-            [
-              {
-                "height": 216,
-              },
-              {
-                "color": "black",
-              },
-            ]
-          }
-          testID="picker"
-        />
-      </View>
+        Également
+      </Text>
+    </View>
+    <View
+      accessibilityLabel="Pourcentage"
+      accessibilityRole="button"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "backgroundColor": "hsl(0, 0%, 90%)",
+          "borderRadius": 16,
+          "padding": 8,
+        }
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "fontSize": 14,
+              "fontWeight": "400",
+              "lineHeight": 20,
+            },
+          ]
+        }
+      >
+        Pourcentage
+      </Text>
+    </View>
+    <View
+      accessibilityLabel="Montant"
+      accessibilityRole="button"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "backgroundColor": "hsl(0, 0%, 90%)",
+          "borderRadius": 16,
+          "padding": 8,
+        }
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "fontSize": 14,
+              "fontWeight": "400",
+              "lineHeight": 20,
+            },
+          ]
+        }
+      >
+        Montant
+      </Text>
     </View>
   </View>
   <View
     style={
-      {
-        "flex": 1,
-        "gap": 8,
-      }
+      [
+        {
+          "gap": 1,
+        },
+        undefined,
+      ]
     }
   >
     <View
       style={
         {
-          "display": "flex",
+          "alignItems": "center",
+          "backgroundColor": "white",
+          "borderBottomLeftRadius": 0,
+          "borderBottomRightRadius": 0,
+          "borderTopLeftRadius": 8,
+          "borderTopRightRadius": 8,
           "flexDirection": "row",
+          "height": 55,
           "justifyContent": "space-between",
+          "paddingHorizontal": 16,
         }
       }
     >
@@ -135,9 +261,16 @@ exports[`SplitInput SplitInput component renders correctly 1`] = `
     <View
       style={
         {
-          "display": "flex",
+          "alignItems": "center",
+          "backgroundColor": "white",
+          "borderBottomLeftRadius": 8,
+          "borderBottomRightRadius": 8,
+          "borderTopLeftRadius": 0,
+          "borderTopRightRadius": 0,
           "flexDirection": "row",
+          "height": 55,
           "justifyContent": "space-between",
+          "paddingHorizontal": 16,
         }
       }
     >

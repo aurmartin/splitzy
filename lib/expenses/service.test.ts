@@ -11,7 +11,7 @@ import { ExpensesRepository } from "@/lib/expenses/repository";
 import { System } from "@/lib/system";
 import { system } from "@/lib/test-setup";
 import { generateId } from "@/lib/utils";
-import { ValidationError } from "@/lib/validation-error";
+import { DisplayableError } from "@/lib/displayable-error";
 import dinero, { Currency } from "dinero.js";
 import { eq } from "drizzle-orm";
 
@@ -150,7 +150,7 @@ describe("insertExpense", () => {
 
     await expect(
       ExpenseService.insertExpense(system, invalidTitleParams),
-    ).rejects.toThrow(ValidationError);
+    ).rejects.toThrow(DisplayableError);
     await expect(
       ExpenseService.insertExpense(system, invalidTitleParams),
     ).rejects.toThrow(/titre/);
@@ -167,7 +167,7 @@ describe("insertExpense", () => {
 
     await expect(
       ExpenseService.insertExpense(system, invalidPayerParams),
-    ).rejects.toThrow(ValidationError);
+    ).rejects.toThrow(DisplayableError);
     await expect(
       ExpenseService.insertExpense(system, invalidPayerParams),
     ).rejects.toThrow(/membre/);

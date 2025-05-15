@@ -6,10 +6,11 @@ import { useRouter } from "expo-router";
 
 interface TopBarProps {
   title?: string;
-  rightActions?: React.ReactNode[];
+  rightActions?: React.ReactNode[] | React.ReactNode;
 }
 
-export const TopBar = ({ title, rightActions }: TopBarProps) => {
+export const TopBar = (props: TopBarProps) => {
+  const { title, rightActions } = props;
   const router = useRouter();
 
   return (
@@ -29,17 +30,17 @@ export const TopBar = ({ title, rightActions }: TopBarProps) => {
         <Ionicons name="arrow-back-outline" size={24} color="hsl(0 0% 40%)" />
       </Pressable>
 
-      {title && (
-        <Text type="display" style={{ marginLeft: 16 }}>
+      {title ? (
+        <Text type="title" style={{ marginLeft: 16 }}>
           {title}
         </Text>
-      )}
+      ) : null}
 
-      {rightActions && (
+      {rightActions ? (
         <View style={{ marginLeft: "auto", flexDirection: "row", gap: 8 }}>
           {rightActions}
         </View>
-      )}
+      ) : null}
     </View>
   );
 };

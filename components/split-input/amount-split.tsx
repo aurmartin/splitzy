@@ -1,12 +1,11 @@
 import { DineroInput } from "@/components/dinero-input";
-import { SplitContainer } from "@/components/split-input/split-container";
-import { Text } from "@/components/text";
 import { type AmountSplit } from "@/lib/expenses";
 import { MaterialIcons } from "@expo/vector-icons";
 import dinero, { type Dinero } from "dinero.js";
 import { produce } from "immer";
 import React from "react";
-import { Pressable, View } from "react-native";
+import { Pressable } from "react-native";
+import { ListGroup } from "../list-group";
 
 interface AmountSplitInputProps {
   value: AmountSplit;
@@ -45,53 +44,28 @@ const AmountSplitInput = (props: AmountSplitInputProps) => {
   };
 
   return (
-    <SplitContainer>
-      {value.members.map((member) => (
-        <View
+    <ListGroup>
+      {value.members.map((member, index) => (
+        <DineroInput
           key={member}
-          style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
-        >
-          <Text style={{ flex: 1 }}>{member}</Text>
-
-          <View style={{ position: "relative" }}>
-            <DineroInput
-              testID={`amount-input-${member}`}
-              style={{
-                minWidth: 100,
-                textAlign: "right",
-              }}
-              value={valueForMember(member)}
-              onChange={(value) => handleInputChange(member, value)}
-            />
-
-            {value.amounts[member] && (
-              <View
-                style={{
-                  position: "absolute",
-                  left: 10,
-                  top: 0,
-                  bottom: 0,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
+          label={member}
+          testID={`amount-input-${member}`}
+          right={
+            value.amounts[member] ? (
+              <Pressable
+                onPress={() => handleResetMember(member)}
+                testID={`reset-amount-${member}`}
               >
-                <Pressable
-                  testID={`reset-amount-${member}`}
-                  onPress={() => handleResetMember(member)}
-                  style={{
-                    borderRadius: 24,
-                    padding: 2,
-                    backgroundColor: "hsl(0 0% 90%)",
-                  }}
-                >
-                  <MaterialIcons name="close" size={18} color="black" />
-                </Pressable>
-              </View>
-            )}
-          </View>
-        </View>
+                <MaterialIcons name="close" size={18} color="black" />
+              </Pressable>
+            ) : null
+          }
+          style={{ padding: 0 }}
+          value={valueForMember(member)}
+          onChange={(value) => handleInputChange(member, value)}
+        />
       ))}
-    </SplitContainer>
+    </ListGroup>
   );
 };
 

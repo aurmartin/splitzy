@@ -2,11 +2,10 @@ import { ExpenseForm, type ExpenseFormFields } from "@/components/expense-form";
 import { Screen } from "@/components/screen";
 import { useSnackBar } from "@/components/snack-bar";
 import { useSystem } from "@/components/system-provider";
-import { TopBar } from "@/components/top-bar";
 import { getMajorUnitAmount } from "@/lib/currency";
 import { ExpenseService } from "@/lib/expenses";
 import { Group, useGroup } from "@/lib/groups";
-import { ValidationError } from "@/lib/validation-error";
+import { DisplayableError } from "@/lib/displayable-error";
 import { trackEvent } from "@aptabase/react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
@@ -16,8 +15,6 @@ const NewExpenseForm = (props: { group: Group }) => {
 
   const snackBar = useSnackBar();
   const system = useSystem();
-
-  const [validationErrors, setValidationErrors] = React.useState({});
 
   const onSubmit = async (fields: ExpenseFormFields) => {
     try {
@@ -43,21 +40,15 @@ const NewExpenseForm = (props: { group: Group }) => {
 
       router.back();
     } catch (error) {
-      if (error instanceof ValidationError) {
-        setValidationErrors(error.errors);
+      if (error instanceof DisplayableError) {
+        snackBar.show(error.message, "error");
       } else {
         snackBar.show("Une erreur est survenue", "error");
       }
     }
   };
 
-  return (
-    <ExpenseForm
-      group={group}
-      onSubmit={onSubmit}
-      validationErrors={validationErrors}
-    />
-  );
+  return <ExpenseForm group={group} onSubmit={onSubmit} />;
 };
 
 export default function NewExpenseScreen() {
@@ -70,8 +61,6 @@ export default function NewExpenseScreen() {
 
   return (
     <Screen>
-      <TopBar title="Nouvelle dépense" />
-
       <NewExpenseForm group={group} />
     </Screen>
   );

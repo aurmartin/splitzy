@@ -46,10 +46,9 @@ describe("NewExpenseScreen", () => {
 
     await user.clear(screen.getByLabelText("Titre"));
     await user.type(screen.getByLabelText("Titre"), "Test expense");
-    await user.type(screen.getByLabelText(/Montant/), "100");
-    await user.press(screen.getByLabelText("Payé par"));
-    await user.press(screen.getByText("Alice"));
-    await user.press(screen.getByRole("button", { name: /Créer/ }));
+    await user.type(screen.getAllByLabelText(/Montant/)[0], "100");
+    await user.press(screen.getByRole("button", { name: /Alice/ }));
+    await user.press(screen.getByLabelText("Enregistrer"));
 
     await waitFor(async () => {
       const expenses = await system.db
@@ -69,7 +68,7 @@ describe("NewExpenseScreen", () => {
     renderRouter(routerContext, system, { initialUrl: newExpenseScreenUrl });
 
     await user.clear(screen.getByLabelText("Titre"));
-    await user.press(screen.getByRole("button", { name: /Créer/ }));
+    await user.press(screen.getByLabelText("Enregistrer"));
 
     await screen.findByText("Veuillez entrer un titre");
   });

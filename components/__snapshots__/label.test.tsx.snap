@@ -6,12 +6,16 @@ exports[`Label renders correctly 1`] = `
     [
       {
         "fontSize": 16,
-        "fontWeight": "400",
+        "fontWeight": "500",
         "lineHeight": 24,
       },
-      {
-        "marginBottom": 4,
-      },
+      [
+        {
+          "marginBottom": 2,
+          "textTransform": "uppercase",
+        },
+        undefined,
+      ],
     ]
   }
 >

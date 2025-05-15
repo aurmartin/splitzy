@@ -39,7 +39,7 @@ exports[`RedirectScreen should render snapshot 1`] = `
       style={
         [
           {
-            "backgroundColor": "hsl(200 15% 90%)",
+            "backgroundColor": "hsl(0 0% 94%)",
             "flex": 1,
             "padding": 8,
           },

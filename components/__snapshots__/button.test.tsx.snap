@@ -43,7 +43,7 @@ exports[`renders correctly 1`] = `
           "paddingHorizontal": 16,
         },
         {
-          "backgroundColor": "hsl(200 40% 50%)",
+          "backgroundColor": "white",
         },
         undefined,
       ],
@@ -62,7 +62,7 @@ exports[`renders correctly 1`] = `
           "lineHeight": 24,
         },
         {
-          "color": "white",
+          "color": "hsl(200 40% 50%)",
         },
       ]
     }
@@ -115,7 +115,7 @@ exports[`renders correctly with style 1`] = `
           "paddingHorizontal": 16,
         },
         {
-          "backgroundColor": "hsl(200 40% 50%)",
+          "backgroundColor": "white",
         },
         {
           "backgroundColor": "red",
@@ -136,7 +136,7 @@ exports[`renders correctly with style 1`] = `
           "lineHeight": 24,
         },
         {
-          "color": "white",
+          "color": "hsl(200 40% 50%)",
         },
       ]
     }
@@ -189,7 +189,7 @@ exports[`renders correctly with type 1`] = `
           "paddingHorizontal": 16,
         },
         {
-          "backgroundColor": "hsl(200 40% 50%)",
+          "backgroundColor": "white",
         },
         undefined,
       ],
@@ -208,7 +208,7 @@ exports[`renders correctly with type 1`] = `
           "lineHeight": 24,
         },
         {
-          "color": "white",
+          "color": "hsl(200 40% 50%)",
         },
       ]
     }
@@ -261,7 +261,7 @@ exports[`renders disabled state correctly 1`] = `
           "paddingHorizontal": 16,
         },
         {
-          "backgroundColor": "hsl(200 40% 50%)",
+          "backgroundColor": "white",
         },
         undefined,
       ],
@@ -280,7 +280,7 @@ exports[`renders disabled state correctly 1`] = `
           "lineHeight": 24,
         },
         {
-          "color": "white",
+          "color": "hsl(200 40% 50%)",
         },
       ]
     }

@@ -39,7 +39,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
       style={
         [
           {
-            "backgroundColor": "hsl(200 15% 90%)",
+            "backgroundColor": "hsl(0 0% 94%)",
             "flex": 1,
             "padding": 8,
           },
@@ -121,9 +121,9 @@ exports[`NewExpenseScreen should render correctly 1`] = `
           style={
             [
               {
-                "fontSize": 32,
+                "fontSize": 22,
                 "fontWeight": "400",
-                "lineHeight": 38,
+                "lineHeight": 28,
               },
               {
                 "marginLeft": 16,
@@ -131,8 +131,79 @@ exports[`NewExpenseScreen should render correctly 1`] = `
             ]
           }
         >
-          Nouvelle dépense
+          Créer une dépense
         </Text>
+        <View
+          style={
+            {
+              "flexDirection": "row",
+              "gap": 8,
+              "marginLeft": "auto",
+            }
+          }
+        >
+          <View
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              {
+                "backgroundColor": "white",
+                "borderRadius": 24,
+                "padding": 8,
+              }
+            }
+          >
+            <Text
+              accessibilityLabel="Enregistrer"
+              allowFontScaling={false}
+              selectable={false}
+              style={
+                [
+                  {
+                    "color": "black",
+                    "fontSize": 24,
+                  },
+                  undefined,
+                  {
+                    "fontFamily": "ionicons",
+                    "fontStyle": "normal",
+                    "fontWeight": "normal",
+                  },
+                  {},
+                ]
+              }
+            >
+              
+            </Text>
+          </View>
+        </View>
       </View>
       <RCTScrollView>
         <View>
@@ -186,7 +257,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                       "paddingHorizontal": 16,
                     },
                     {
-                      "backgroundColor": "hsl(200 40% 50%)",
+                      "backgroundColor": "transparent",
                     },
                     undefined,
                   ],
@@ -205,7 +276,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                       "lineHeight": 24,
                     },
                     {
-                      "color": "white",
+                      "color": "hsl(200 40% 50%)",
                     },
                   ]
                 }
@@ -213,88 +284,31 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                 Télécharger un reçu
               </Text>
             </View>
-            <View>
-              <Text
+            <View
+              style={
+                {
+                  "gap": 1,
+                }
+              }
+            >
+              <View
                 style={
                   [
                     {
-                      "fontSize": 16,
-                      "fontWeight": "400",
-                      "lineHeight": 24,
+                      "alignItems": "center",
+                      "backgroundColor": "#fff",
+                      "borderRadius": 8,
+                      "flexDirection": "row",
+                      "height": 55,
+                      "paddingHorizontal": 16,
                     },
                     {
-                      "marginBottom": 4,
+                      "borderBottomLeftRadius": 0,
+                      "borderBottomRightRadius": 0,
                     },
                   ]
                 }
               >
-                Titre
-              </Text>
-              <TextInput
-                accessibilityLabel="Titre"
-                label="Titre"
-                onChangeText={[Function]}
-                placeholder="Titre"
-                placeholderTextColor="#666"
-                style={
-                  [
-                    {
-                      "backgroundColor": "#fff",
-                      "borderColor": "hsl(0 0% 70%)",
-                      "borderRadius": 4,
-                      "borderWidth": 1,
-                      "height": 45,
-                      "padding": 10,
-                    },
-                    undefined,
-                  ]
-                }
-                value="Dépense"
-              />
-            </View>
-            <View>
-              <Text
-                style={
-                  [
-                    {
-                      "fontSize": 16,
-                      "fontWeight": "400",
-                      "lineHeight": 24,
-                    },
-                    {
-                      "marginBottom": 4,
-                    },
-                  ]
-                }
-              >
-                Montant (€)
-              </Text>
-              <TextInput
-                accessibilityLabel="Montant (€)"
-                keyboardType="numeric"
-                label="Montant (€)"
-                onChangeText={[Function]}
-                placeholder="0.00"
-                placeholderTextColor="#666"
-                style={
-                  [
-                    {
-                      "backgroundColor": "#fff",
-                      "borderColor": "hsl(0 0% 70%)",
-                      "borderRadius": 4,
-                      "borderWidth": 1,
-                      "height": 45,
-                      "padding": 10,
-                    },
-                    undefined,
-                  ]
-                }
-                testID="float-input"
-                value="0"
-              />
-            </View>
-            <View>
-              <View>
                 <Text
                   style={
                     [
@@ -303,68 +317,258 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                         "fontWeight": "400",
                         "lineHeight": 24,
                       },
-                      {
-                        "marginBottom": 4,
-                      },
                     ]
                   }
                 >
-                  Payé par
+                  Titre
                 </Text>
                 <View
                   style={
                     {
-                      "backgroundColor": "white",
-                      "borderColor": "hsl(0 0% 70%)",
-                      "borderRadius": 4,
-                      "borderStyle": "solid",
-                      "borderWidth": 1,
+                      "flex": 1,
+                      "justifyContent": "center",
                     }
                   }
                 >
-                  <View
+                  <TextInput
+                    accessibilityLabel="Titre"
+                    onChangeText={[Function]}
+                    placeholderTextColor="#888"
                     style={
                       {
-                        "marginBottom": -5,
-                        "marginTop": -5,
-                        "padding": 0,
+                        "flex": 1,
+                        "fontSize": 16,
+                        "paddingBottom": 0,
+                        "paddingTop": 0,
+                        "textAlign": "right",
                       }
                     }
+                    value=""
+                  />
+                </View>
+              </View>
+              <View
+                style={
+                  [
+                    {
+                      "alignItems": "center",
+                      "backgroundColor": "#fff",
+                      "borderRadius": 8,
+                      "flexDirection": "row",
+                      "height": 55,
+                      "paddingHorizontal": 16,
+                    },
+                    {
+                      "borderTopLeftRadius": 0,
+                      "borderTopRightRadius": 0,
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 16,
+                        "fontWeight": "400",
+                        "lineHeight": 24,
+                      },
+                    ]
+                  }
+                >
+                  Montant
+                </Text>
+                <View
+                  style={
+                    {
+                      "flex": 1,
+                      "justifyContent": "center",
+                    }
+                  }
+                >
+                  <TextInput
+                    accessibilityLabel="Montant"
+                    keyboardType="numeric"
+                    onChangeText={[Function]}
+                    placeholder="0.00"
+                    placeholderTextColor="#888"
+                    style={
+                      {
+                        "flex": 1,
+                        "fontSize": 16,
+                        "paddingBottom": 0,
+                        "paddingTop": 0,
+                        "textAlign": "right",
+                      }
+                    }
+                    testID="float-input"
+                    value="0"
+                  />
+                </View>
+                <View
+                  style={
+                    {
+                      "marginLeft": 2,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontSize": 16,
+                          "fontWeight": "400",
+                          "lineHeight": 24,
+                        },
+                      ]
+                    }
                   >
-                    <RNCPicker
-                      accessibilityLabel="Payé par"
-                      items={
-                        [
-                          {
-                            "label": "Alice",
-                            "testID": undefined,
-                            "textColor": undefined,
-                            "value": "Alice",
-                          },
-                          {
-                            "label": "Bob",
-                            "testID": undefined,
-                            "textColor": undefined,
-                            "value": "Bob",
-                          },
-                        ]
-                      }
-                      numberOfLines={1}
-                      onChange={[Function]}
-                      selectedIndex={0}
-                      style={
-                        [
-                          {
-                            "height": 216,
-                          },
-                          {
-                            "color": "black",
-                          },
-                        ]
-                      }
-                      testID="picker"
-                    />
-                  </View>
+                    USD
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                style={
+                  [
+                    {
+                      "fontSize": 16,
+                      "fontWeight": "500",
+                      "lineHeight": 24,
+                    },
+                    [
+                      {
+                        "marginBottom": 2,
+                        "textTransform": "uppercase",
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Payé par
+              </Text>
+              <View
+                style={
+                  [
+                    {
+                      "flexDirection": "row",
+                      "gap": 8,
+                    },
+                    {
+                      "justifyContent": "center",
+                    },
+                  ]
+                }
+              >
+                <View
+                  accessibilityLabel="Alice"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "busy": undefined,
+                      "checked": undefined,
+                      "disabled": undefined,
+                      "expanded": undefined,
+                      "selected": undefined,
+                    }
+                  }
+                  accessibilityValue={
+                    {
+                      "max": undefined,
+                      "min": undefined,
+                      "now": undefined,
+                      "text": undefined,
+                    }
+                  }
+                  accessible={true}
+                  collapsable={false}
+                  focusable={true}
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    {
+                      "backgroundColor": "hsl(200, 50%, 80%)",
+                      "borderRadius": 16,
+                      "padding": 8,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontSize": 14,
+                          "fontWeight": "400",
+                          "lineHeight": 20,
+                        },
+                      ]
+                    }
+                  >
+                    Alice
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="Bob"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "busy": undefined,
+                      "checked": undefined,
+                      "disabled": undefined,
+                      "expanded": undefined,
+                      "selected": undefined,
+                    }
+                  }
+                  accessibilityValue={
+                    {
+                      "max": undefined,
+                      "min": undefined,
+                      "now": undefined,
+                      "text": undefined,
+                    }
+                  }
+                  accessible={true}
+                  collapsable={false}
+                  focusable={true}
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    {
+                      "backgroundColor": "hsl(0, 0%, 90%)",
+                      "borderRadius": 16,
+                      "padding": 8,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontSize": 14,
+                          "fontWeight": "400",
+                          "lineHeight": 20,
+                        },
+                      ]
+                    }
+                  >
+                    Bob
+                  </Text>
                 </View>
               </View>
             </View>
@@ -376,99 +580,225 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                   }
                 }
               >
-                <View>
-                  <Text
-                    style={
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 16,
+                        "fontWeight": "500",
+                        "lineHeight": 24,
+                      },
                       [
                         {
-                          "fontSize": 16,
-                          "fontWeight": "400",
-                          "lineHeight": 24,
+                          "marginBottom": 2,
+                          "textTransform": "uppercase",
                         },
-                        {
-                          "marginBottom": 4,
-                        },
-                      ]
-                    }
-                  >
-                    Partager la dépense
-                  </Text>
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  Partager la dépense
+                </Text>
+                <View
+                  style={
+                    [
+                      {
+                        "flexDirection": "row",
+                        "gap": 8,
+                      },
+                      {
+                        "justifyContent": "center",
+                      },
+                    ]
+                  }
+                >
                   <View
+                    accessibilityLabel="Également"
+                    accessibilityRole="button"
+                    accessibilityState={
+                      {
+                        "busy": undefined,
+                        "checked": undefined,
+                        "disabled": undefined,
+                        "expanded": undefined,
+                        "selected": undefined,
+                      }
+                    }
+                    accessibilityValue={
+                      {
+                        "max": undefined,
+                        "min": undefined,
+                        "now": undefined,
+                        "text": undefined,
+                      }
+                    }
+                    accessible={true}
+                    collapsable={false}
+                    focusable={true}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onFocus={[Function]}
+                    onResponderGrant={[Function]}
+                    onResponderMove={[Function]}
+                    onResponderRelease={[Function]}
+                    onResponderTerminate={[Function]}
+                    onResponderTerminationRequest={[Function]}
+                    onStartShouldSetResponder={[Function]}
                     style={
                       {
-                        "backgroundColor": "white",
-                        "borderColor": "hsl(0 0% 70%)",
-                        "borderRadius": 4,
-                        "borderStyle": "solid",
-                        "borderWidth": 1,
+                        "backgroundColor": "hsl(200, 50%, 80%)",
+                        "borderRadius": 16,
+                        "padding": 8,
                       }
                     }
                   >
-                    <View
+                    <Text
                       style={
-                        {
-                          "marginBottom": -5,
-                          "marginTop": -5,
-                          "padding": 0,
-                        }
+                        [
+                          {
+                            "fontSize": 14,
+                            "fontWeight": "400",
+                            "lineHeight": 20,
+                          },
+                        ]
                       }
                     >
-                      <RNCPicker
-                        accessibilityLabel="Partager la dépense"
-                        items={
-                          [
-                            {
-                              "label": "Également",
-                              "testID": undefined,
-                              "textColor": undefined,
-                              "value": "equal",
-                            },
-                            {
-                              "label": "En pourcentage",
-                              "testID": undefined,
-                              "textColor": undefined,
-                              "value": "percentage",
-                            },
-                            {
-                              "label": "En montant",
-                              "testID": undefined,
-                              "textColor": undefined,
-                              "value": "amount",
-                            },
-                          ]
-                        }
-                        numberOfLines={1}
-                        onChange={[Function]}
-                        selectedIndex={0}
-                        style={
-                          [
-                            {
-                              "height": 216,
-                            },
-                            {
-                              "color": "black",
-                            },
-                          ]
-                        }
-                        testID="picker"
-                      />
-                    </View>
+                      Également
+                    </Text>
+                  </View>
+                  <View
+                    accessibilityLabel="Pourcentage"
+                    accessibilityRole="button"
+                    accessibilityState={
+                      {
+                        "busy": undefined,
+                        "checked": undefined,
+                        "disabled": undefined,
+                        "expanded": undefined,
+                        "selected": undefined,
+                      }
+                    }
+                    accessibilityValue={
+                      {
+                        "max": undefined,
+                        "min": undefined,
+                        "now": undefined,
+                        "text": undefined,
+                      }
+                    }
+                    accessible={true}
+                    collapsable={false}
+                    focusable={true}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onFocus={[Function]}
+                    onResponderGrant={[Function]}
+                    onResponderMove={[Function]}
+                    onResponderRelease={[Function]}
+                    onResponderTerminate={[Function]}
+                    onResponderTerminationRequest={[Function]}
+                    onStartShouldSetResponder={[Function]}
+                    style={
+                      {
+                        "backgroundColor": "hsl(0, 0%, 90%)",
+                        "borderRadius": 16,
+                        "padding": 8,
+                      }
+                    }
+                  >
+                    <Text
+                      style={
+                        [
+                          {
+                            "fontSize": 14,
+                            "fontWeight": "400",
+                            "lineHeight": 20,
+                          },
+                        ]
+                      }
+                    >
+                      Pourcentage
+                    </Text>
+                  </View>
+                  <View
+                    accessibilityLabel="Montant"
+                    accessibilityRole="button"
+                    accessibilityState={
+                      {
+                        "busy": undefined,
+                        "checked": undefined,
+                        "disabled": undefined,
+                        "expanded": undefined,
+                        "selected": undefined,
+                      }
+                    }
+                    accessibilityValue={
+                      {
+                        "max": undefined,
+                        "min": undefined,
+                        "now": undefined,
+                        "text": undefined,
+                      }
+                    }
+                    accessible={true}
+                    collapsable={false}
+                    focusable={true}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onFocus={[Function]}
+                    onResponderGrant={[Function]}
+                    onResponderMove={[Function]}
+                    onResponderRelease={[Function]}
+                    onResponderTerminate={[Function]}
+                    onResponderTerminationRequest={[Function]}
+                    onStartShouldSetResponder={[Function]}
+                    style={
+                      {
+                        "backgroundColor": "hsl(0, 0%, 90%)",
+                        "borderRadius": 16,
+                        "padding": 8,
+                      }
+                    }
+                  >
+                    <Text
+                      style={
+                        [
+                          {
+                            "fontSize": 14,
+                            "fontWeight": "400",
+                            "lineHeight": 20,
+                          },
+                        ]
+                      }
+                    >
+                      Montant
+                    </Text>
                   </View>
                 </View>
                 <View
                   style={
-                    {
-                      "flex": 1,
-                      "gap": 8,
-                    }
+                    [
+                      {
+                        "gap": 1,
+                      },
+                      undefined,
+                    ]
                   }
                 >
                   <View
                     style={
                       {
-                        "display": "flex",
+                        "alignItems": "center",
+                        "backgroundColor": "white",
+                        "borderBottomLeftRadius": 0,
+                        "borderBottomRightRadius": 0,
+                        "borderTopLeftRadius": 8,
+                        "borderTopRightRadius": 8,
                         "flexDirection": "row",
+                        "height": 55,
                         "justifyContent": "space-between",
+                        "paddingHorizontal": 16,
                       }
                     }
                   >
@@ -503,9 +833,16 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                   <View
                     style={
                       {
-                        "display": "flex",
+                        "alignItems": "center",
+                        "backgroundColor": "white",
+                        "borderBottomLeftRadius": 8,
+                        "borderBottomRightRadius": 8,
+                        "borderTopLeftRadius": 0,
+                        "borderTopRightRadius": 0,
                         "flexDirection": "row",
+                        "height": 55,
                         "justifyContent": "space-between",
+                        "paddingHorizontal": 16,
                       }
                     }
                   >
@@ -539,75 +876,6 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                   </View>
                 </View>
               </View>
-            </View>
-            <View
-              accessibilityRole="button"
-              accessibilityState={
-                {
-                  "busy": undefined,
-                  "checked": undefined,
-                  "disabled": undefined,
-                  "expanded": undefined,
-                  "selected": undefined,
-                }
-              }
-              accessibilityValue={
-                {
-                  "max": undefined,
-                  "min": undefined,
-                  "now": undefined,
-                  "text": undefined,
-                }
-              }
-              accessible={true}
-              collapsable={false}
-              focusable={true}
-              onBlur={[Function]}
-              onClick={[Function]}
-              onFocus={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              style={
-                [
-                  [
-                    {
-                      "alignItems": "center",
-                      "borderRadius": 40,
-                      "height": 40,
-                      "justifyContent": "center",
-                      "paddingHorizontal": 16,
-                    },
-                    {
-                      "backgroundColor": "hsl(200 40% 50%)",
-                    },
-                    undefined,
-                  ],
-                  {
-                    "overflow": "hidden",
-                  },
-                ]
-              }
-            >
-              <Text
-                style={
-                  [
-                    {
-                      "fontSize": 16,
-                      "fontWeight": "400",
-                      "lineHeight": 24,
-                    },
-                    {
-                      "color": "white",
-                    },
-                  ]
-                }
-              >
-                Créer la dépense
-              </Text>
             </View>
           </View>
         </View>

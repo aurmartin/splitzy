@@ -1,9 +1,11 @@
-import { Pressable } from "@/components/pressable";
+import Label from "@/components/label";
+import { ListGroup } from "@/components/list-group";
 import { Screen } from "@/components/screen";
 import { useSnackBar } from "@/components/snack-bar";
 import { useSystem } from "@/components/system-provider";
 import { Text } from "@/components/text";
 import { TopBar } from "@/components/top-bar";
+import { TopBarAction, TopBarDeleteAction } from "@/components/top-bar-action";
 import {
   ExpenseService,
   useAmounts,
@@ -11,7 +13,6 @@ import {
   type Expense,
 } from "@/lib/expenses";
 import { getLocale } from "@/lib/locale";
-import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScrollView, View } from "react-native";
 
@@ -45,91 +46,50 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
 
   return (
     <Screen>
-      <ScrollView>
-        <TopBar
-          rightActions={[
-            <Pressable
-              onPress={handleEdit}
-              key="edit"
-              style={{
-                backgroundColor: "white",
-                padding: 8,
-                borderRadius: 24,
-              }}
-              android_ripple={{ color: "hsl(0 0% 90%)" }}
-            >
-              <Ionicons name="pencil" size={24} color="hsl(0 0% 40%)" />
-            </Pressable>,
+      <TopBar
+        rightActions={
+          <>
+            <TopBarDeleteAction onPress={handleDelete} />
+            <TopBarAction iconName="pencil" onPress={handleEdit} />
+          </>
+        }
+      />
 
-            <Pressable
-              onPress={handleDelete}
-              key="delete"
-              style={{
-                backgroundColor: "hsl(348, 45%, 85%)",
-                padding: 8,
-                borderRadius: 24,
-              }}
-              android_ripple={{ color: "hsl(348, 40%, 80%)" }}
-            >
-              <Ionicons name="trash" size={24} color="hsl(348, 40%, 50%)" />
-            </Pressable>,
-          ]}
-        />
+      <Text type="headlineMedium" style={{ marginBottom: 16 }}>
+        {expense.title}{" "}
+        {expense.splitExpense.total.setLocale(getLocale()).toFormat()}
+      </Text>
 
-        <Text type="headline" style={{ marginBottom: 16 }}>
-          {expense.title}{" "}
-          {expense.splitExpense.total.setLocale(getLocale()).toFormat()}
-        </Text>
+      <Text style={{ marginBottom: 16 }}>
+        Payé par {expense.payerName} le{" "}
+        {new Date(expense.createdAt).toLocaleDateString()}
+      </Text>
 
-        <Text style={{ marginBottom: 16 }}>
-          Payé par {expense.payerName} le{" "}
-          {new Date(expense.createdAt).toLocaleDateString()}
-        </Text>
-
-        {Object.entries(amounts).map(([name, amount]) => (
-          <View
-            key={name}
-            style={{
-              marginBottom: 8,
-              backgroundColor: "white",
-              padding: 14,
-              elevation: 1,
-              borderRadius: 8,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Text key={name}>{name}</Text>
-            <Text>{amount.setLocale(getLocale()).toFormat()}</Text>
-          </View>
-        ))}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Label>Répartition</Label>
+        <ListGroup style={{ marginBottom: 16 }}>
+          {Object.entries(amounts).map(([name, amount]) => (
+            <View key={name} style={{ justifyContent: "space-between" }}>
+              <Text key={name}>{name}</Text>
+              <Text>{amount.setLocale(getLocale()).toFormat()}</Text>
+            </View>
+          ))}
+        </ListGroup>
 
         {expense.receipt && (
-          <View>
-            <Text style={{ marginBottom: 8, marginTop: 8 }}>Receipt</Text>
-
-            <View
-              style={{
-                flex: 1,
-                gap: 16,
-                backgroundColor: "white",
-                padding: 16,
-                elevation: 1,
-                borderRadius: 8,
-              }}
-            >
+          <>
+            <Label>Ticket de caisse</Label>
+            <ListGroup>
               {expense.receipt.items.map((item) => (
-                <View
-                  key={item.description}
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <View>
-                    <Text>{item.humanReadableDescription}</Text>
+                <View key={item.description}>
+                  <View style={{ gap: 4, flex: 1, marginRight: 16 }}>
+                    <Text
+                      style={{ flexShrink: 1 }}
+                      numberOfLines={1}
+                      ellipsizeMode="middle"
+                    >
+                      {item.humanReadableDescription}
+                    </Text>
                     <Text
                       type="bodyMedium"
                       style={{ color: "hsl(0, 0%, 40%)" }}
@@ -137,11 +97,12 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
                       {item.description}
                     </Text>
                   </View>
+
                   <Text>{item.price.setLocale(getLocale()).toFormat()}</Text>
                 </View>
               ))}
-            </View>
-          </View>
+            </ListGroup>
+          </>
         )}
       </ScrollView>
     </Screen>

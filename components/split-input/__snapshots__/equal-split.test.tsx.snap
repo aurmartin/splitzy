@@ -3,18 +3,27 @@
 exports[`EqualSplit EqualSplitInput renders correctly 1`] = `
 <View
   style={
-    {
-      "flex": 1,
-      "gap": 8,
-    }
+    [
+      {
+        "gap": 1,
+      },
+      undefined,
+    ]
   }
 >
   <View
     style={
       {
-        "display": "flex",
+        "alignItems": "center",
+        "backgroundColor": "white",
+        "borderBottomLeftRadius": 0,
+        "borderBottomRightRadius": 0,
+        "borderTopLeftRadius": 8,
+        "borderTopRightRadius": 8,
         "flexDirection": "row",
+        "height": 55,
         "justifyContent": "space-between",
+        "paddingHorizontal": 16,
       }
     }
   >
@@ -49,9 +58,16 @@ exports[`EqualSplit EqualSplitInput renders correctly 1`] = `
   <View
     style={
       {
-        "display": "flex",
+        "alignItems": "center",
+        "backgroundColor": "white",
+        "borderBottomLeftRadius": 8,
+        "borderBottomRightRadius": 8,
+        "borderTopLeftRadius": 0,
+        "borderTopRightRadius": 0,
         "flexDirection": "row",
+        "height": 55,
         "justifyContent": "space-between",
+        "paddingHorizontal": 16,
       }
     }
   >

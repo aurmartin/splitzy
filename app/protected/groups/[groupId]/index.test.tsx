@@ -57,7 +57,7 @@ describe("GroupScreen", () => {
   it("should share the group", async () => {
     const user = userEvent.setup();
     renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
-    await user.press(screen.getByTestId("share-group"));
+    await user.press(screen.getByLabelText("Partager"));
     expect(share).toHaveBeenCalledTimes(1);
   });
 

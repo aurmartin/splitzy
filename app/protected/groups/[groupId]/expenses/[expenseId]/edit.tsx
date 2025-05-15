@@ -3,21 +3,21 @@ import LoadingScreen from "@/components/loading-screen";
 import { Screen } from "@/components/screen";
 import { useSnackBar } from "@/components/snack-bar";
 import { useSystem } from "@/components/system-provider";
-import { TopBar } from "@/components/top-bar";
+import { DisplayableError } from "@/lib/displayable-error";
 import { type Expense, ExpenseService, useExpense } from "@/lib/expenses";
 import { Group, useGroup } from "@/lib/groups";
-import { ValidationError } from "@/lib/validation-error";
-import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { Pressable } from "react-native";
 
-const EditExpenseForm = (props: { group: Group; expense: Expense }) => {
-  const { group, expense } = props;
+const EditExpenseForm = (props: {
+  group: Group;
+  expense: Expense;
+  onDelete?: () => void;
+}) => {
+  const { group, expense, onDelete } = props;
 
   const snackBar = useSnackBar();
   const system = useSystem();
-  const [validationErrors, setValidationErrors] = React.useState({});
 
   const onSubmit = async (fields: ExpenseFormFields) => {
     try {
@@ -32,8 +32,9 @@ const EditExpenseForm = (props: { group: Group; expense: Expense }) => {
 
       router.back();
     } catch (error) {
-      if (error instanceof ValidationError) {
-        setValidationErrors(error.errors);
+      console.error(error);
+      if (error instanceof DisplayableError) {
+        snackBar.show(error.message, "error");
       } else {
         snackBar.show("Une erreur est survenue", "error");
       }
@@ -45,7 +46,7 @@ const EditExpenseForm = (props: { group: Group; expense: Expense }) => {
       group={group}
       expense={expense}
       onSubmit={onSubmit}
-      validationErrors={validationErrors}
+      onDelete={onDelete}
     />
   );
 };
@@ -74,25 +75,11 @@ export default function EditExpenseScreen() {
 
   return (
     <Screen>
-      <TopBar
-        title="Modifier la dépense"
-        rightActions={[
-          <Pressable
-            onPress={handleDelete}
-            key="delete"
-            style={{
-              backgroundColor: "hsl(348, 45%, 85%)",
-              padding: 8,
-              borderRadius: 24,
-            }}
-            android_ripple={{ color: "hsl(348, 40%, 80%)" }}
-          >
-            <Ionicons name="trash" size={24} color="hsl(348, 40%, 50%)" />
-          </Pressable>,
-        ]}
+      <EditExpenseForm
+        group={group}
+        expense={expense}
+        onDelete={handleDelete}
       />
-
-      <EditExpenseForm group={group} expense={expense} />
     </Screen>
   );
 }

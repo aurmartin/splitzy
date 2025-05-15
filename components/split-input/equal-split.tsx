@@ -1,5 +1,5 @@
+import { ListGroup } from "@/components/list-group";
 import { convertSplit } from "@/components/split-input/convert";
-import { SplitContainer } from "@/components/split-input/split-container";
 import { Text } from "@/components/text";
 import { type EqualSplit } from "@/lib/expenses";
 import { getLocale } from "@/lib/locale";
@@ -13,21 +13,14 @@ const EqualSplitInput = (props: { value: EqualSplit }) => {
   const amountSplit = convertSplit(value);
 
   return (
-    <SplitContainer>
+    <ListGroup>
       {Object.entries(amountSplit.amounts).map(([member, amount]) => (
-        <View
-          key={member}
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
+        <View key={member} style={{ justifyContent: "space-between" }}>
           <Text numberOfLines={1}>{member}</Text>
           <Text>{amount.setLocale(getLocale()).toFormat()}</Text>
         </View>
       ))}
-    </SplitContainer>
+    </ListGroup>
   );
 };
 
@@ -39,4 +32,4 @@ const createEqualSplit = (total: Dinero, members: string[]): EqualSplit => {
   };
 };
 
-export { EqualSplitInput, createEqualSplit };
+export { createEqualSplit, EqualSplitInput };

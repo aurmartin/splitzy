@@ -1,10 +1,9 @@
 import { FloatInput } from "@/components/float-input";
-import { SplitContainer } from "@/components/split-input/split-container";
 import { Text } from "@/components/text";
 import { type PercentageSplit } from "@/lib/expenses";
 import { type Dinero } from "dinero.js";
 import React from "react";
-import { View } from "react-native";
+import { ListGroup } from "../list-group";
 
 const PercentageSplitInput = (props: {
   value: PercentageSplit;
@@ -23,22 +22,18 @@ const PercentageSplitInput = (props: {
   };
 
   return (
-    <SplitContainer>
+    <ListGroup>
       {Object.entries(value.ratios).map(([member, ratio]) => (
-        <View
+        <FloatInput
           key={member}
-          style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
-        >
-          <Text style={{ flex: 1 }}>{member}</Text>
-          <FloatInput
-            style={{ minWidth: 50 }}
-            value={ratio}
-            onChange={(value) => handleInputChange(member, value)}
-          />
-          <Text>%</Text>
-        </View>
+          label={member}
+          right={<Text>%</Text>}
+          style={{ minWidth: 50, padding: 0 }}
+          value={ratio}
+          onChange={(value) => handleInputChange(member, value)}
+        />
       ))}
-    </SplitContainer>
+    </ListGroup>
   );
 };
 
@@ -67,4 +62,4 @@ const createPercentageSplit = (
   };
 };
 
-export { PercentageSplitInput, createPercentageSplit };
+export { createPercentageSplit, PercentageSplitInput };

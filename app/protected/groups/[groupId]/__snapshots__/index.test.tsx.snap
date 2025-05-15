@@ -39,7 +39,7 @@ exports[`GroupScreen should render correctly 1`] = `
       style={
         [
           {
-            "backgroundColor": "hsl(200 15% 90%)",
+            "backgroundColor": "hsl(0 0% 94%)",
             "flex": 1,
             "padding": 8,
           },
@@ -123,9 +123,9 @@ exports[`GroupScreen should render correctly 1`] = `
           style={
             [
               {
-                "fontSize": 32,
+                "fontSize": 22,
                 "fontWeight": "400",
-                "lineHeight": 38,
+                "lineHeight": 28,
               },
               {
                 "marginLeft": 16,
@@ -175,26 +175,21 @@ exports[`GroupScreen should render correctly 1`] = `
             onResponderTerminationRequest={[Function]}
             onStartShouldSetResponder={[Function]}
             style={
-              [
-                {
-                  "backgroundColor": "white",
-                  "borderRadius": 24,
-                  "padding": 8,
-                },
-                {
-                  "overflow": "hidden",
-                },
-              ]
+              {
+                "backgroundColor": "white",
+                "borderRadius": 24,
+                "padding": 8,
+              }
             }
-            testID="share-group"
           >
             <Text
+              accessibilityLabel="Partager"
               allowFontScaling={false}
               selectable={false}
               style={
                 [
                   {
-                    "color": "hsl(0 0% 40%)",
+                    "color": "black",
                     "fontSize": 24,
                   },
                   undefined,
@@ -278,7 +273,7 @@ exports[`GroupScreen should render correctly 1`] = `
                   "paddingHorizontal": 16,
                 },
                 {
-                  "backgroundColor": "hsl(200 40% 50%)",
+                  "backgroundColor": "white",
                 },
                 {
                   "marginTop": 8,
@@ -299,7 +294,7 @@ exports[`GroupScreen should render correctly 1`] = `
                   "lineHeight": 24,
                 },
                 {
-                  "color": "white",
+                  "color": "hsl(200 40% 50%)",
                 },
               ]
             }

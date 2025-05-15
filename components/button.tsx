@@ -16,7 +16,6 @@ export default function Button(props: ButtonProps) {
     <Pressable
       {...rest}
       style={[styles.button, styles[type], style]}
-      android_ripple={{ color: Colors.primaryLight }}
       accessibilityRole="button"
     >
       <Text style={styles.text}>{children}</Text>
@@ -26,10 +25,10 @@ export default function Button(props: ButtonProps) {
 
 const styles = StyleSheet.create({
   primary: {
-    backgroundColor: Colors.primary,
+    backgroundColor: "white",
   },
   secondary: {
-    backgroundColor: Colors.secondary,
+    backgroundColor: "transparent",
   },
   button: {
     borderRadius: 40,
@@ -39,6 +38,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   text: {
-    color: "white",
+    color: Colors.primary,
   },
 });

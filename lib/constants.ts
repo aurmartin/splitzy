@@ -12,5 +12,5 @@ export const Colors = {
 
   green: `hsl(120 50% 40%)`,
 
-  background: `hsl(${primaryHue} 15% 90%)`,
+  background: `hsl(0 0% 94%)`,
 };

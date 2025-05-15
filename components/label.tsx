@@ -1,12 +1,22 @@
-import { StyleSheet } from "react-native";
+import { StyleProp, StyleSheet, TextStyle } from "react-native";
 import { Text } from "@/components/text";
 
-export default function Label(props: { children: React.ReactNode }) {
-  return <Text style={styles.label}>{props.children}</Text>;
+interface LabelProps {
+  children: React.ReactNode;
+  style?: StyleProp<TextStyle>;
+}
+
+export default function Label(props: LabelProps) {
+  return (
+    <Text type="titleMedium" style={[styles.label, props.style]}>
+      {props.children}
+    </Text>
+  );
 }
 
 const styles = StyleSheet.create({
   label: {
-    marginBottom: 4,
+    marginBottom: 2,
+    textTransform: "uppercase",
   },
 });

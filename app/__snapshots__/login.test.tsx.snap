@@ -39,7 +39,7 @@ exports[`LoginScreen should render snapshot 1`] = `
       style={
         [
           {
-            "backgroundColor": "hsl(200 15% 90%)",
+            "backgroundColor": "hsl(0 0% 94%)",
             "flex": 1,
             "padding": 8,
           },
@@ -100,29 +100,50 @@ exports[`LoginScreen should render snapshot 1`] = `
         >
           Enter your email address below. If you don't have an account yet, we'll automatically create one for you when you first sign in!
         </Text>
-        <TextInput
-          autoCapitalize="none"
-          autoComplete="email"
-          autoCorrect={false}
-          keyboardType="email-address"
-          onChangeText={[Function]}
-          placeholder="Email"
-          placeholderTextColor="#666"
+        <View
           style={
             [
               {
+                "alignItems": "center",
                 "backgroundColor": "#fff",
-                "borderColor": "hsl(0 0% 70%)",
-                "borderRadius": 4,
-                "borderWidth": 1,
-                "height": 45,
-                "padding": 10,
+                "borderRadius": 8,
+                "flexDirection": "row",
+                "height": 55,
+                "paddingHorizontal": 16,
               },
               undefined,
             ]
           }
-          value=""
-        />
+        >
+          <View
+            style={
+              {
+                "flex": 1,
+                "justifyContent": "center",
+              }
+            }
+          >
+            <TextInput
+              autoCapitalize="none"
+              autoComplete="email"
+              autoCorrect={false}
+              keyboardType="email-address"
+              onChangeText={[Function]}
+              placeholder="Email"
+              placeholderTextColor="#888"
+              style={
+                {
+                  "flex": 1,
+                  "fontSize": 16,
+                  "paddingBottom": 0,
+                  "paddingTop": 0,
+                  "textAlign": "left",
+                }
+              }
+              value=""
+            />
+          </View>
+        </View>
         <View
           accessibilityLabel="Login"
           accessibilityRole="button"
@@ -166,7 +187,7 @@ exports[`LoginScreen should render snapshot 1`] = `
                   "paddingHorizontal": 16,
                 },
                 {
-                  "backgroundColor": "hsl(200 40% 50%)",
+                  "backgroundColor": "white",
                 },
                 undefined,
               ],
@@ -185,7 +206,7 @@ exports[`LoginScreen should render snapshot 1`] = `
                   "lineHeight": 24,
                 },
                 {
-                  "color": "white",
+                  "color": "hsl(200 40% 50%)",
                 },
               ]
             }

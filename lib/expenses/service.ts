@@ -11,6 +11,7 @@ import {
   ExpenseUpdateParams,
   Split,
 } from "./types";
+import { DisplayableError } from "../displayable-error";
 
 const insertExpense = async (system: System, params: ExpenseCreateParams) => {
   const validParams = validateCreateExpenseParams(params);
@@ -49,23 +50,23 @@ const createExpense = (validParams: ExpenseCreateParams): Expense => {
 };
 
 const validateCreateExpenseParams = (params: ExpenseCreateParams) => {
-  const errors: Record<string, string> = {};
-
   if (params.title.length === 0) {
-    errors.title = "Veuillez entrer un titre";
+    throw new DisplayableError(
+      "Le titre est invalide",
+      "Veuillez entrer un titre",
+    );
   }
 
   if (params.payerName.length === 0) {
-    errors.payerName = "Veuillez sélectionner un membre";
+    throw new DisplayableError(
+      "Le membre est invalide",
+      "Veuillez sélectionner un membre",
+    );
   }
 
   const splitError = validateSplit(params.splitExpense);
   if (splitError) {
-    errors.splitExpense = splitError;
-  }
-
-  if (Object.keys(errors).length > 0) {
-    throw new ValidationError(errors);
+    throw new DisplayableError("Le partage est invalide", splitError);
   }
 
   return params;

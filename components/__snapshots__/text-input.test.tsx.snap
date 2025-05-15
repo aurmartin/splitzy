@@ -1,21 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TextInput renders correctly 1`] = `
-<TextInput
-  placeholder="Enter text"
-  placeholderTextColor="#666"
+<View
   style={
     [
       {
+        "alignItems": "center",
         "backgroundColor": "#fff",
-        "borderColor": "hsl(0 0% 70%)",
-        "borderRadius": 4,
-        "borderWidth": 1,
-        "height": 45,
-        "padding": 10,
+        "borderRadius": 8,
+        "flexDirection": "row",
+        "height": 55,
+        "paddingHorizontal": 16,
       },
       undefined,
     ]
   }
-/>
+>
+  <View
+    style={
+      {
+        "flex": 1,
+        "justifyContent": "center",
+      }
+    }
+  >
+    <TextInput
+      placeholder="Enter text"
+      placeholderTextColor="#888"
+      style={
+        {
+          "flex": 1,
+          "fontSize": 16,
+          "paddingBottom": 0,
+          "paddingTop": 0,
+          "textAlign": "left",
+        }
+      }
+    />
+  </View>
+</View>
 `;

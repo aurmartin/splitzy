@@ -1,6 +1,5 @@
 import Button from "@/components/button";
 import { DineroInput } from "@/components/dinero-input";
-import Picker from "@/components/picker";
 import {
   SplitInput,
   changeTotal,
@@ -8,18 +7,26 @@ import {
   createReceiptSplit,
   createSplit,
 } from "@/components/split-input";
+import { useSystem } from "@/components/system-provider";
 import { Text } from "@/components/text";
 import { TextInput } from "@/components/text-input";
-import { useSystem } from "@/components/system-provider";
 import type { Expense, Receipt, Split } from "@/lib/expenses";
 import { Group, useMe } from "@/lib/groups";
-import { Picker as RNPicker } from "@react-native-picker/picker";
 import dinero, { type Dinero } from "dinero.js";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import React from "react";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  View,
+  type TextInput as RNTextInput,
+} from "react-native";
+import { ChipList } from "./chip-list";
 import { useSnackBar } from "./snack-bar";
+import { TopBar } from "./top-bar";
+import Label from "./label";
+import { TopBarDeleteAction, TopBarSaveAction } from "./top-bar-action";
 
 const ReceiptLoader = () => {
   return (
@@ -55,15 +62,17 @@ const ExpenseForm = (props: {
   group: Group;
   expense?: Expense;
   onSubmit: (fields: ExpenseFormFields) => void;
-  validationErrors: Record<string, string>;
+  onDelete?: () => void;
 }) => {
-  const { group, expense, onSubmit, validationErrors } = props;
+  const { group, expense, onSubmit, onDelete } = props;
 
   const system = useSystem();
   const me = useMe(group.id);
   const snackBar = useSnackBar();
 
-  const [title, setTitle] = React.useState("Dépense");
+  const titleInputRef = React.useRef<RNTextInput>(null);
+
+  const [title, setTitle] = React.useState("");
 
   const [payerName, setPayerName] = React.useState(me);
 
@@ -86,6 +95,12 @@ const ExpenseForm = (props: {
     setSplit(expense.splitExpense);
     setReceipt(expense.receipt);
   }, [group, expense]);
+
+  React.useEffect(() => {
+    if (titleInputRef.current) {
+      titleInputRef.current.focus();
+    }
+  }, []);
 
   const handleTypeChange = (type: Split["type"]) => {
     setSplit((split) => changeType(split, type));
@@ -150,67 +165,64 @@ const ExpenseForm = (props: {
   }
 
   return (
-    <ScrollView>
-      <View style={{ flex: 1, gap: 16 }}>
-        <Button onPress={handleReceipt}>Télécharger un reçu</Button>
+    <>
+      <TopBar
+        title={expense ? "Modifier la dépense" : "Créer une dépense"}
+        rightActions={
+          <>
+            {expense ? <TopBarDeleteAction onPress={onDelete} /> : null}
+            <TopBarSaveAction onPress={handleSubmit} />
+          </>
+        }
+      />
 
-        <View>
-          <TextInput
-            label="Titre"
-            placeholder="Titre"
-            value={title}
-            onChangeText={setTitle}
-          />
-          {validationErrors.title && (
-            <Text style={{ color: "hsl(0, 100%, 30%)" }}>
-              {validationErrors.title}
-            </Text>
-          )}
+      <ScrollView>
+        <View style={{ flex: 1, gap: 16 }}>
+          <Button type="secondary" onPress={handleReceipt}>
+            Télécharger un reçu
+          </Button>
+
+          <View style={{ gap: 1 }}>
+            <TextInput
+              ref={titleInputRef}
+              label="Titre"
+              value={title}
+              onChangeText={setTitle}
+              style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
+            />
+
+            <DineroInput
+              label="Montant"
+              value={total}
+              onChange={handleTotalChange}
+              style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+              right={<Text>{total.getCurrency()}</Text>}
+            />
+          </View>
+
+          <View>
+            <Label>Payé par</Label>
+            <ChipList
+              style={{ justifyContent: "center" }}
+              value={payerName}
+              onChange={setPayerName}
+              items={group.members.map((member) => ({
+                label: member,
+                value: member,
+              }))}
+            />
+          </View>
+
+          <View>
+            <SplitInput
+              value={split}
+              onChange={setSplit}
+              onTypeChange={handleTypeChange}
+            />
+          </View>
         </View>
-
-        <View>
-          <DineroInput
-            label="Montant (€)"
-            value={total}
-            onChange={handleTotalChange}
-          />
-        </View>
-
-        <View>
-          <Picker
-            label="Payé par"
-            selectedValue={payerName}
-            onValueChange={setPayerName}
-          >
-            {group.members.map((member) => (
-              <RNPicker.Item key={member} label={member} value={member} />
-            ))}
-          </Picker>
-          {validationErrors.payerName && (
-            <Text style={{ color: "hsl(0, 100%, 30%)" }}>
-              {validationErrors.payerName}
-            </Text>
-          )}
-        </View>
-
-        <View>
-          <SplitInput
-            value={split}
-            onChange={setSplit}
-            onTypeChange={handleTypeChange}
-          />
-          {validationErrors.splitExpense && (
-            <Text style={{ color: "hsl(0, 100%, 30%)" }}>
-              {validationErrors.splitExpense}
-            </Text>
-          )}
-        </View>
-
-        <Button onPress={handleSubmit}>
-          {expense ? "Modifier la dépense" : "Créer la dépense"}
-        </Button>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 };
 
