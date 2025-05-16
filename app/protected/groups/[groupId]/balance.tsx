@@ -117,7 +117,10 @@ const BalanceScreenContent = React.memo(function BalanceScreenContent({
     <>
       <MyBalance group={group} balance={balance} />
 
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        alwaysBounceVertical={false}
+      >
         <View style={{ flex: 1, paddingBottom: 24 }}>
           <GroupBalance balance={balance} />
           <Reimbursements balance={balance} />

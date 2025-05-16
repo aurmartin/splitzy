@@ -27,8 +27,8 @@ export default function FAB(props: Props) {
 const styles = StyleSheet.create({
   wrapper: {
     position: "absolute",
-    bottom: 20,
-    right: 8,
+    bottom: 30,
+    right: 16,
     zIndex: 100,
   },
   fab: {

@@ -13,8 +13,7 @@ import { TextInput } from "@/components/text-input";
 import type { Expense, Receipt, Split } from "@/lib/expenses";
 import { Group, useMe } from "@/lib/groups";
 import dinero, { type Dinero } from "dinero.js";
-import * as DocumentPicker from "expo-document-picker";
-import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
 import React from "react";
 import {
   ActivityIndicator,
@@ -27,6 +26,7 @@ import { useSnackBar } from "./snack-bar";
 import { TopBar } from "./top-bar";
 import Label from "./label";
 import { TopBarDeleteAction, TopBarSaveAction } from "./top-bar-action";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 
 const ReceiptLoader = () => {
   return (
@@ -69,6 +69,7 @@ const ExpenseForm = (props: {
   const system = useSystem();
   const me = useMe(group.id);
   const snackBar = useSnackBar();
+  const { showActionSheetWithOptions } = useActionSheet();
 
   const titleInputRef = React.useRef<RNTextInput>(null);
 
@@ -122,23 +123,83 @@ const ExpenseForm = (props: {
     onSubmit(fields);
   };
 
-  const handleReceipt = async () => {
-    const result = await DocumentPicker.getDocumentAsync({
-      copyToCacheDirectory: true,
-      type: "image/*",
-    });
-    const uri = result.assets?.[0]?.uri;
+  const showReceiptActionSheet = async () => {
+    showActionSheetWithOptions(
+      {
+        options: ["Prendre une photo", "Choisir une photo", "Annuler"],
+        cancelButtonIndex: 2,
+      },
+      async (index) => {
+        console.log("showReceiptActionSheet", index);
+        let result: ImagePicker.ImagePickerResult | null = null;
 
-    if (!uri) return;
+        if (index === 0) {
+          console.log("openCameraAndProcessReceipt");
+          result = await openCamera();
+        } else if (index === 1) {
+          console.log("openMediaLibrary");
+          result = await openMediaLibrary();
+        }
+
+        if (result) {
+          await processReceiptImage(result);
+        }
+      },
+    );
+  };
+
+  const openCamera =
+    async (): Promise<ImagePicker.ImagePickerResult | null> => {
+      const permission = await ImagePicker.getCameraPermissionsAsync();
+
+      if (!permission.granted) {
+        const request = await ImagePicker.requestCameraPermissionsAsync();
+
+        if (!request.granted) {
+          snackBar.show("Veuillez autoriser l'accès à la caméra", "error");
+          return null;
+        }
+      }
+
+      return await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        base64: true,
+      });
+    };
+
+  const openMediaLibrary =
+    async (): Promise<ImagePicker.ImagePickerResult | null> => {
+      const permission = await ImagePicker.getMediaLibraryPermissionsAsync();
+
+      if (!permission.granted) {
+        const request = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (!request.granted) {
+          snackBar.show(
+            "Veuillez autoriser l'accès à la bibliothèque de photos",
+            "error",
+          );
+        }
+
+        return null;
+      }
+
+      return await ImagePicker.launchImageLibraryAsync({
+        base64: true,
+      });
+    };
+
+  const processReceiptImage = async (result: ImagePicker.ImagePickerResult) => {
+    if (result.canceled) return;
+
+    const imageBase64 = result.assets?.[0]?.base64;
+
+    if (!imageBase64) return;
 
     try {
       setReceiptLoading(true);
 
-      const file = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
-      const receipt = await system.serverConnector.parseReceipt(file);
+      const receipt = await system.serverConnector.parseReceipt(imageBase64);
 
       setReceiptLoading(false);
       setReceipt(receipt);
@@ -176,9 +237,12 @@ const ExpenseForm = (props: {
         }
       />
 
-      <ScrollView>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        alwaysBounceVertical={false}
+      >
         <View style={{ flex: 1, gap: 16 }}>
-          <Button type="secondary" onPress={handleReceipt}>
+          <Button type="secondary" onPress={showReceiptActionSheet}>
             Télécharger un reçu
           </Button>
 

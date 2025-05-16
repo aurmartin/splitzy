@@ -74,7 +74,7 @@ exports[`GroupsScreen should render snapshot 1`] = `
               }
             }
           >
-            No groups found. Create one by using the '+' button!
+            Aucun groupe trouvé. Créez-en un en utilisant le bouton '+' !
           </Text>
         }
         contentContainerStyle={
@@ -127,16 +127,16 @@ exports[`GroupsScreen should render snapshot 1`] = `
               ]
             }
           >
-            No groups found. Create one by using the '+' button!
+            Aucun groupe trouvé. Créez-en un en utilisant le bouton '+' !
           </Text>
         </View>
       </RCTScrollView>
       <View
         style={
           {
-            "bottom": 20,
+            "bottom": 30,
             "position": "absolute",
-            "right": 8,
+            "right": 16,
             "zIndex": 100,
           }
         }

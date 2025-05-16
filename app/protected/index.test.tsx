@@ -47,7 +47,9 @@ describe("GroupsScreen", () => {
 
   it("should render empty state", () => {
     renderRouter(routerContext, system, { initialUrl: "/protected" });
-    screen.getByText("No groups found. Create one by using the '+' button!");
+    screen.getByText(
+      "Aucun groupe trouvé. Créez-en un en utilisant le bouton '+' !",
+    );
   });
 
   it("should allow the user to refresh the groups", async () => {

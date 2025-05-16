@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { View, ViewStyle } from "react-native";
+import { DimensionValue, View, ViewStyle } from "react-native";
 
 interface ListGroupChildProps {
   style?: ViewStyle;
@@ -11,10 +11,17 @@ interface ListGroupProps {
   gap?: number;
   style?: ViewStyle;
   itemBorderRadius?: number;
+  itemHeight?: DimensionValue;
 }
 
 function ListGroup(props: ListGroupProps) {
-  const { children, gap = 1, style, itemBorderRadius = 8 } = props;
+  const {
+    children,
+    gap = 1,
+    style,
+    itemBorderRadius = 8,
+    itemHeight = 55,
+  } = props;
   const itemsCount = React.Children.count(children);
 
   return (
@@ -33,7 +40,7 @@ function ListGroup(props: ListGroupProps) {
             index === itemsCount - 1 ? itemBorderRadius : 0,
           borderBottomRightRadius:
             index === itemsCount - 1 ? itemBorderRadius : 0,
-          height: 55,
+          height: itemHeight,
           ...childStyle,
         };
 

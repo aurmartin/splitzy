@@ -65,7 +65,10 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
         {new Date(expense.createdAt).toLocaleDateString()}
       </Text>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        alwaysBounceVertical={false}
+      >
         <Label>Répartition</Label>
         <ListGroup style={{ marginBottom: 16 }}>
           {Object.entries(amounts).map(([name, amount]) => (
@@ -79,7 +82,7 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
         {expense.receipt && (
           <>
             <Label>Ticket de caisse</Label>
-            <ListGroup>
+            <ListGroup itemHeight={70}>
               {expense.receipt.items.map((item) => (
                 <View key={item.description}>
                   <View style={{ gap: 4, flex: 1, marginRight: 16 }}>

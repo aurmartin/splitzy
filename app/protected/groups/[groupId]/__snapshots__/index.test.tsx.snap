@@ -388,9 +388,9 @@ exports[`GroupScreen should render correctly 1`] = `
       <View
         style={
           {
-            "bottom": 20,
+            "bottom": 30,
             "position": "absolute",
-            "right": 8,
+            "right": 16,
             "zIndex": 100,
           }
         }

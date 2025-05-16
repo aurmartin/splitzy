@@ -72,7 +72,7 @@ exports[`LoginScreen should render snapshot 1`] = `
             ]
           }
         >
-          Welcome!
+          Bienvenue !
         </Text>
         <Text
           style={
@@ -85,7 +85,7 @@ exports[`LoginScreen should render snapshot 1`] = `
             ]
           }
         >
-          Sign in or create an account
+          Connectez-vous ou créez un compte
         </Text>
         <Text
           style={
@@ -98,7 +98,7 @@ exports[`LoginScreen should render snapshot 1`] = `
             ]
           }
         >
-          Enter your email address below. If you don't have an account yet, we'll automatically create one for you when you first sign in!
+          Saisissez votre adresse e-mail ci-dessous. Si vous n'avez pas encore de compte, nous en créerons automatiquement un pour vous lors de votre première connexion !
         </Text>
         <View
           style={
@@ -129,7 +129,7 @@ exports[`LoginScreen should render snapshot 1`] = `
               autoCorrect={false}
               keyboardType="email-address"
               onChangeText={[Function]}
-              placeholder="Email"
+              placeholder="E-mail"
               placeholderTextColor="#888"
               style={
                 {
@@ -145,7 +145,7 @@ exports[`LoginScreen should render snapshot 1`] = `
           </View>
         </View>
         <View
-          accessibilityLabel="Login"
+          accessibilityLabel="Connexion"
           accessibilityRole="button"
           accessibilityState={
             {
@@ -211,7 +211,7 @@ exports[`LoginScreen should render snapshot 1`] = `
               ]
             }
           >
-            Login or Create Account
+            Se connecter ou créer un compte
           </Text>
         </View>
       </View>

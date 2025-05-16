@@ -45,7 +45,7 @@ interface ChipListItem {
 
 interface ChipListProps {
   onChange: (value: string) => void;
-  value: string;
+  value: string | string[];
   items: ChipListItem[];
   style?: StyleProp<ViewStyle>;
 }
@@ -53,13 +53,20 @@ interface ChipListProps {
 function ChipList(props: ChipListProps) {
   const { onChange, value, items, style } = props;
 
+  const isSelected = (item: ChipListItem) => {
+    if (Array.isArray(value)) {
+      return value.includes(item.value);
+    }
+    return item.value === value;
+  };
+
   return (
     <View style={[{ flexDirection: "row", gap: 8 }, style]}>
       {items.map((item) => (
         <Chip
           key={item.value}
           label={item.label}
-          isSelected={item.value === value}
+          isSelected={isSelected(item)}
           onPress={() => onChange(item.value)}
         />
       ))}

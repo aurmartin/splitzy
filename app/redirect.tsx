@@ -1,10 +1,31 @@
 import LoadingScreen from "@/components/loading-screen";
 import { useSystem } from "@/components/system-provider";
-import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as Linking from "expo-linking";
 import { router } from "expo-router";
 import React from "react";
 import * as Sentry from "@sentry/react-native";
+
+function getQueryParams(input: string): {
+  errorCode: string | null;
+  params: Record<string, string>;
+} {
+  const url = new URL(input, "https://phony.example");
+
+  const errorCode = url.searchParams.get("errorCode");
+  url.searchParams.delete("errorCode");
+
+  const params = Object.fromEntries(url.searchParams);
+  if (url.hash) {
+    new URLSearchParams(url.hash.replace(/^#/, "")).forEach((value, key) => {
+      params[key] = value;
+    });
+  }
+
+  return {
+    errorCode,
+    params,
+  };
+}
 
 export default function RedirectScreen() {
   const url = Linking.useLinkingURL();
@@ -12,7 +33,7 @@ export default function RedirectScreen() {
 
   const createSessionFromUrl = React.useCallback(
     async (url: string) => {
-      const { params, errorCode } = QueryParams.getQueryParams(url);
+      const { params, errorCode } = getQueryParams(url);
 
       if (errorCode) {
         console.error(errorCode);

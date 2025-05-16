@@ -1,11 +1,6 @@
 import { randomUUID } from "expo-crypto";
 
 export const generateId = () => {
-  if (process.env.NODE_ENV === "test") {
-    const { v4 } = require("uuid");
-    return v4();
-  }
-
   return randomUUID();
 };
 

@@ -46,13 +46,18 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-router",
     "expo-localization",
     "expo-sqlite",
-    "expo-web-browser",
     [
       "@sentry/react-native/expo",
       {
         url: "https://sentry.io/",
         project: "splitzy",
         organization: "aurmartin",
+      },
+    ],
+    [
+      "expo-image-picker",
+      {
+        photosPermission: "The app accesses your photos to scan receipts.",
       },
     ],
   ],

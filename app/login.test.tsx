@@ -19,10 +19,12 @@ describe("LoginScreen", () => {
     const user = userEvent.setup();
     renderRouter(routerContext, system, { initialUrl: "/login" });
 
-    await user.type(screen.getByPlaceholderText("Email"), "test@test.com");
+    await user.type(screen.getByPlaceholderText("E-mail"), "test@test.com");
     await user.press(screen.getByRole("button"));
 
-    await screen.findByText("Check your email for a magic link to sign in.");
+    await screen.findByText(
+      "Vérifiez votre e-mail pour un lien magique de connexion.",
+    );
   });
 
   it("should handle sign in error", async () => {
@@ -35,7 +37,7 @@ describe("LoginScreen", () => {
       },
     );
 
-    await user.type(screen.getByPlaceholderText("Email"), "test@test.com");
+    await user.type(screen.getByPlaceholderText("E-mail"), "test@test.com");
     await user.press(screen.getByRole("button"));
 
     await screen.findByText("Invalid email");

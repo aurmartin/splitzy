@@ -60,20 +60,20 @@ export default function LoginScreen() {
 
       dispatch({
         type: "success",
-        payload: "Check your email for a magic link to sign in.",
+        payload: "Vérifiez votre e-mail pour un lien magique de connexion.",
       });
     } catch (error: any) {
       console.error("Error in signInWithEmail", error);
 
       dispatch({
         type: "error",
-        payload: error?.message || "Something went wrong",
+        payload: error?.message || "Une erreur est survenue",
       });
     }
   }, [dispatch, system.supabaseConnector, email]);
 
   if (state.loading) {
-    return <LoadingScreen message="Signing in..." />;
+    return <LoadingScreen message="Connexion en cours..." />;
   }
 
   return (
@@ -83,10 +83,10 @@ export default function LoginScreen() {
           type="displayLarge"
           style={{ textAlign: "center", marginBottom: 32, marginTop: 32 }}
         >
-          Welcome!
+          Bienvenue !
         </Text>
 
-        <Text type="headlineMedium">Sign in or create an account</Text>
+        <Text type="headlineMedium">Connectez-vous ou créez un compte</Text>
 
         {state.error && (
           <Text style={{ color: Colors.red }}>{state.error}</Text>
@@ -97,8 +97,9 @@ export default function LoginScreen() {
         )}
 
         <Text>
-          Enter your email address below. If you don&apos;t have an account yet,
-          we&apos;ll automatically create one for you when you first sign in!
+          Saisissez votre adresse e-mail ci-dessous. Si vous n&apos;avez pas
+          encore de compte, nous en créerons automatiquement un pour vous lors
+          de votre première connexion !
         </Text>
 
         <TextInput
@@ -106,13 +107,13 @@ export default function LoginScreen() {
           keyboardType="email-address"
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="Email"
+          placeholder="E-mail"
           value={email}
           onChangeText={setEmail}
         />
 
-        <Button onPress={signInWithEmail} accessibilityLabel="Login">
-          Login or Create Account
+        <Button onPress={signInWithEmail} accessibilityLabel="Connexion">
+          Se connecter ou créer un compte
         </Button>
       </View>
     </Screen>

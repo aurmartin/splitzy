@@ -205,7 +205,10 @@ exports[`NewExpenseScreen should render correctly 1`] = `
           </View>
         </View>
       </View>
-      <RCTScrollView>
+      <RCTScrollView
+        alwaysBounceVertical={false}
+        showsVerticalScrollIndicator={false}
+      >
         <View>
           <View
             style={

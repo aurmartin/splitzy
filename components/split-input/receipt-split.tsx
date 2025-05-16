@@ -1,10 +1,11 @@
-import { Text } from "@/components/text";
-import { primaryHue } from "@/lib/constants";
-import { type Receipt, type ReceiptSplit } from "@/lib/expenses";
 import { convertSplit } from "@/components/split-input/convert";
+import { Text } from "@/components/text";
+import { type Receipt, type ReceiptSplit } from "@/lib/expenses";
 import { getLocale } from "@/lib/locale";
+import { produce } from "immer";
 import React from "react";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
+import { ChipList } from "../chip-list";
 
 const ReceiptSplitInput = (props: {
   value: ReceiptSplit;
@@ -12,57 +13,31 @@ const ReceiptSplitInput = (props: {
 }) => {
   const { value, onChange } = props;
 
-  const isSelected = (item: Receipt["items"][number], member: string) => {
-    return item.paid_for.includes(member);
-  };
-
   const toggleSelect = (itemIndex: number, member: string) => {
-    onChange({
-      ...value,
-      receipt: {
-        ...value.receipt,
-        items: value.receipt.items.map((item, index) => {
-          if (index === itemIndex) {
-            if (item.paid_for.includes(member)) {
-              return {
-                ...item,
-                paid_for: item.paid_for.filter((m) => m !== member),
-              };
-            }
+    onChange(
+      produce(value, (draft) => {
+        const item = draft.receipt.items[itemIndex];
 
-            return {
-              ...item,
-              paid_for: [...item.paid_for, member],
-            };
-          }
-          return item;
-        }),
-      },
-    });
-  };
-
-  const backgroundColor = (item: Receipt["items"][number], member: string) => {
-    return isSelected(item, member)
-      ? `hsl(${primaryHue}, 100%, 90%)`
-      : `hsl(0, 0%, 90%)`;
+        if (item.paid_for.includes(member)) {
+          item.paid_for = item.paid_for.filter((m) => m !== member);
+        } else {
+          item.paid_for.push(member);
+        }
+      }),
+    );
   };
 
   const amountSplit = convertSplit(value);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: "white",
-        borderRadius: 4,
-      }}
-    >
+    <View style={{ gap: 1 }}>
       <View
         style={{
-          gap: 8,
-          padding: 12,
-          borderBottomWidth: 1,
-          borderColor: "hsl(0, 0%, 80%)",
+          gap: 16,
+          padding: 16,
+          backgroundColor: "white",
+          borderTopLeftRadius: 8,
+          borderTopRightRadius: 8,
         }}
       >
         {Object.entries(amountSplit.amounts).map(([member, amount]) => (
@@ -80,7 +55,15 @@ const ReceiptSplitInput = (props: {
         ))}
       </View>
 
-      <View style={{ padding: 12, gap: 8 }}>
+      <View
+        style={{
+          padding: 16,
+          gap: 8,
+          backgroundColor: "white",
+          borderBottomLeftRadius: 8,
+          borderBottomRightRadius: 8,
+        }}
+      >
         {value.receipt.items.map((item, index) => (
           <View key={index} style={{ gap: 8 }}>
             <View
@@ -91,30 +74,34 @@ const ReceiptSplitInput = (props: {
                 alignItems: "center",
               }}
             >
-              <View>
-                <Text>{item.humanReadableDescription}</Text>
-                <Text type="bodyMedium" style={{ color: "hsl(0, 0%, 40%)" }}>
+              <View style={{ flexShrink: 1 }}>
+                <Text numberOfLines={1} ellipsizeMode="middle">
+                  {item.humanReadableDescription}
+                </Text>
+
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="middle"
+                  type="bodyMedium"
+                  style={{ color: "hsl(0, 0%, 40%)" }}
+                >
                   {item.description}
                 </Text>
               </View>
-              <Text>{item.price.setLocale(getLocale()).toFormat()}</Text>
+
+              <Text style={{ marginLeft: 8 }}>
+                {item.price.setLocale(getLocale()).toFormat()}
+              </Text>
             </View>
 
-            <View style={{ flex: 1, flexDirection: "row", gap: 8 }}>
-              {value.members.map((member) => (
-                <Pressable
-                  key={member}
-                  style={{
-                    backgroundColor: backgroundColor(item, member),
-                    padding: 8,
-                    borderRadius: 8,
-                  }}
-                  onPress={() => toggleSelect(index, member)}
-                >
-                  <Text>{member}</Text>
-                </Pressable>
-              ))}
-            </View>
+            <ChipList
+              value={item.paid_for}
+              onChange={(paid_for) => toggleSelect(index, paid_for)}
+              items={value.members.map((member) => ({
+                label: member,
+                value: member,
+              }))}
+            />
           </View>
         ))}
       </View>
@@ -131,4 +118,4 @@ function createReceiptSplit(receipt: Receipt, members: string[]): ReceiptSplit {
   };
 }
 
-export { ReceiptSplitInput, createReceiptSplit };
+export { createReceiptSplit, ReceiptSplitInput };

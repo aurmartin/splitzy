@@ -4,22 +4,13 @@ import { setMe } from "@/lib/groups";
 import { system } from "@/lib/test-setup";
 import { buildGroupRecord, renderRouter } from "@/lib/test-utils";
 import { screen, userEvent, waitFor } from "@testing-library/react-native";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 import { eq } from "drizzle-orm";
 
-jest.mock("expo-document-picker", () => ({
-  getDocumentAsync: jest.fn().mockResolvedValue({
-    assets: [
-      {
-        uri: "https://example.com/receipt.jpg",
-      },
-    ],
-  }),
-}));
-
-jest.mock("expo-file-system", () => ({
-  ...jest.requireActual("expo-file-system"),
-  readAsStringAsync: jest.fn().mockResolvedValue(""),
-}));
+const showActionSheetWithOptions = jest.fn();
+jest.mocked(useActionSheet).mockReturnValue({
+  showActionSheetWithOptions,
+});
 
 beforeEach(async () => {
   const group = buildGroupRecord({ id: "test-group-id" });
@@ -83,6 +74,9 @@ describe("NewExpenseScreen", () => {
 
   it("should handle receipt", async () => {
     const user = userEvent.setup();
+
+    // actionIndex = 1 => "Choisir une photo"
+    showActionSheetWithOptions.mockImplementation((_, callback) => callback(1));
 
     renderRouter(routerContext, system, { initialUrl: newExpenseScreenUrl });
 
