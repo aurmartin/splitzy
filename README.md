@@ -4,6 +4,14 @@
 
 A local-first, AI-powered expense splitting app that works offline. Built with React Native and Expo.
 
+## Screenshots
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+  <img src="assets/images/splitzy-mockup/Apple iPhone 14 Plus (1284x2778)/Apple iPhone 14 Plus Screenshot 1.png" width="200" />
+  <img src="assets/images/splitzy-mockup/Apple iPhone 14 Plus (1284x2778)/Apple iPhone 14 Plus Screenshot 2.png" width="200" />
+  <img src="assets/images/splitzy-mockup/Apple iPhone 14 Plus (1284x2778)/Apple iPhone 14 Plus Screenshot 3.png" width="200" />
+</div>
+
 ## Features
 
 - 💡 **Smart Scanning**: AI-powered receipt scanning that automatically detects items
