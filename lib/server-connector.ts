@@ -221,8 +221,7 @@ class ServerConnector {
       "Content-Type": "application/json",
     };
 
-    // const url = `${Env.SERVER_URL}${path}`;
-    const url = "https://splitzy.aurmartin.fr" + path;
+    const url = `${Env.SERVER_URL}${path}`;
 
     const response = await fetch(url, {
       method: "POST",
