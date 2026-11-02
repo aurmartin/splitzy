@@ -5,7 +5,9 @@ import { ServerConnector } from "@/lib/server-connector";
 import { schemaMigrationsTable, type Database } from "@/lib/db/schema";
 
 interface Migration {
-  up: (db: Database) => Promise<void>;
+  // Migrations must be synchronous: the drizzle SQLite drivers used here
+  // (expo-sqlite, better-sqlite3) only support synchronous transactions.
+  up: (db: Database) => void;
   version: number;
   name: string;
 }
@@ -14,7 +16,7 @@ const getMigrations = (): Migration[] => [
   {
     version: 1,
     name: "Initial migration",
-    up: async (db: Database) => {
+    up: (db: Database) => {
       db.run(`
         CREATE TABLE IF NOT EXISTS groups (
           id text PRIMARY KEY NOT NULL,
@@ -94,18 +96,20 @@ export class System {
         );
 
         try {
-          await this.db.transaction(async (tx) => {
-            await migration.up(tx);
+          // The transaction is rolled back automatically if the callback throws.
+          this.db.transaction((tx) => {
+            migration.up(tx);
 
-            await tx.insert(schemaMigrationsTable).values({
-              version: migration.version,
-              appliedAt: new Date().toISOString(),
-            });
+            tx.insert(schemaMigrationsTable)
+              .values({
+                version: migration.version,
+                appliedAt: new Date().toISOString(),
+              })
+              .run();
           });
           console.log(`Migration ${migration.version} applied successfully`);
         } catch (error) {
           console.error(`Migration ${migration.version} failed:`, error);
-          this.db.run("ROLLBACK");
           throw error;
         }
       }

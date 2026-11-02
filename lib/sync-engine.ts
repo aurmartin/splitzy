@@ -137,16 +137,18 @@ class SyncEngine {
     logger.debug("Insert operation table =", getTableName(table), "- id =", id);
 
     try {
-      await this.db.transaction(async (tx) => {
-        await tx.insert(table).values(updateFields);
-        await tx.insert(syncQueue).values({
-          id: generateId(),
-          entityId: id,
-          entityTable: getTableName(table),
-          operationType: "insert",
-          changes: JSON.stringify(updateFields),
-          createdAt: new Date().toISOString(),
-        });
+      this.db.transaction((tx) => {
+        tx.insert(table).values(updateFields).run();
+        tx.insert(syncQueue)
+          .values({
+            id: generateId(),
+            entityId: id,
+            entityTable: getTableName(table),
+            operationType: "insert",
+            changes: JSON.stringify(updateFields),
+            createdAt: new Date().toISOString(),
+          })
+          .run();
       });
 
       this.notifyTableListeners(table);
@@ -164,16 +166,18 @@ class SyncEngine {
     logger.debug("Update operation table =", getTableName(table), "- id =", id);
 
     try {
-      await this.db.transaction(async (tx) => {
-        await tx.update(table).set(updateFields).where(eq(table.id, id));
-        await tx.insert(syncQueue).values({
-          id: generateId(),
-          entityId: id,
-          entityTable: getTableName(table),
-          operationType: "update",
-          changes: JSON.stringify(updateFields),
-          createdAt: new Date().toISOString(),
-        });
+      this.db.transaction((tx) => {
+        tx.update(table).set(updateFields).where(eq(table.id, id)).run();
+        tx.insert(syncQueue)
+          .values({
+            id: generateId(),
+            entityId: id,
+            entityTable: getTableName(table),
+            operationType: "update",
+            changes: JSON.stringify(updateFields),
+            createdAt: new Date().toISOString(),
+          })
+          .run();
       });
 
       this.notifyTableListeners(table);
@@ -189,15 +193,17 @@ class SyncEngine {
     logger.debug("Delete operation table =", getTableName(table), "- id =", id);
 
     try {
-      await this.db.transaction(async (tx) => {
-        await tx.delete(table).where(eq(table.id, id));
-        await tx.insert(syncQueue).values({
-          id: generateId(),
-          entityId: id,
-          entityTable: getTableName(table),
-          operationType: "delete",
-          createdAt: new Date().toISOString(),
-        });
+      this.db.transaction((tx) => {
+        tx.delete(table).where(eq(table.id, id)).run();
+        tx.insert(syncQueue)
+          .values({
+            id: generateId(),
+            entityId: id,
+            entityTable: getTableName(table),
+            operationType: "delete",
+            createdAt: new Date().toISOString(),
+          })
+          .run();
       });
 
       this.notifyTableListeners(table);
@@ -413,20 +419,20 @@ class SyncEngine {
         operation.entityId,
       );
 
-      await this.db.transaction(async (tx) => {
+      this.db.transaction((tx) => {
         // Remove the operation from the queue
-        await tx.delete(syncQueue).where(eq(syncQueue.id, operation.id));
+        tx.delete(syncQueue).where(eq(syncQueue.id, operation.id)).run();
 
         const table = tables[operation.entityTable];
 
         // If the row exists in supabase, update the row in the database, else delete the row
         if (supabaseRow.data) {
-          await tx
-            .update(table)
+          tx.update(table)
             .set(supabaseRow.data)
-            .where(eq(table.id, operation.entityId));
+            .where(eq(table.id, operation.entityId))
+            .run();
         } else {
-          await tx.delete(table).where(eq(table.id, operation.entityId));
+          tx.delete(table).where(eq(table.id, operation.entityId)).run();
         }
       });
     } catch (error) {
