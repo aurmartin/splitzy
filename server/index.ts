@@ -153,6 +153,29 @@ app.post("/parse-receipt", async (req, res) => {
   res.json(result);
 });
 
+// Supabase pauses free-tier projects after 7 days of inactivity.
+// Ping the database once a day to keep the project alive.
+const SUPABASE_KEEPALIVE_INTERVAL_MS =
+  parseInt(process.env.SUPABASE_KEEPALIVE_INTERVAL_MS || "") ||
+  24 * 60 * 60 * 1000;
+
+const supabaseKeepAlive = async () => {
+  try {
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const { error } = await supabase.from("groups").select("id").limit(1);
+    if (error) {
+      console.error("Supabase keepalive failed:", error.message);
+    } else {
+      console.log("Supabase keepalive ok");
+    }
+  } catch (err) {
+    console.error("Supabase keepalive failed:", err);
+  }
+};
+
 app.listen(bind_port, bind_ip, () => {
   console.log(`Server is running on http://${bind_ip}:${bind_port}`);
+
+  supabaseKeepAlive();
+  setInterval(supabaseKeepAlive, SUPABASE_KEEPALIVE_INTERVAL_MS);
 });
