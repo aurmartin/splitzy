@@ -20,6 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: Env.BUNDLE_ID,
+    appleTeamId: "AVS7SR2AV8",
     config: {
       usesNonExemptEncryption: false, // Avoid the export compliance warning on the app store
     },
