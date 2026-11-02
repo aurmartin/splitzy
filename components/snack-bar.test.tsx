@@ -25,7 +25,7 @@ const TestComponent = (props: {
 
 describe("useSnackBar", () => {
   it("show snackbar success", async () => {
-    render(<TestComponent message="test message" type="success" />, null);
+    await render(<TestComponent message="test message" type="success" />, null);
 
     screen.getByText("test message");
     expect(didRender).toHaveBeenCalledTimes(1);
@@ -33,26 +33,26 @@ describe("useSnackBar", () => {
   });
 
   it("show snackbar error", async () => {
-    render(<TestComponent message="test message" type="error" />, null);
+    await render(<TestComponent message="test message" type="error" />, null);
 
     screen.getByText("test message");
     expect(didRender).toHaveBeenCalledTimes(1);
     expect(screen.toJSON()).toMatchSnapshot();
   });
 
-  it("should throw with invalid type", () => {
-    expect(() =>
+  it("should throw with invalid type", async () => {
+    await expect(
       render(
         //@ts-ignore
         <TestComponent message="test message" type="invalid" />,
         null,
       ),
-    ).toThrow();
+    ).rejects.toThrow();
   });
 
-  it("should throw without context", () => {
-    expect(() =>
+  it("should throw without context", async () => {
+    await expect(
       baseRender(<TestComponent message="test message" type="success" />),
-    ).toThrow();
+    ).rejects.toThrow();
   });
 });

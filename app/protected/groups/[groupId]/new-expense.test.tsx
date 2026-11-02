@@ -25,15 +25,19 @@ const routerContext = {
 const newExpenseScreenUrl = "/protected/groups/test-group-id/new-expense";
 
 describe("NewExpenseScreen", () => {
-  it("should render correctly", () => {
-    renderRouter(routerContext, system, { initialUrl: newExpenseScreenUrl });
+  it("should render correctly", async () => {
+    await renderRouter(routerContext, system, {
+      initialUrl: newExpenseScreenUrl,
+    });
     expect(screen.toJSON()).toMatchSnapshot();
   });
 
   it("should create an expense", async () => {
     const user = userEvent.setup();
 
-    renderRouter(routerContext, system, { initialUrl: newExpenseScreenUrl });
+    await renderRouter(routerContext, system, {
+      initialUrl: newExpenseScreenUrl,
+    });
 
     await user.clear(screen.getByLabelText("Titre"));
     await user.type(screen.getByLabelText("Titre"), "Test expense");
@@ -56,7 +60,9 @@ describe("NewExpenseScreen", () => {
   it("should show validation errors if the form is invalid", async () => {
     const user = userEvent.setup();
 
-    renderRouter(routerContext, system, { initialUrl: newExpenseScreenUrl });
+    await renderRouter(routerContext, system, {
+      initialUrl: newExpenseScreenUrl,
+    });
 
     await user.clear(screen.getByLabelText("Titre"));
     await user.press(screen.getByLabelText("Enregistrer"));
@@ -64,12 +70,12 @@ describe("NewExpenseScreen", () => {
     await screen.findByText("Veuillez entrer un titre");
   });
 
-  it("should throw an error if the group is not found", () => {
-    expect(() =>
+  it("should throw an error if the group is not found", async () => {
+    await expect(
       renderRouter(routerContext, system, {
         initialUrl: "/protected/groups/not-found/new-expense",
       }),
-    ).toThrow("Group not found");
+    ).rejects.toThrow("Group not found");
   });
 
   it("should handle receipt", async () => {
@@ -78,7 +84,9 @@ describe("NewExpenseScreen", () => {
     // actionIndex = 1 => "Choisir une photo"
     showActionSheetWithOptions.mockImplementation((_, callback) => callback(1));
 
-    renderRouter(routerContext, system, { initialUrl: newExpenseScreenUrl });
+    await renderRouter(routerContext, system, {
+      initialUrl: newExpenseScreenUrl,
+    });
 
     await user.press(
       screen.getByRole("button", { name: /Télécharger un reçu/ }),

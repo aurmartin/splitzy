@@ -22,6 +22,7 @@ const envPath = path.resolve(__dirname, `.env.${APP_ENV}`);
 
 require("dotenv").config({
   path: envPath,
+  quiet: true,
 });
 
 /**

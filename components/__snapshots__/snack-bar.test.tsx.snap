@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`useSnackBar show snackbar error 1`] = `
-[
-  <View />,
+<>
+  <View />
   <RNCSafeAreaView
     edges={
       {
@@ -51,13 +51,13 @@ exports[`useSnackBar show snackbar error 1`] = `
         test message
       </Text>
     </View>
-  </RNCSafeAreaView>,
-]
+  </RNCSafeAreaView>
+</>
 `;
 
 exports[`useSnackBar show snackbar success 1`] = `
-[
-  <View />,
+<>
+  <View />
   <RNCSafeAreaView
     edges={
       {
@@ -106,6 +106,6 @@ exports[`useSnackBar show snackbar success 1`] = `
         test message
       </Text>
     </View>
-  </RNCSafeAreaView>,
-]
+  </RNCSafeAreaView>
+</>
 `;

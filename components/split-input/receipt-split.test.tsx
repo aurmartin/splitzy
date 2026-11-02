@@ -27,7 +27,7 @@ describe("ReceiptSplit", () => {
   };
 
   describe("ReceiptSplitInput", () => {
-    it("renders correctly", () => {
+    it("renders correctly", async () => {
       const mockSplit = {
         type: "receipt" as const,
         total: mockReceipt.total,
@@ -35,11 +35,11 @@ describe("ReceiptSplit", () => {
         receipt: mockReceipt,
       };
 
-      render(<ReceiptSplitInput value={mockSplit} onChange={() => {}} />);
+      await render(<ReceiptSplitInput value={mockSplit} onChange={() => {}} />);
       expect(screen.toJSON()).toMatchSnapshot();
     });
 
-    it("displays all receipt items", () => {
+    it("displays all receipt items", async () => {
       const mockSplit = {
         type: "receipt" as const,
         total: mockReceipt.total,
@@ -47,7 +47,7 @@ describe("ReceiptSplit", () => {
         receipt: mockReceipt,
       };
 
-      render(<ReceiptSplitInput value={mockSplit} onChange={() => {}} />);
+      await render(<ReceiptSplitInput value={mockSplit} onChange={() => {}} />);
 
       screen.getByText("Item 1");
       screen.getByText("Item 2");
@@ -64,7 +64,9 @@ describe("ReceiptSplit", () => {
       };
 
       const mockOnChange = jest.fn();
-      render(<ReceiptSplitInput value={mockSplit} onChange={mockOnChange} />);
+      await render(
+        <ReceiptSplitInput value={mockSplit} onChange={mockOnChange} />,
+      );
 
       // Find and click user2's button for the first item
       const user2Buttons = screen.getAllByText("user2");

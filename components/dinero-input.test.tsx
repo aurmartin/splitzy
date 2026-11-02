@@ -5,11 +5,11 @@ import * as React from "react";
 import { DineroInput } from "./dinero-input";
 
 describe("DineroInput", () => {
-  it("renders correctly", () => {
+  it("renders correctly", async () => {
     const mockOnChange = jest.fn();
     const value = dinero({ amount: 1000, currency: "USD" }); // $10.00
 
-    render(<DineroInput value={value} onChange={mockOnChange} />);
+    await render(<DineroInput value={value} onChange={mockOnChange} />);
     expect(screen.toJSON()).toMatchSnapshot();
   });
 
@@ -19,7 +19,7 @@ describe("DineroInput", () => {
     const mockOnChange = jest.fn((value: Dinero) => value.getAmount());
     const value = dinero({ amount: 1000, currency: "USD" });
 
-    render(
+    await render(
       <DineroInput label="test-input" value={value} onChange={mockOnChange} />,
     );
 

@@ -3,8 +3,8 @@ import { render, screen } from "@testing-library/react-native";
 import Label from "./label";
 
 describe("Label", () => {
-  it("renders correctly", () => {
-    render(<Label>Test Label</Label>);
+  it("renders correctly", async () => {
+    await render(<Label>Test Label</Label>);
     expect(screen.toJSON()).toMatchSnapshot();
   });
 });

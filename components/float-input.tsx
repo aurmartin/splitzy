@@ -9,16 +9,15 @@ interface FloatInputProps extends Omit<TextInputProps, "onChange" | "value"> {
 const FloatInput = (props: FloatInputProps) => {
   const { value, onChange, ...rest } = props;
   const [text, setText] = React.useState(value.toString());
+  const [prevValue, setPrevValue] = React.useState(value);
 
-  React.useEffect(() => {
-    setText((text) => {
-      if (value !== parseFloat(text)) {
-        return value.toString();
-      }
-
-      return text;
-    });
-  }, [value]);
+  // Sync the text with the value when it changes from the outside.
+  if (value !== prevValue) {
+    setPrevValue(value);
+    if (value !== parseFloat(text)) {
+      setText(value.toString());
+    }
+  }
 
   const handleChange = (textValue: string) => {
     if (!textValue.match(/^([0-9]{1,})?(\.)?([0-9]{1,})?$/)) {

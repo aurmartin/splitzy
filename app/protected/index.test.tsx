@@ -12,13 +12,13 @@ const routerContext = {
 };
 
 describe("GroupsScreen", () => {
-  it("should render snapshot", () => {
-    renderRouter(routerContext, system, { initialUrl: "/protected" });
+  it("should render snapshot", async () => {
+    await renderRouter(routerContext, system, { initialUrl: "/protected" });
     expect(screen.toJSON()).toMatchSnapshot();
   });
 
-  it("should render correct title", () => {
-    renderRouter(routerContext, system, { initialUrl: "/protected" });
+  it("should render correct title", async () => {
+    await renderRouter(routerContext, system, { initialUrl: "/protected" });
 
     screen.getByText("Splitzy Dev");
   });
@@ -30,7 +30,7 @@ describe("GroupsScreen", () => {
     });
     await system.db.insert(groupsTable).values(group);
 
-    renderRouter(routerContext, system, { initialUrl: "/protected" });
+    await renderRouter(routerContext, system, { initialUrl: "/protected" });
 
     screen.getByText("Group 1");
     screen.getByText("Alice, Bob");
@@ -40,13 +40,13 @@ describe("GroupsScreen", () => {
     const group = buildGroupRecord({ members: JSON.stringify([]) });
     await system.db.insert(groupsTable).values(group);
 
-    renderRouter(routerContext, system, { initialUrl: "/protected" });
+    await renderRouter(routerContext, system, { initialUrl: "/protected" });
 
     screen.getByText("(no members)");
   });
 
-  it("should render empty state", () => {
-    renderRouter(routerContext, system, { initialUrl: "/protected" });
+  it("should render empty state", async () => {
+    await renderRouter(routerContext, system, { initialUrl: "/protected" });
     screen.getByText(
       "Aucun groupe trouvé. Créez-en un en utilisant le bouton '+' !",
     );
@@ -60,7 +60,7 @@ describe("GroupsScreen", () => {
     });
     await system.syncEngine.syncTableFromRemote(groupsTable);
 
-    renderRouter(routerContext, system, { initialUrl: "/protected" });
+    await renderRouter(routerContext, system, { initialUrl: "/protected" });
 
     screen.getByText("initial group name");
 
@@ -70,7 +70,7 @@ describe("GroupsScreen", () => {
       error: null,
     });
 
-    fireEvent(screen.getByTestId("groups-flat-list"), "onRefresh");
+    await fireEvent(screen.getByTestId("groups-flat-list"), "onRefresh");
 
     await screen.findByText("updated group name");
   });
@@ -78,7 +78,7 @@ describe("GroupsScreen", () => {
   it("should navigate to the new group screen", async () => {
     const user = userEvent.setup();
 
-    renderRouter(routerContext, system, { initialUrl: "/protected" });
+    await renderRouter(routerContext, system, { initialUrl: "/protected" });
     await user.press(screen.getByTestId("fab-button"));
 
     screen.getByText("New Group");
@@ -89,7 +89,7 @@ describe("GroupsScreen", () => {
     const group = buildGroupRecord();
     await system.db.insert(groupsTable).values(group);
 
-    renderRouter(routerContext, system, { initialUrl: "/protected" });
+    await renderRouter(routerContext, system, { initialUrl: "/protected" });
     await user.press(screen.getByText(group.name));
 
     screen.getByText("Group Details");

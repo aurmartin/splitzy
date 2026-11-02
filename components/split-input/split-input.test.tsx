@@ -14,14 +14,14 @@ describe("SplitInput", () => {
   const mockMembers = ["user1", "user2"];
 
   describe("SplitInput component", () => {
-    it("renders correctly", () => {
+    it("renders correctly", async () => {
       const mockSplit: Split = {
         type: "equal",
         total: mockTotal,
         members: mockMembers,
       };
 
-      render(
+      await render(
         <SplitInput
           value={mockSplit}
           onChange={() => {}}
@@ -31,7 +31,7 @@ describe("SplitInput", () => {
       expect(screen.toJSON()).toMatchSnapshot();
     });
 
-    it("handles type changes", () => {
+    it("handles type changes", async () => {
       const mockSplit: Split = {
         type: "equal",
         total: mockTotal,
@@ -39,7 +39,7 @@ describe("SplitInput", () => {
       };
 
       const mockOnTypeChange = jest.fn();
-      render(
+      await render(
         <SplitInput
           value={mockSplit}
           onChange={() => {}}
@@ -47,7 +47,9 @@ describe("SplitInput", () => {
         />,
       );
 
-      fireEvent.press(screen.getByRole("button", { name: "Pourcentage" }));
+      await fireEvent.press(
+        screen.getByRole("button", { name: "Pourcentage" }),
+      );
 
       expect(mockOnTypeChange).toHaveBeenCalledWith("percentage");
     });

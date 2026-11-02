@@ -4,9 +4,9 @@ import FAB from "./fab";
 import { Text } from "react-native";
 
 describe("FAB", () => {
-  it("renders correctly", () => {
+  it("renders correctly", async () => {
     const mockOnPress = jest.fn();
-    render(
+    await render(
       <FAB onPress={mockOnPress}>
         <Text>+</Text>
       </FAB>,
@@ -18,7 +18,7 @@ describe("FAB", () => {
     const user = userEvent.setup();
 
     const mockOnPress = jest.fn();
-    render(
+    await render(
       <FAB onPress={mockOnPress}>
         <Text>+</Text>
       </FAB>,

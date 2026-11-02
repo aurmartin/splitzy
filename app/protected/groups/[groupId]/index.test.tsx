@@ -12,7 +12,7 @@ import { Share, Text } from "react-native";
 
 const share = jest.spyOn(Share, "share").mockResolvedValue({
   action: "sharedAction",
-  activityType: null,
+  activityType: undefined,
 });
 
 beforeEach(async () => {
@@ -34,29 +34,35 @@ const routerContext = {
 const testGroupScreenUrl = "/protected/groups/test-group-id";
 
 describe("GroupScreen", () => {
-  it("should render correctly", () => {
-    renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
+  it("should render correctly", async () => {
+    await renderRouter(routerContext, system, {
+      initialUrl: testGroupScreenUrl,
+    });
     expect(screen.toJSON()).toMatchSnapshot();
     screen.getByText("test group name");
   });
 
-  it("should redirect to set-me if me is not set", () => {
+  it("should redirect to set-me if me is not set", async () => {
     removeMe(system, "test-group-id");
-    renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
+    await renderRouter(routerContext, system, {
+      initialUrl: testGroupScreenUrl,
+    });
     screen.getByText("Set me");
   });
 
-  it("should throw if group is not found", () => {
-    expect(() =>
+  it("should throw if group is not found", async () => {
+    await expect(
       renderRouter(routerContext, system, {
         initialUrl: "/protected/groups/not-found",
       }),
-    ).toThrow("Group not found");
+    ).rejects.toThrow("Group not found");
   });
 
   it("should share the group", async () => {
     const user = userEvent.setup();
-    renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
+    await renderRouter(routerContext, system, {
+      initialUrl: testGroupScreenUrl,
+    });
     await user.press(screen.getByLabelText("Partager"));
     expect(share).toHaveBeenCalledTimes(1);
   });
@@ -84,7 +90,9 @@ describe("GroupScreen", () => {
       }),
     );
 
-    renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
+    await renderRouter(routerContext, system, {
+      initialUrl: testGroupScreenUrl,
+    });
 
     screen.getAllByText("test expense title");
     screen.getAllByText(/Alice/);
@@ -102,7 +110,9 @@ describe("GroupScreen", () => {
 
   it("should navigate to new expense", async () => {
     const user = userEvent.setup();
-    renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
+    await renderRouter(routerContext, system, {
+      initialUrl: testGroupScreenUrl,
+    });
     await user.press(screen.getByTestId("fab-button"));
     screen.getByText("New expense");
   });
@@ -112,7 +122,9 @@ describe("GroupScreen", () => {
     await system.db
       .insert(tables.expenses)
       .values(buildExpenseRecord({ groupId: "test-group-id" }));
-    renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
+    await renderRouter(routerContext, system, {
+      initialUrl: testGroupScreenUrl,
+    });
 
     await user.press(screen.getByText("test expense title"));
 
@@ -121,7 +133,9 @@ describe("GroupScreen", () => {
 
   it("should navigate to balance", async () => {
     const user = userEvent.setup();
-    renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
+    await renderRouter(routerContext, system, {
+      initialUrl: testGroupScreenUrl,
+    });
 
     await user.press(screen.getByText("Remboursements"));
 
@@ -129,7 +143,9 @@ describe("GroupScreen", () => {
   });
 
   it("should refresh expenses", async () => {
-    renderRouter(routerContext, system, { initialUrl: testGroupScreenUrl });
+    await renderRouter(routerContext, system, {
+      initialUrl: testGroupScreenUrl,
+    });
     screen.getByText("Aucune dépense");
 
     (system.supabaseConnector.selectAll as jest.Mock).mockResolvedValueOnce({
@@ -137,7 +153,7 @@ describe("GroupScreen", () => {
       error: null,
     });
 
-    fireEvent(screen.getByTestId("expenses-list"), "onRefresh");
+    await fireEvent(screen.getByTestId("expenses-list"), "onRefresh");
 
     await screen.findByText("test expense title");
   });

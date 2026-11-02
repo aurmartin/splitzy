@@ -5,6 +5,7 @@ const { SupabaseConnector } = jest.requireActual<
 jest.spyOn(SupabaseConnector.prototype, "selectAll").mockResolvedValue({
   data: [],
   error: null,
+  success: true,
   count: 0,
   status: 200,
   statusText: "OK",
@@ -13,6 +14,7 @@ jest.spyOn(SupabaseConnector.prototype, "selectAll").mockResolvedValue({
 jest.spyOn(SupabaseConnector.prototype, "insert").mockResolvedValue({
   data: null,
   error: null,
+  success: true,
   count: 0,
   status: 200,
   statusText: "OK",
@@ -21,6 +23,7 @@ jest.spyOn(SupabaseConnector.prototype, "insert").mockResolvedValue({
 jest.spyOn(SupabaseConnector.prototype, "update").mockResolvedValue({
   data: null,
   error: null,
+  success: true,
   count: 0,
   status: 200,
   statusText: "OK",
@@ -29,6 +32,7 @@ jest.spyOn(SupabaseConnector.prototype, "update").mockResolvedValue({
 jest.spyOn(SupabaseConnector.prototype, "delete").mockResolvedValue({
   data: null,
   error: null,
+  success: true,
   count: 0,
   status: 200,
   statusText: "OK",

@@ -19,7 +19,7 @@ import {
   ActivityIndicator,
   ScrollView,
   View,
-  type TextInput as RNTextInput,
+  type TextInputInstance,
 } from "react-native";
 import { ChipList } from "./chip-list";
 import { useSnackBar } from "./snack-bar";
@@ -71,7 +71,7 @@ const ExpenseForm = (props: {
   const snackBar = useSnackBar();
   const { showActionSheetWithOptions } = useActionSheet();
 
-  const titleInputRef = React.useRef<RNTextInput>(null);
+  const titleInputRef = React.useRef<TextInputInstance>(null);
 
   const [title, setTitle] = React.useState("");
 
@@ -87,15 +87,16 @@ const ExpenseForm = (props: {
   const [receipt, setReceipt] = React.useState<Receipt | null>(null);
   const [receiptLoading, setReceiptLoading] = React.useState(false);
 
-  React.useEffect(() => {
-    if (!expense) return;
-
+  // Fill the form with the expense values when the expense is loaded.
+  const [loadedExpense, setLoadedExpense] = React.useState<typeof expense>();
+  if (expense && expense !== loadedExpense) {
+    setLoadedExpense(expense);
     setTitle(expense.title);
     setPayerName(expense.payerName);
     setTotal(expense.splitExpense.total);
     setSplit(expense.splitExpense);
     setReceipt(expense.receipt);
-  }, [group, expense]);
+  }
 
   React.useEffect(() => {
     if (titleInputRef.current) {

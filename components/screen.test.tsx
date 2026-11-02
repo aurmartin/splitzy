@@ -4,8 +4,8 @@ import { Text } from "react-native";
 import { Screen } from "./screen";
 
 describe("Screen", () => {
-  it("renders correctly", () => {
-    render(
+  it("renders correctly", async () => {
+    await render(
       <Screen>
         <Text>Test Content</Text>
       </Screen>,

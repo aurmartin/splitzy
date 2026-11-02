@@ -3,11 +3,11 @@ import { render, screen, userEvent } from "@testing-library/react-native";
 import { FloatInput } from "./float-input";
 
 describe("FloatInput", () => {
-  it("renders correctly", () => {
+  it("renders correctly", async () => {
     const mockOnChange = jest.fn();
     const value = 10.0;
 
-    render(<FloatInput value={value} onChange={mockOnChange} />);
+    await render(<FloatInput value={value} onChange={mockOnChange} />);
     expect(screen.toJSON()).toMatchSnapshot();
   });
 
@@ -17,7 +17,7 @@ describe("FloatInput", () => {
     const mockOnChange = jest.fn();
     const value = 10.0;
 
-    render(<FloatInput value={value} onChange={mockOnChange} />);
+    await render(<FloatInput value={value} onChange={mockOnChange} />);
 
     const input = screen.getByTestId("float-input");
 
@@ -43,7 +43,7 @@ describe("FloatInput", () => {
     const mockOnChange = jest.fn();
     const value = 10.0;
 
-    render(<FloatInput value={value} onChange={mockOnChange} />);
+    await render(<FloatInput value={value} onChange={mockOnChange} />);
 
     const input = screen.getByTestId("float-input");
 
@@ -55,13 +55,13 @@ describe("FloatInput", () => {
 
   it("updates display value when prop changes", async () => {
     const mockOnChange = jest.fn();
-    render(<FloatInput value={10.0} onChange={mockOnChange} />);
+    await render(<FloatInput value={10.0} onChange={mockOnChange} />);
 
     const input = screen.getByTestId("float-input");
 
     expect(input.props.value).toBe("10");
 
-    screen.rerender(<FloatInput value={20.0} onChange={mockOnChange} />);
+    await screen.rerender(<FloatInput value={20.0} onChange={mockOnChange} />);
     expect(input.props.value).toBe("20");
   });
 });

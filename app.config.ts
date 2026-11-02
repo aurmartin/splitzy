@@ -13,16 +13,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   userInterfaceStyle: "automatic",
-  newArchEnabled: true,
   updates: {
     fallbackToCacheTimeout: 0,
   },
   assetBundlePatterns: ["**/*"],
-  splash: {
-    image: "./assets/images/splash.png",
-    resizeMode: "contain",
-    backgroundColor: "#F7F3ED",
-  },
   ios: {
     supportsTablet: true,
     bundleIdentifier: Env.BUNDLE_ID,
@@ -36,7 +30,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#F7F3ED",
     },
     package: Env.PACKAGE,
-    edgeToEdgeEnabled: true,
   },
   web: {
     bundler: "metro",
@@ -44,6 +37,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     "expo-router",
+    "expo-status-bar",
+    [
+      "expo-splash-screen",
+      {
+        image: "./assets/images/splash.png",
+        imageWidth: 200,
+        resizeMode: "contain",
+        backgroundColor: "#F7F3ED",
+      },
+    ],
     "expo-localization",
     "expo-sqlite",
     [

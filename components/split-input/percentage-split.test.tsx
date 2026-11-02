@@ -9,7 +9,7 @@ import * as React from "react";
 
 describe("PercentageSplit", () => {
   describe("PercentageSplitInput", () => {
-    it("renders correctly", () => {
+    it("renders correctly", async () => {
       const mockSplit = {
         type: "percentage" as const,
         total: dinero({ amount: 1000, currency: "USD" }),
@@ -17,7 +17,9 @@ describe("PercentageSplit", () => {
         members: ["user1"],
       } as PercentageSplit;
 
-      render(<PercentageSplitInput value={mockSplit} onChange={() => {}} />);
+      await render(
+        <PercentageSplitInput value={mockSplit} onChange={() => {}} />,
+      );
       expect(screen.toJSON()).toMatchSnapshot();
     });
 
@@ -32,7 +34,7 @@ describe("PercentageSplit", () => {
       } as PercentageSplit;
 
       const mockOnChange = jest.fn();
-      render(
+      await render(
         <PercentageSplitInput value={mockSplit} onChange={mockOnChange} />,
       );
 

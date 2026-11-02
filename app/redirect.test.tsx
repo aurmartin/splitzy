@@ -17,29 +17,29 @@ jest.mock("expo-linking", () => ({
 }));
 
 describe("RedirectScreen", () => {
-  it("should render snapshot", () => {
-    renderRouter(routerContext, system, { initialUrl: "/redirect" });
+  it("should render snapshot", async () => {
+    await renderRouter(routerContext, system, { initialUrl: "/redirect" });
     expect(screen.toJSON()).toMatchSnapshot();
   });
 
   it("should redirect to protected route when correct link is provided", async () => {
     const url = `/redirect?access_token=token&refresh_token=test-refresh-token`;
     jest.mocked(Linking.useLinkingURL).mockReturnValue(url);
-    renderRouter(routerContext, system, { initialUrl: url });
+    await renderRouter(routerContext, system, { initialUrl: url });
     await screen.findByText("Protected");
   });
 
   it("should redirect to login page when no access_token is provided", async () => {
     const url = `/redirect?refresh_token=test-refresh-token`;
     jest.mocked(Linking.useLinkingURL).mockReturnValue(url);
-    renderRouter(routerContext, system, { initialUrl: url });
+    await renderRouter(routerContext, system, { initialUrl: url });
     await screen.findByText("Login Page");
   });
 
   it("should redirect to login page when errorCode is provided", async () => {
     const url = `/redirect?errorCode=test-error-code`;
     jest.mocked(Linking.useLinkingURL).mockReturnValue(url);
-    renderRouter(routerContext, system, { initialUrl: url });
+    await renderRouter(routerContext, system, { initialUrl: url });
     await screen.findByText("Login Page");
   });
 });

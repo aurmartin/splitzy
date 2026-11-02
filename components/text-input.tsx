@@ -1,6 +1,7 @@
 import {
   TextInput as RNTextInput,
   View,
+  type TextInputInstance,
   type TextInputProps as RNTextInputProps,
   type StyleProp,
   type ViewStyle,
@@ -12,7 +13,7 @@ type TextInputProps = {
   label?: string;
   right?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
-  ref?: React.Ref<RNTextInput>;
+  ref?: React.Ref<TextInputInstance>;
 } & RNTextInputProps;
 
 function TextInput(props: TextInputProps) {

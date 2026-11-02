@@ -3,8 +3,8 @@ import { render, screen, userEvent } from "@testing-library/react-native";
 import * as React from "react";
 import { Text } from "react-native";
 
-it("renders correctly with children", () => {
-  render(
+it("renders correctly with children", async () => {
+  await render(
     <Card>
       <Text>Card content</Text>
     </Card>,
@@ -16,7 +16,7 @@ it("handles onPress events", async () => {
   const user = userEvent.setup();
 
   const onPressMock = jest.fn();
-  render(
+  await render(
     <Card onPress={onPressMock}>
       <Text>Clickable card</Text>
     </Card>,
@@ -26,8 +26,8 @@ it("handles onPress events", async () => {
   expect(onPressMock).toHaveBeenCalled();
 });
 
-it("renders as View when no onPress provided", () => {
-  render(
+it("renders as View when no onPress provided", async () => {
+  await render(
     <Card>
       <Text>Static card</Text>
     </Card>,
@@ -35,8 +35,8 @@ it("renders as View when no onPress provided", () => {
   expect(screen.toJSON()).toMatchSnapshot();
 });
 
-it("renders as Pressable when onPress provided", () => {
-  render(
+it("renders as Pressable when onPress provided", async () => {
+  await render(
     <Card onPress={() => {}}>
       <Text>Clickable card</Text>
     </Card>,

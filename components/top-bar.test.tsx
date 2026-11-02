@@ -16,27 +16,27 @@ describe("TopBar", () => {
     jest.clearAllMocks();
   });
 
-  it("renders correctly", () => {
-    render(<TopBar />);
+  it("renders correctly", async () => {
+    await render(<TopBar />);
     expect(screen.toJSON()).toMatchSnapshot();
   });
 
-  it("renders title when provided", () => {
+  it("renders title when provided", async () => {
     const title = "Test Title";
-    render(<TopBar title={title} />);
+    await render(<TopBar title={title} />);
 
     screen.getByText(title);
   });
 
   it("handles back button press correctly", async () => {
     const user = userEvent.setup();
-    render(<TopBar />);
+    await render(<TopBar />);
 
     await user.press(screen.getByTestId("topbar-back-button"));
     expect(mockBack).toHaveBeenCalled();
   });
 
-  it("renders right actions when provided", () => {
+  it("renders right actions when provided", async () => {
     const actionText = "Action";
     const rightActions = [
       <Pressable key="1" testID="right-action">
@@ -44,7 +44,7 @@ describe("TopBar", () => {
       </Pressable>,
     ];
 
-    render(<TopBar rightActions={rightActions} />);
+    await render(<TopBar rightActions={rightActions} />);
 
     screen.getByTestId("right-action");
     screen.getByText(actionText);

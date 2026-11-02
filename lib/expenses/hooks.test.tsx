@@ -46,7 +46,7 @@ describe("useExpense", () => {
     };
 
     // Act
-    render(<Test />, system);
+    await render(<Test />, system);
 
     // Assert
     await screen.findByText(testExpense.title);
@@ -66,7 +66,7 @@ describe("useExpense", () => {
     };
 
     // Act
-    render(<Test />, system);
+    await render(<Test />, system);
 
     const updatedExpense = {
       ...testExpense,
@@ -113,7 +113,7 @@ describe("useExpenses", () => {
       );
     };
 
-    render(<Test />, system);
+    await render(<Test />, system);
   });
 
   it("should return all expenses for a group", async () => {

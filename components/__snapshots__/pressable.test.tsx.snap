@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Pressable renders correctly 1`] = `
 <View
@@ -37,6 +37,8 @@ exports[`Pressable renders correctly 1`] = `
     }
   }
 >
-  Test
+  <Text>
+    Test
+  </Text>
 </View>
 `;

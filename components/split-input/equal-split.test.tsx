@@ -5,14 +5,14 @@ import dinero from "dinero.js";
 
 describe("EqualSplit", () => {
   describe("EqualSplitInput", () => {
-    it("renders correctly", () => {
+    it("renders correctly", async () => {
       const mockSplit = {
         type: "equal" as const,
         total: dinero({ amount: 2000, currency: "USD" }),
         members: ["user1", "user2"],
       };
 
-      render(<EqualSplitInput value={mockSplit} />);
+      await render(<EqualSplitInput value={mockSplit} />);
       expect(screen.toJSON()).toMatchSnapshot();
     });
   });

@@ -10,14 +10,14 @@ const routerContext = {
 };
 
 describe("LoginScreen", () => {
-  it("should render snapshot", () => {
-    renderRouter(routerContext, system, { initialUrl: "/login" });
+  it("should render snapshot", async () => {
+    await renderRouter(routerContext, system, { initialUrl: "/login" });
     expect(screen.toJSON()).toMatchSnapshot();
   });
 
   it("should allow user to sign in with email", async () => {
     const user = userEvent.setup();
-    renderRouter(routerContext, system, { initialUrl: "/login" });
+    await renderRouter(routerContext, system, { initialUrl: "/login" });
 
     await user.type(screen.getByPlaceholderText("E-mail"), "test@test.com");
     await user.press(screen.getByRole("button"));
@@ -29,7 +29,7 @@ describe("LoginScreen", () => {
 
   it("should handle sign in error", async () => {
     const user = userEvent.setup();
-    renderRouter(routerContext, system, { initialUrl: "/login" });
+    await renderRouter(routerContext, system, { initialUrl: "/login" });
 
     (system.supabaseConnector.signInWithOtp as jest.Mock).mockImplementation(
       () => {
@@ -52,7 +52,7 @@ describe("LoginScreen", () => {
       },
     });
 
-    renderRouter(routerContext, system, { initialUrl: "/login" });
+    await renderRouter(routerContext, system, { initialUrl: "/login" });
 
     await screen.findByText("Protected");
   });

@@ -18,8 +18,8 @@ describe("AmountSplit", () => {
 
     const onChange = jest.fn();
 
-    beforeEach(() => {
-      render(
+    beforeEach(async () => {
+      await render(
         <AmountSplitInput
           testID="amount-split-input"
           value={testSplit}
@@ -42,7 +42,7 @@ describe("AmountSplit", () => {
       expect(screen.queryByTestId("reset-amount-bob")).toBeNull();
     });
 
-    it("should recompute remaining amounts when total changes", () => {
+    it("should recompute remaining amounts when total changes", async () => {
       const updatedSplit = {
         ...testSplit,
         total: dinero({ amount: 2000, currency: "USD" }),
@@ -50,7 +50,7 @@ describe("AmountSplit", () => {
 
       expect(screen.getByTestId("amount-input-bob").props.value).toEqual("0");
 
-      screen.rerender(
+      await screen.rerender(
         <AmountSplitInput
           testID="amount-split-input"
           value={updatedSplit}
