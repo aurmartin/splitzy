@@ -7,7 +7,6 @@ import { Colors } from "@/lib/constants";
 import { tables } from "@/lib/db/schema";
 import { Env } from "@/lib/env";
 import { System } from "@/lib/system";
-import * as Aptabase from "@aptabase/react-native";
 import { type FallbackRender } from "@sentry/react";
 import * as Sentry from "@sentry/react-native";
 import { drizzle } from "drizzle-orm/expo-sqlite";
@@ -26,8 +25,6 @@ if (Env.APP_ENV !== "development") {
     // uncomment the line below to enable Spotlight (https://spotlightjs.com)
     // spotlight: __DEV__,
   });
-
-  Aptabase.init("A-EU-5706290686", { appVersion: Env.VERSION });
 }
 
 const sqliteDatabase = openDatabaseSync("sqlite.db", {
@@ -45,8 +42,6 @@ export default function RootLayout() {
 
   React.useEffect(() => {
     system.init();
-
-    Aptabase.trackEvent("open_app");
 
     return () => {
       system.dispose();

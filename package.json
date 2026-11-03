@@ -20,7 +20,6 @@
     "build:ios-production": "SENTRY_DISABLE_AUTO_UPLOAD=true EXPO_NO_DOTENV=1 APP_ENV=production sh -c 'expo prebuild --platform ios --clean && expo run:ios --configuration Release --device'"
   },
   "dependencies": {
-    "@aptabase/react-native": "^0.3.10",
     "@expo/metro-runtime": "~58.0.16",
     "@expo/react-native-action-sheet": "^4.1.1",
     "@expo/vector-icons": "^15.1.1",
