@@ -17,6 +17,9 @@ updates:
     patterns: ["*"]
     multi-ecosystem-group: dependencies
     ignore:
+      # Major updates are done by hand.
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
       # These versions are pinned by the Expo SDK: upgrade them with
       # `npx expo install --fix` as part of an SDK upgrade instead.
       - dependency-name: "expo"
@@ -76,11 +79,17 @@ updates:
     directory: /server
     patterns: ["*"]
     multi-ecosystem-group: dependencies
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: docker
     directory: /server
     patterns: ["*"]
     multi-ecosystem-group: dependencies
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   # CI
   - package-ecosystem: github-actions
