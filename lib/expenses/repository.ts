@@ -1,11 +1,11 @@
 import { expensesTable, type ExpenseRecord } from "@/lib/db/schema";
 import { System } from "@/lib/system";
-import dinero, { type Currency, type Dinero } from "dinero.js";
+import { Money, type Currency } from "@/lib/money";
 import { desc, eq } from "drizzle-orm";
 
 import type { Expense, Receipt, Split } from "./types";
 
-interface DineroRecord {
+interface MoneyRecord {
   amount: number;
   currency: Currency;
   precision: number;
@@ -105,7 +105,7 @@ function decodeExpenseRecord(record: ExpenseRecord): Expense {
 }
 
 function decodeSplitExpense(decoded: any): Expense["splitExpense"] {
-  const total = dinero({
+  const total = Money.create({
     amount: decoded.total.amount,
     currency: decoded.total.currency,
     precision: decoded.total.precision,
@@ -120,14 +120,14 @@ function decodeSplitExpense(decoded: any): Expense["splitExpense"] {
     case "equal":
       return { type, total, members };
     case "amount":
-      const amounts = decoded.amounts as Record<string, DineroRecord>;
+      const amounts = decoded.amounts as Record<string, MoneyRecord>;
       return {
         type,
         total,
         members,
         amounts: Object.entries(amounts).reduce(
           (acc, [member, amount]) => {
-            acc[member] = dinero({
+            acc[member] = Money.create({
               amount: amount.amount,
               currency: amount.currency,
               precision: amount.precision,
@@ -135,7 +135,7 @@ function decodeSplitExpense(decoded: any): Expense["splitExpense"] {
 
             return acc;
           },
-          {} as { [member: string]: Dinero },
+          {} as { [member: string]: Money },
         ),
       };
     case "receipt":
@@ -157,7 +157,7 @@ function decodeReceipt(decoded: any): Receipt | null {
     title: decoded.title,
     currency: decoded.currency,
     date: new Date(decoded.date),
-    total: dinero({
+    total: Money.create({
       amount: decoded.total.amount,
       currency: decoded.total.currency,
       precision: decoded.total.precision,
@@ -165,7 +165,7 @@ function decodeReceipt(decoded: any): Receipt | null {
     items: decoded.items.map((item: any) => ({
       description: item.description,
       humanReadableDescription: item.humanReadableDescription,
-      price: dinero({
+      price: Money.create({
         amount: item.price.amount,
         currency: item.price.currency,
         precision: item.price.precision,

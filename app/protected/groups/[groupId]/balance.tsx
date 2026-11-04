@@ -16,6 +16,7 @@ import {
 } from "@/lib/currency";
 import { Group, useGroup, useMe } from "@/lib/groups";
 import { getLocale } from "@/lib/locale";
+import { Money } from "@/lib/money";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { ScrollView, View } from "react-native";
@@ -38,8 +39,8 @@ const MyBalance = React.memo(function MyBalance({
     <Card style={{ gap: 4, alignItems: "center", marginBottom: 24 }}>
       <Text>{getBalanceMessage(myBalance)}</Text>
       <Text type="headlineMedium" style={{ color: getAmountColor(myBalance) }}>
-        {myBalance.getAmount() !== 0
-          ? getAbsoluteAmount(myBalance).setLocale(getLocale()).toFormat()
+        {myBalance.amount !== 0
+          ? Money.format(getAbsoluteAmount(myBalance), getLocale())
           : ""}
       </Text>
     </Card>
@@ -59,7 +60,7 @@ const GroupBalance = React.memo(function GroupBalance({
           <View key={name} style={{ justifyContent: "space-between" }}>
             <Text>{name}</Text>
             <Text style={{ color: getAmountColor(amount) }}>
-              {amount.setLocale(getLocale()).toFormat()}
+              {Money.format(amount, getLocale())}
             </Text>
           </View>
         ))}
@@ -95,7 +96,7 @@ const Reimbursements = React.memo(function Reimbursements({
             <Text>{reimbursement.from}</Text>
             <Text style={{ color: "gray" }}>doit</Text>
             <Text type="titleMedium">
-              {reimbursement.amount.setLocale(getLocale()).toFormat()}
+              {Money.format(reimbursement.amount, getLocale())}
             </Text>
             <Text style={{ color: "gray" }}>à</Text>
             <Text>{reimbursement.to}</Text>

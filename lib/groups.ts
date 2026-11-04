@@ -3,7 +3,7 @@ import { ValidationError } from "@/lib/validation-error";
 import { GroupRecord, groupsTable } from "@/lib/db/schema";
 import { System } from "@/lib/system";
 import { generateId, time } from "@/lib/utils";
-import { Currency } from "dinero.js";
+import { type Currency } from "@/lib/money";
 import { desc, eq } from "drizzle-orm";
 import { useCallback, useEffect, useMemo, useState } from "react";
 

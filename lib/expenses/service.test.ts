@@ -12,7 +12,7 @@ import { System } from "@/lib/system";
 import { system } from "@/lib/test-setup";
 import { generateId } from "@/lib/utils";
 import { DisplayableError } from "@/lib/displayable-error";
-import dinero, { Currency } from "dinero.js";
+import { Money, type Currency } from "@/lib/money";
 import { eq } from "drizzle-orm";
 
 // Helper functions for creating test data
@@ -26,7 +26,7 @@ const createBasicExpense = (overrides: Partial<Expense> = {}): Expense => {
     payerName: "Test User",
     splitExpense: {
       type: "percentage",
-      total: dinero({ amount: 0, currency: "USD" }),
+      total: Money.create({ amount: 0, currency: "USD" }),
       members: [],
       ratios: {},
     },
@@ -40,7 +40,7 @@ const createBasicExpense = (overrides: Partial<Expense> = {}): Expense => {
 
 const createSplitExpense = (): Expense["splitExpense"] => ({
   type: "percentage",
-  total: dinero({ amount: 0, currency: "USD" }),
+  total: Money.create({ amount: 0, currency: "USD" }),
   members: ["Alice", "Bob"],
   ratios: {
     Alice: 50,
@@ -50,20 +50,20 @@ const createSplitExpense = (): Expense["splitExpense"] => ({
 
 const createReceipt = (): Receipt => ({
   date: new Date("2023-05-15"),
-  total: dinero({ amount: 3000, currency: "EUR" }),
+  total: Money.create({ amount: 3000, currency: "EUR" }),
   title: "Restaurant Bill",
   currency: "EUR" as Currency,
   items: [
     {
       description: "Main course",
       humanReadableDescription: "Main course",
-      price: dinero({ amount: 2000, currency: "EUR" }),
+      price: Money.create({ amount: 2000, currency: "EUR" }),
       paid_for: ["Alice", "Bob"],
     },
     {
       description: "Dessert",
       humanReadableDescription: "Dessert",
-      price: dinero({ amount: 1000, currency: "EUR" }),
+      price: Money.create({ amount: 1000, currency: "EUR" }),
       paid_for: ["Alice"],
     },
   ],
@@ -197,24 +197,24 @@ describe("getAmounts", () => {
   it("should compute all amounts when given an amount split with missing amounts", () => {
     const splitExpense: AmountSplit = {
       type: "amount",
-      total: dinero({ amount: 1000, currency: "USD" }),
+      total: Money.create({ amount: 1000, currency: "USD" }),
       members: ["Alice", "Bob"],
       amounts: {
-        Alice: dinero({ amount: 250, currency: "USD" }),
+        Alice: Money.create({ amount: 250, currency: "USD" }),
       },
     };
 
     const expense = createBasicExpense({ splitExpense });
     const amounts = ExpenseService.getAmounts(expense);
 
-    expect(amounts.Alice.getAmount()).toEqual(250);
-    expect(amounts.Bob.getAmount()).toEqual(750);
+    expect(amounts.Alice.amount).toEqual(250);
+    expect(amounts.Bob.amount).toEqual(750);
   });
 
   it("should compute all amounts when given a percentage split", () => {
     const splitExpense: PercentageSplit = {
       type: "percentage",
-      total: dinero({ amount: 1000, currency: "USD" }),
+      total: Money.create({ amount: 1000, currency: "USD" }),
       members: ["Alice", "Bob"],
       ratios: {
         Alice: 50,
@@ -225,21 +225,21 @@ describe("getAmounts", () => {
     const expense = createBasicExpense({ splitExpense });
     const amounts = ExpenseService.getAmounts(expense);
 
-    expect(amounts.Alice.getAmount()).toEqual(500);
-    expect(amounts.Bob.getAmount()).toEqual(500);
+    expect(amounts.Alice.amount).toEqual(500);
+    expect(amounts.Bob.amount).toEqual(500);
   });
 
   it("should compute all amounts when given an equal split", () => {
     const splitExpense: EqualSplit = {
       type: "equal",
-      total: dinero({ amount: 1000, currency: "USD" }),
+      total: Money.create({ amount: 1000, currency: "USD" }),
       members: ["Alice", "Bob"],
     };
 
     const expense = createBasicExpense({ splitExpense });
     const amounts = ExpenseService.getAmounts(expense);
 
-    expect(amounts.Alice.getAmount()).toEqual(500);
-    expect(amounts.Bob.getAmount()).toEqual(500);
+    expect(amounts.Alice.amount).toEqual(500);
+    expect(amounts.Bob.amount).toEqual(500);
   });
 });

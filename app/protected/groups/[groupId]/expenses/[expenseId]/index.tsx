@@ -13,6 +13,7 @@ import {
   type Expense,
 } from "@/lib/expenses";
 import { getLocale } from "@/lib/locale";
+import { Money } from "@/lib/money";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScrollView, View } from "react-native";
 
@@ -56,8 +57,7 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
       />
 
       <Text type="headlineMedium" style={{ marginBottom: 16 }}>
-        {expense.title}{" "}
-        {expense.splitExpense.total.setLocale(getLocale()).toFormat()}
+        {expense.title} {Money.format(expense.splitExpense.total, getLocale())}
       </Text>
 
       <Text style={{ marginBottom: 16 }}>
@@ -74,7 +74,7 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
           {Object.entries(amounts).map(([name, amount]) => (
             <View key={name} style={{ justifyContent: "space-between" }}>
               <Text key={name}>{name}</Text>
-              <Text>{amount.setLocale(getLocale()).toFormat()}</Text>
+              <Text>{Money.format(amount, getLocale())}</Text>
             </View>
           ))}
         </ListGroup>
@@ -101,7 +101,7 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
                     </Text>
                   </View>
 
-                  <Text>{item.price.setLocale(getLocale()).toFormat()}</Text>
+                  <Text>{Money.format(item.price, getLocale())}</Text>
                 </View>
               ))}
             </ListGroup>

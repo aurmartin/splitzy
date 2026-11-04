@@ -3,7 +3,7 @@ import { ExpensesRepository } from "@/lib/expenses/repository";
 import { getGroupRow, useAddGroup } from "@/lib/groups";
 import { System } from "@/lib/system";
 import { generateId } from "@/lib/utils";
-import dinero from "dinero.js";
+import { Money } from "@/lib/money";
 import { usePathname } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, Platform, StyleSheet, Text, View } from "react-native";
@@ -24,7 +24,7 @@ async function generateExpenses(system: System, groupId: string) {
   for (let i = 0; i < count; i++) {
     const payer = getRandomMember(members);
 
-    const total = dinero({
+    const total = Money.create({
       amount: Math.floor(Math.random() * 100),
       currency: group.currency,
     });

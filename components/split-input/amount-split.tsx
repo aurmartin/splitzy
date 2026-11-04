@@ -1,7 +1,7 @@
-import { DineroInput } from "@/components/dinero-input";
+import { MoneyInput } from "@/components/money-input";
 import { type AmountSplit } from "@/lib/expenses";
 import { MaterialIcons } from "@expo/vector-icons";
-import dinero, { type Dinero } from "dinero.js";
+import { Money } from "@/lib/money";
 import { produce } from "immer";
 import React from "react";
 import { Pressable } from "react-native";
@@ -16,7 +16,7 @@ interface AmountSplitInputProps {
 const AmountSplitInput = (props: AmountSplitInputProps) => {
   const { value, onChange } = props;
 
-  const handleInputChange = (member: string, amount: Dinero) => {
+  const handleInputChange = (member: string, amount: Money) => {
     if (onChange) {
       const updatedValue = produce(value, (draft) => {
         draft.amounts[member] = amount;
@@ -46,7 +46,7 @@ const AmountSplitInput = (props: AmountSplitInputProps) => {
   return (
     <ListGroup>
       {value.members.map((member, index) => (
-        <DineroInput
+        <MoneyInput
           key={member}
           label={member}
           testID={`amount-input-${member}`}
@@ -69,7 +69,7 @@ const AmountSplitInput = (props: AmountSplitInputProps) => {
   );
 };
 
-const getRemaningAmounts = (split: AmountSplit): Record<string, Dinero> => {
+const getRemaningAmounts = (split: AmountSplit): Record<string, Money> => {
   const missingMembers = split.members.filter(
     (member) => !(member in split.amounts),
   );
@@ -79,33 +79,36 @@ const getRemaningAmounts = (split: AmountSplit): Record<string, Dinero> => {
   }
 
   const total = split.total;
-  const currency = total.getCurrency();
+  const currency = total.currency;
 
   const alreadyAllocatedTotal = Object.values(split.amounts).reduce(
-    (acc, amount) => acc.add(amount),
-    dinero({ amount: 0, currency }),
+    (acc, amount) => Money.add(acc, amount),
+    Money.create({ amount: 0, currency }),
   );
 
-  const remaning = total.subtract(alreadyAllocatedTotal);
+  const remaning = Money.subtract(total, alreadyAllocatedTotal);
 
-  const remaningAllocation = remaning.allocate(missingMembers.map(() => 1));
+  const remaningAllocation = Money.allocate(
+    remaning,
+    missingMembers.map(() => 1),
+  );
 
   return missingMembers.reduce(
     (acc, member, index) => {
       const amount = remaningAllocation[index];
 
-      if (amount.isPositive()) {
+      if (amount.amount > 0) {
         acc[member] = amount;
       } else {
-        acc[member] = dinero({ amount: 0, currency });
+        acc[member] = Money.create({ amount: 0, currency });
       }
 
       return acc;
     },
-    {} as Record<string, Dinero>,
+    {} as Record<string, Money>,
   );
 };
-const createAmountSplit = (total: Dinero, members: string[]): AmountSplit => {
+const createAmountSplit = (total: Money, members: string[]): AmountSplit => {
   return {
     type: "amount",
     amounts: {},
@@ -118,7 +121,7 @@ const useEffectiveAmounts = (split: AmountSplit) => {
   return React.useMemo(() => getEffectiveAmounts(split), [split]);
 };
 
-const getEffectiveAmounts = (split: AmountSplit): Record<string, Dinero> => {
+const getEffectiveAmounts = (split: AmountSplit): Record<string, Money> => {
   const remaningAmounts = getRemaningAmounts(split);
 
   return split.members.reduce(
@@ -126,7 +129,7 @@ const getEffectiveAmounts = (split: AmountSplit): Record<string, Dinero> => {
       acc[member] = split.amounts[member] || remaningAmounts[member];
       return acc;
     },
-    {} as Record<string, Dinero>,
+    {} as Record<string, Money>,
   );
 };
 

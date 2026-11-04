@@ -1,7 +1,7 @@
 import * as React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { ReceiptSplitInput, createReceiptSplit } from "./receipt-split";
-import dinero from "dinero.js";
+import { Money } from "@/lib/money";
 import { type Receipt } from "@/lib/expenses";
 
 describe("ReceiptSplit", () => {
@@ -10,17 +10,17 @@ describe("ReceiptSplit", () => {
       {
         description: "Item_1",
         humanReadableDescription: "Item 1",
-        price: dinero({ amount: 1000, currency: "USD" }),
+        price: Money.create({ amount: 1000, currency: "USD" }),
         paid_for: ["user1"],
       },
       {
         description: "Item_2",
         humanReadableDescription: "Item 2",
-        price: dinero({ amount: 2000, currency: "USD" }),
+        price: Money.create({ amount: 2000, currency: "USD" }),
         paid_for: [],
       },
     ],
-    total: dinero({ amount: 3000, currency: "USD" }),
+    total: Money.create({ amount: 3000, currency: "USD" }),
     date: new Date(),
     title: "Receipt 1",
     currency: "USD",

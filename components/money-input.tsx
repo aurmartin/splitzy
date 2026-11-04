@@ -1,22 +1,22 @@
-import dinero, { Dinero } from "dinero.js";
+import { Money } from "@/lib/money";
 import React from "react";
 import { FloatInput, type FloatInputProps } from "./float-input";
 import { getMinorUnitAmount } from "@/lib/currency";
 
-interface DineroInputProps extends Omit<FloatInputProps, "value" | "onChange"> {
-  value: Dinero;
-  onChange: (value: Dinero) => void;
+interface MoneyInputProps extends Omit<FloatInputProps, "value" | "onChange"> {
+  value: Money;
+  onChange: (value: Money) => void;
 }
 
-const DineroInput = (props: DineroInputProps) => {
+const MoneyInput = (props: MoneyInputProps) => {
   const { value, onChange: onChangeProp, ...rest } = props;
 
   const onChange = React.useCallback(
     (numberValue: number) => {
-      const currency = value.getCurrency();
+      const currency = value.currency;
 
       onChangeProp(
-        dinero({
+        Money.create({
           amount: getMinorUnitAmount(numberValue, currency),
           currency,
         }),
@@ -25,7 +25,9 @@ const DineroInput = (props: DineroInputProps) => {
     [onChangeProp, value],
   );
 
-  return <FloatInput value={value.toUnit()} onChange={onChange} {...rest} />;
+  return (
+    <FloatInput value={Money.toUnit(value)} onChange={onChange} {...rest} />
+  );
 };
 
-export { DineroInput, type DineroInputProps };
+export { MoneyInput, type MoneyInputProps };

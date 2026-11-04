@@ -6,11 +6,11 @@ import {
 } from "@/components/split-input";
 import { type PercentageSplit, type Split } from "@/lib/expenses";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import dinero from "dinero.js";
+import { Money } from "@/lib/money";
 import * as React from "react";
 
 describe("SplitInput", () => {
-  const mockTotal = dinero({ amount: 2000, currency: "USD" });
+  const mockTotal = Money.create({ amount: 2000, currency: "USD" });
   const mockMembers = ["user1", "user2"];
 
   describe("SplitInput component", () => {
@@ -63,7 +63,7 @@ describe("SplitInput", () => {
         members: mockMembers,
       };
 
-      const newTotal = dinero({ amount: 3000, currency: "USD" });
+      const newTotal = Money.create({ amount: 3000, currency: "USD" });
       const result = changeTotal(originalSplit, newTotal);
 
       expect(result.type).toBe("equal");
@@ -79,7 +79,7 @@ describe("SplitInput", () => {
         ratios: { user1: 50, user2: 50 },
       };
 
-      const newTotal = dinero({ amount: 3000, currency: "USD" });
+      const newTotal = Money.create({ amount: 3000, currency: "USD" });
       const result = changeTotal(originalSplit, newTotal);
 
       expect(result.type).toBe("percentage");

@@ -1,7 +1,7 @@
 import { computeBalance, computeOptimalReimbursements } from "./balance";
 import type { Expense } from "@/lib/expenses";
 import { Group } from "./groups";
-import dinero from "dinero.js";
+import { Money } from "@/lib/money";
 
 const createExpense = (overrides: Partial<Expense> = {}): Expense => ({
   id: "1",
@@ -14,7 +14,7 @@ const createExpense = (overrides: Partial<Expense> = {}): Expense => ({
   payerName: "Alice",
   splitExpense: {
     type: "percentage",
-    total: dinero({ amount: 0, currency: "USD" }),
+    total: Money.create({ amount: 0, currency: "USD" }),
     members: [],
     ratios: {},
   },
@@ -33,8 +33,8 @@ describe("balance computation", () => {
 
     const balance = computeBalance(group, expenses);
 
-    expect(balance.Alice.getAmount()).toEqual(0);
-    expect(balance.Bob.getAmount()).toEqual(0);
+    expect(balance.Alice.amount).toEqual(0);
+    expect(balance.Bob.amount).toEqual(0);
   });
 
   it("should compute balance for single expense", () => {
@@ -48,11 +48,11 @@ describe("balance computation", () => {
         payerName: "Alice",
         splitExpense: {
           type: "amount",
-          total: dinero({ amount: 10, currency: "USD" }),
+          total: Money.create({ amount: 10, currency: "USD" }),
           members: ["Alice", "Bob"],
           amounts: {
-            Alice: dinero({ amount: 5, currency: "USD" }),
-            Bob: dinero({ amount: 5, currency: "USD" }),
+            Alice: Money.create({ amount: 5, currency: "USD" }),
+            Bob: Money.create({ amount: 5, currency: "USD" }),
           },
         },
       }),
@@ -60,8 +60,8 @@ describe("balance computation", () => {
 
     const balance = computeBalance(group, expenses);
 
-    expect(balance.Alice.getAmount()).toEqual(5);
-    expect(balance.Bob.getAmount()).toEqual(-5);
+    expect(balance.Alice.amount).toEqual(5);
+    expect(balance.Bob.amount).toEqual(-5);
   });
 
   it("should compute balance for multiple expenses", () => {
@@ -75,12 +75,12 @@ describe("balance computation", () => {
         payerName: "Alice",
         splitExpense: {
           type: "amount",
-          total: dinero({ amount: 30, currency: "USD" }),
+          total: Money.create({ amount: 30, currency: "USD" }),
           members: ["Alice", "Bob", "Charlie"],
           amounts: {
-            Alice: dinero({ amount: 10, currency: "USD" }),
-            Bob: dinero({ amount: 10, currency: "USD" }),
-            Charlie: dinero({ amount: 10, currency: "USD" }),
+            Alice: Money.create({ amount: 10, currency: "USD" }),
+            Bob: Money.create({ amount: 10, currency: "USD" }),
+            Charlie: Money.create({ amount: 10, currency: "USD" }),
           },
         },
       }),
@@ -88,11 +88,11 @@ describe("balance computation", () => {
         payerName: "Bob",
         splitExpense: {
           type: "amount",
-          total: dinero({ amount: 30, currency: "USD" }),
+          total: Money.create({ amount: 30, currency: "USD" }),
           members: ["Alice", "Bob", "Charlie"],
           amounts: {
-            Alice: dinero({ amount: 15, currency: "USD" }),
-            Bob: dinero({ amount: 15, currency: "USD" }),
+            Alice: Money.create({ amount: 15, currency: "USD" }),
+            Bob: Money.create({ amount: 15, currency: "USD" }),
           },
         },
       }),
@@ -100,17 +100,17 @@ describe("balance computation", () => {
 
     const balance = computeBalance(group, expenses);
 
-    expect(balance.Alice.getAmount()).toEqual(5);
-    expect(balance.Bob.getAmount()).toEqual(5);
-    expect(balance.Charlie.getAmount()).toEqual(-10);
+    expect(balance.Alice.amount).toEqual(5);
+    expect(balance.Bob.amount).toEqual(5);
+    expect(balance.Charlie.amount).toEqual(-10);
   });
 });
 
 describe("optimal reimbursements computation", () => {
   it("should return empty array for balanced group", () => {
     const balance = {
-      Alice: dinero({ amount: 0, currency: "USD" }),
-      Bob: dinero({ amount: 0, currency: "USD" }),
+      Alice: Money.create({ amount: 0, currency: "USD" }),
+      Bob: Money.create({ amount: 0, currency: "USD" }),
     };
 
     const reimbursements = computeOptimalReimbursements(balance);
@@ -120,8 +120,8 @@ describe("optimal reimbursements computation", () => {
 
   it("should compute simple reimbursement between two people", () => {
     const balance = {
-      Alice: dinero({ amount: 1000, currency: "USD" }),
-      Bob: dinero({ amount: -1000, currency: "USD" }),
+      Alice: Money.create({ amount: 1000, currency: "USD" }),
+      Bob: Money.create({ amount: -1000, currency: "USD" }),
     };
 
     const reimbursements = computeOptimalReimbursements(balance);
@@ -129,14 +129,14 @@ describe("optimal reimbursements computation", () => {
     expect(reimbursements).toHaveLength(1);
     expect(reimbursements[0].from).toBe("Bob");
     expect(reimbursements[0].to).toBe("Alice");
-    expect(reimbursements[0].amount.getAmount()).toBe(1000);
+    expect(reimbursements[0].amount.amount).toBe(1000);
   });
 
   it("should compute optimal reimbursements for multiple people", () => {
     const balance = {
-      Alice: dinero({ amount: 2000, currency: "USD" }),
-      Bob: dinero({ amount: -1000, currency: "USD" }),
-      Charlie: dinero({ amount: -1000, currency: "USD" }),
+      Alice: Money.create({ amount: 2000, currency: "USD" }),
+      Bob: Money.create({ amount: -1000, currency: "USD" }),
+      Charlie: Money.create({ amount: -1000, currency: "USD" }),
     };
 
     const reimbursements = computeOptimalReimbursements(balance);
@@ -145,7 +145,7 @@ describe("optimal reimbursements computation", () => {
 
     // Verify amounts
     const totalReimbursed = reimbursements.reduce(
-      (sum, r) => sum + r.amount.getAmount(),
+      (sum, r) => sum + r.amount.amount,
       0,
     );
     expect(totalReimbursed).toBe(2000);
@@ -153,50 +153,45 @@ describe("optimal reimbursements computation", () => {
     // Verify that Alice receives all the money
     const toAlice = reimbursements.filter((r) => r.to === "Alice");
     expect(toAlice.length).toBe(2);
-    expect(toAlice[0].amount.getAmount() + toAlice[1].amount.getAmount()).toBe(
-      2000,
-    );
+    expect(toAlice[0].amount.amount + toAlice[1].amount.amount).toBe(2000);
   });
 
   it("should handle complex case with multiple transfers", () => {
     const balance = {
-      Alice: dinero({ amount: 3000, currency: "USD" }),
-      Bob: dinero({ amount: -1000, currency: "USD" }),
-      Charlie: dinero({ amount: -500, currency: "USD" }),
-      David: dinero({ amount: -1500, currency: "USD" }),
+      Alice: Money.create({ amount: 3000, currency: "USD" }),
+      Bob: Money.create({ amount: -1000, currency: "USD" }),
+      Charlie: Money.create({ amount: -500, currency: "USD" }),
+      David: Money.create({ amount: -1500, currency: "USD" }),
     };
 
     const reimbursements = computeOptimalReimbursements(balance);
 
     // Verify total amount matches
     const totalReimbursed = reimbursements.reduce(
-      (sum, r) => sum + r.amount.getAmount(),
+      (sum, r) => sum + r.amount.amount,
       0,
     );
     expect(totalReimbursed).toBe(3000);
 
     // Verify Alice receives everything
     const toAlice = reimbursements.filter((r) => r.to === "Alice");
-    const aliceTotal = toAlice.reduce(
-      (sum, r) => sum + r.amount.getAmount(),
-      0,
-    );
+    const aliceTotal = toAlice.reduce((sum, r) => sum + r.amount.amount, 0);
     expect(aliceTotal).toBe(3000);
 
     // Verify each person pays what they owe
     const fromBob = reimbursements
       .filter((r) => r.from === "Bob")
-      .reduce((sum, r) => sum + r.amount.getAmount(), 0);
+      .reduce((sum, r) => sum + r.amount.amount, 0);
     expect(fromBob).toBe(1000);
 
     const fromCharlie = reimbursements
       .filter((r) => r.from === "Charlie")
-      .reduce((sum, r) => sum + r.amount.getAmount(), 0);
+      .reduce((sum, r) => sum + r.amount.amount, 0);
     expect(fromCharlie).toBe(500);
 
     const fromDavid = reimbursements
       .filter((r) => r.from === "David")
-      .reduce((sum, r) => sum + r.amount.getAmount(), 0);
+      .reduce((sum, r) => sum + r.amount.amount, 0);
     expect(fromDavid).toBe(1500);
   });
 });

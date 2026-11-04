@@ -4,7 +4,7 @@ import { ExpensesRepository } from "@/lib/expenses/repository";
 import { System } from "@/lib/system";
 import { generateId } from "@/lib/utils";
 import { ValidationError } from "@/lib/validation-error";
-import dinero, { Dinero } from "dinero.js";
+import { Money } from "@/lib/money";
 import {
   Expense,
   ExpenseCreateParams,
@@ -100,17 +100,17 @@ const validateSplit = (split: Split): string | undefined => {
     const effectiveAmounts = getEffectiveAmounts(split);
 
     const total = Object.values(effectiveAmounts).reduce(
-      (acc, curr) => acc.add(curr),
-      dinero({ amount: 0, currency: split.total.getCurrency() }),
+      (acc, curr) => Money.add(acc, curr),
+      Money.create({ amount: 0, currency: split.total.currency }),
     );
 
-    if (total.getAmount() !== split.total.getAmount()) {
+    if (total.amount !== split.total.amount) {
       return "La somme des montants ne correspond pas au total";
     }
   }
 };
 
-const getAmounts = (expense: Expense): Record<string, Dinero> => {
+const getAmounts = (expense: Expense): Record<string, Money> => {
   const amountSplit = convertSplit(expense.splitExpense);
   return getEffectiveAmounts(amountSplit);
 };

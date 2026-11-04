@@ -2,7 +2,7 @@ import { expensesTable } from "@/lib/db/schema";
 import { System } from "@/lib/system";
 import { system } from "@/lib/test-setup";
 import { generateId } from "@/lib/utils";
-import dinero, { Currency } from "dinero.js";
+import { Money, type Currency } from "@/lib/money";
 import { eq } from "drizzle-orm";
 
 import { ExpensesRepository } from "./repository";
@@ -19,7 +19,7 @@ const createBasicExpense = (overrides: Partial<Expense> = {}): Expense => {
     payerName: "Test User",
     splitExpense: {
       type: "percentage",
-      total: dinero({ amount: 0, currency: "USD" }),
+      total: Money.create({ amount: 0, currency: "USD" }),
       members: [],
       ratios: {},
     },
@@ -33,20 +33,20 @@ const createBasicExpense = (overrides: Partial<Expense> = {}): Expense => {
 
 const createReceipt = (): Receipt => ({
   date: new Date("2023-05-15"),
-  total: dinero({ amount: 3000, currency: "EUR" }),
+  total: Money.create({ amount: 3000, currency: "EUR" }),
   title: "Restaurant Bill",
   currency: "EUR" as Currency,
   items: [
     {
       description: "Main course",
       humanReadableDescription: "Main course",
-      price: dinero({ amount: 2000, currency: "EUR" }),
+      price: Money.create({ amount: 2000, currency: "EUR" }),
       paid_for: ["Alice", "Bob"],
     },
     {
       description: "Dessert",
       humanReadableDescription: "Dessert",
-      price: dinero({ amount: 1000, currency: "EUR" }),
+      price: Money.create({ amount: 1000, currency: "EUR" }),
       paid_for: ["Alice"],
     },
   ],
@@ -76,16 +76,14 @@ const getExpensesByGroupId = (system: System, groupId: string) => {
 const expectReceiptEqual = (left: Receipt, right: Receipt) => {
   expect(left.title).toEqual(right.title);
   expect(left.currency).toEqual(right.currency);
-  expect(left.total.getAmount()).toEqual(right.total.getAmount());
+  expect(left.total.amount).toEqual(right.total.amount);
   expect(left.items.length).toEqual(right.items.length);
   left.items.forEach((item, index) => {
     expect(item.description).toEqual(right.items[index].description);
     expect(item.humanReadableDescription).toEqual(
       right.items[index].humanReadableDescription,
     );
-    expect(item.price.getAmount()).toEqual(
-      right.items[index].price.getAmount(),
-    );
+    expect(item.price.amount).toEqual(right.items[index].price.amount);
     expect(item.paid_for).toEqual(right.items[index].paid_for);
   });
 };
@@ -191,7 +189,7 @@ describe("insertExpense", () => {
     const parsedReceipt = JSON.parse(result.receipt as string);
     expect(parsedReceipt.title).toEqual(receipt.title);
     expect(parsedReceipt.currency).toEqual(receipt.currency);
-    expect(parsedReceipt.total.amount).toEqual(receipt.total.getAmount());
+    expect(parsedReceipt.total.amount).toEqual(receipt.total.amount);
     expect(parsedReceipt.items).toHaveLength(receipt.items.length);
     expect(parsedReceipt.items[0].description).toEqual(
       receipt.items[0].description,

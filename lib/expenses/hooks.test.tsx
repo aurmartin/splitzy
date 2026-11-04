@@ -1,7 +1,7 @@
 import { system } from "@/lib/test-setup";
 import { act, render, screen } from "@/lib/test-utils";
 import { generateId } from "@/lib/utils";
-import dinero from "dinero.js";
+import { Money } from "@/lib/money";
 import { Text, View } from "react-native";
 
 import { useExpense, useExpenses } from "./hooks";
@@ -21,7 +21,7 @@ const createBasicExpense = (overrides: Partial<Expense> = {}): Expense => {
     payerName: "Test User",
     splitExpense: {
       type: "percentage",
-      total: dinero({ amount: 0, currency: "USD" }),
+      total: Money.create({ amount: 0, currency: "USD" }),
       members: [],
       ratios: {},
     },

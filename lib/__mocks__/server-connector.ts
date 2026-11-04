@@ -1,4 +1,4 @@
-import dinero from "dinero.js";
+import { Money } from "@/lib/money";
 
 const { ServerConnector } = jest.requireActual<
   typeof import("@/lib/server-connector")
@@ -6,7 +6,7 @@ const { ServerConnector } = jest.requireActual<
 
 jest.spyOn(ServerConnector.prototype, "parseReceipt").mockResolvedValue({
   items: [],
-  total: dinero({ amount: 0, currency: "EUR" }),
+  total: Money.create({ amount: 0, currency: "EUR" }),
   date: new Date(),
   title: "Test receipt",
   currency: "EUR",

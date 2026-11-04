@@ -1,5 +1,5 @@
 import Button from "@/components/button";
-import { DineroInput } from "@/components/dinero-input";
+import { MoneyInput } from "@/components/money-input";
 import {
   SplitInput,
   changeTotal,
@@ -12,7 +12,7 @@ import { Text } from "@/components/text";
 import { TextInput } from "@/components/text-input";
 import type { Expense, Receipt, Split } from "@/lib/expenses";
 import { Group, useMe } from "@/lib/groups";
-import dinero, { type Dinero } from "dinero.js";
+import { Money } from "@/lib/money";
 import * as ImagePicker from "expo-image-picker";
 import React from "react";
 import {
@@ -78,7 +78,7 @@ const ExpenseForm = (props: {
   const [payerName, setPayerName] = React.useState(me);
 
   const [total, setTotal] = React.useState(
-    dinero({ amount: 0, currency: group.currency }),
+    Money.create({ amount: 0, currency: group.currency }),
   );
   const [split, setSplit] = React.useState<Split>(
     createSplit("equal", total, group.members),
@@ -108,7 +108,7 @@ const ExpenseForm = (props: {
     setSplit((split) => changeType(split, type));
   };
 
-  const handleTotalChange = (total: Dinero) => {
+  const handleTotalChange = (total: Money) => {
     setTotal(total);
     setSplit((split) => changeTotal(split, total));
   };
@@ -256,12 +256,12 @@ const ExpenseForm = (props: {
               style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
             />
 
-            <DineroInput
+            <MoneyInput
               label="Montant"
               value={total}
               onChange={handleTotalChange}
               style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
-              right={<Text>{total.getCurrency()}</Text>}
+              right={<Text>{total.currency}</Text>}
             />
           </View>
 

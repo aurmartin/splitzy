@@ -4,7 +4,7 @@ import {
   type ReceiptSplit,
   type Split,
 } from "@/lib/expenses";
-import dinero, { Dinero } from "dinero.js";
+import { Money } from "@/lib/money";
 
 const splitRatios = (split: Split): { [member: string]: number } => {
   if (split.type === "percentage") {
@@ -42,13 +42,13 @@ const convertPercentageOrEqualSplit = (split: Split): AmountSplit => {
   const ratios = splitRatios(split);
   const allocateMembers = Object.keys(ratios);
   const allocateRatios = allocateMembers.map((member) => ratios[member]);
-  const allocation = split.total.allocate(allocateRatios);
+  const allocation = Money.allocate(split.total, allocateRatios);
   const amounts = allocateMembers.reduce(
     (acc, member, index) => {
       acc[member] = allocation[index];
       return acc;
     },
-    {} as { [member: string]: Dinero },
+    {} as { [member: string]: Money },
   );
 
   return {
@@ -66,13 +66,13 @@ const convertReceiptSplit = (receiptSplit: ReceiptSplit): AmountSplit => {
     total: receiptSplit.total,
     amounts: receiptSplit.members.reduce(
       (acc, member) => {
-        acc[member] = dinero({
+        acc[member] = Money.create({
           amount: 0,
-          currency: receiptSplit.total.getCurrency(),
+          currency: receiptSplit.total.currency,
         });
         return acc;
       },
-      {} as { [member: string]: Dinero },
+      {} as { [member: string]: Money },
     ),
   } as AmountSplit;
 
@@ -82,9 +82,12 @@ const convertReceiptSplit = (receiptSplit: ReceiptSplit): AmountSplit => {
     const paidForCount = item.paid_for.length;
     const ratio = 100 / paidForCount;
     const allocateRatios = item.paid_for.map(() => ratio);
-    const allocation = item.price.allocate(allocateRatios);
+    const allocation = Money.allocate(item.price, allocateRatios);
     item.paid_for.forEach((member, index) => {
-      split.amounts[member] = split.amounts[member].add(allocation[index]);
+      split.amounts[member] = Money.add(
+        split.amounts[member],
+        allocation[index],
+      );
     });
   });
 

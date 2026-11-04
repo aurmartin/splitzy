@@ -1,8 +1,8 @@
-import type { Currency, Dinero } from "dinero.js";
+import type { Currency, Money } from "@/lib/money";
 
 interface BaseSplit {
   type: "percentage" | "amount" | "equal" | "receipt";
-  total: Dinero;
+  total: Money;
   members: string[];
 }
 
@@ -17,7 +17,7 @@ interface EqualSplit extends BaseSplit {
 
 interface AmountSplit extends BaseSplit {
   type: "amount";
-  amounts: { [member: string]: Dinero };
+  amounts: { [member: string]: Money };
 }
 
 interface ReceiptSplit extends BaseSplit {
@@ -29,14 +29,14 @@ type Split = PercentageSplit | EqualSplit | AmountSplit | ReceiptSplit;
 
 interface Receipt {
   date: Date;
-  total: Dinero;
+  total: Money;
   title: string;
   currency: Currency;
 
   items: {
     description: string;
     humanReadableDescription: string;
-    price: Dinero;
+    price: Money;
     paid_for: string[];
   }[];
 }

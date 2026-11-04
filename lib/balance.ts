@@ -1,18 +1,18 @@
-import dinero, { type Dinero } from "dinero.js";
+import { Money } from "@/lib/money";
 import { type Expense, ExpenseService, useExpenses } from "@/lib/expenses";
 import { type Group } from "@/lib/groups";
 
-export type Balance = Record<string, Dinero>;
+export type Balance = Record<string, Money>;
 
 export type Reimbursement = {
   from: string;
   to: string;
-  amount: Dinero;
+  amount: Money;
 };
 
 export function computeBalance(group: Group, expenses: Expense[]): Balance {
   const balance = group.members.reduce((acc, member) => {
-    acc[member] = dinero({ amount: 0, currency: group.currency });
+    acc[member] = Money.create({ amount: 0, currency: group.currency });
     return acc;
   }, {} as Balance);
 
@@ -20,12 +20,12 @@ export function computeBalance(group: Group, expenses: Expense[]): Balance {
     const payer = expense.payerName;
     const total = expense.splitExpense.total;
 
-    balance[payer] = balance[payer].add(total);
+    balance[payer] = Money.add(balance[payer], total);
 
     const amounts = ExpenseService.getAmounts(expense);
 
     Object.entries(amounts).forEach(([name, amount]) => {
-      balance[name] = balance[name].subtract(amount);
+      balance[name] = Money.subtract(balance[name], amount);
     });
   });
 
@@ -50,35 +50,38 @@ export function computeOptimalReimbursements(
   }, {} as Balance);
 
   // Continue while there are non-zero balances
-  while (members.some((member) => !workingBalance[member].isZero())) {
+  while (members.some((member) => !Money.isZero(workingBalance[member]))) {
     // Find the person who owes the most (most negative balance)
     const maxDebtor = members.reduce((a, b) =>
-      workingBalance[a].lessThan(workingBalance[b]) ? a : b,
+      Money.lessThan(workingBalance[a], workingBalance[b]) ? a : b,
     );
 
     // Find the person who is owed the most (most positive balance)
     const maxCreditor = members.reduce((a, b) =>
-      workingBalance[a].greaterThan(workingBalance[b]) ? a : b,
+      Money.greaterThan(workingBalance[a], workingBalance[b]) ? a : b,
     );
 
     // If both balances are effectively zero (less than 1 cent), break
     if (
-      workingBalance[maxDebtor].isZero() &&
-      workingBalance[maxCreditor].isZero()
+      Money.isZero(workingBalance[maxDebtor]) &&
+      Money.isZero(workingBalance[maxCreditor])
     ) {
       break;
     }
 
     // Calculate the reimbursement amount (minimum of absolute values)
-    const debtorAmount = workingBalance[maxDebtor].multiply(-1); // Make positive
+    const debtorAmount = Money.negate(workingBalance[maxDebtor]); // Make positive
     const creditorAmount = workingBalance[maxCreditor];
-    const amount = debtorAmount.lessThan(creditorAmount)
+    const amount = Money.lessThan(debtorAmount, creditorAmount)
       ? debtorAmount
       : creditorAmount;
 
     // Update the balances
-    workingBalance[maxDebtor] = workingBalance[maxDebtor].add(amount);
-    workingBalance[maxCreditor] = workingBalance[maxCreditor].subtract(amount);
+    workingBalance[maxDebtor] = Money.add(workingBalance[maxDebtor], amount);
+    workingBalance[maxCreditor] = Money.subtract(
+      workingBalance[maxCreditor],
+      amount,
+    );
 
     // Record the reimbursement
     reimbursements.push({

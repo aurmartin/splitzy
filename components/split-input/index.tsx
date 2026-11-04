@@ -22,13 +22,13 @@ import {
   type ReceiptSplit,
   type Split,
 } from "@/lib/expenses";
-import { Dinero } from "dinero.js";
+import { type Money } from "@/lib/money";
 import React from "react";
 import { View } from "react-native";
 import { ChipList } from "../chip-list";
 import Label from "../label";
 
-function changeTotal<T extends Split>(split: T, total: Dinero): T {
+function changeTotal<T extends Split>(split: T, total: Money): T {
   switch (split.type) {
     case "equal":
       return createEqualSplit(total, split.members) as T;
@@ -133,7 +133,7 @@ type CreateSplitReturn<Type extends Split["type"]> = Type extends "equal"
 
 function createSplit<Type extends Split["type"]>(
   type: Type,
-  total: Dinero,
+  total: Money,
   members: string[],
 ): CreateSplitReturn<Type> {
   switch (type) {

@@ -1,7 +1,7 @@
 import { FloatInput } from "@/components/float-input";
 import { Text } from "@/components/text";
 import { type PercentageSplit } from "@/lib/expenses";
-import { type Dinero } from "dinero.js";
+import { type Money } from "@/lib/money";
 import React from "react";
 import { ListGroup } from "../list-group";
 
@@ -38,7 +38,7 @@ const PercentageSplitInput = (props: {
 };
 
 const createPercentageSplit = (
-  total: Dinero,
+  total: Money,
   members: string[],
 ): PercentageSplit => {
   const ratio = Math.round(100 / members.length);

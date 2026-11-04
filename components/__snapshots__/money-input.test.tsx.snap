@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`DineroInput renders correctly 1`] = `
+exports[`MoneyInput renders correctly 1`] = `
 <View
   style={
     [

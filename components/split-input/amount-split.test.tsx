@@ -4,15 +4,15 @@ import {
 } from "@/components/split-input/amount-split";
 import { type AmountSplit } from "@/lib/expenses";
 import { render, screen, userEvent } from "@testing-library/react-native";
-import dinero from "dinero.js";
+import { Money } from "@/lib/money";
 import * as React from "react";
 
 describe("AmountSplit", () => {
   describe("AmountSplitInput", () => {
     const testSplit = {
       type: "amount" as const,
-      amounts: { alice: dinero({ amount: 1000, currency: "USD" }) },
-      total: dinero({ amount: 1000, currency: "USD" }),
+      amounts: { alice: Money.create({ amount: 1000, currency: "USD" }) },
+      total: Money.create({ amount: 1000, currency: "USD" }),
       members: ["alice", "bob", "charlie"],
     } as AmountSplit;
 
@@ -45,7 +45,7 @@ describe("AmountSplit", () => {
     it("should recompute remaining amounts when total changes", async () => {
       const updatedSplit = {
         ...testSplit,
-        total: dinero({ amount: 2000, currency: "USD" }),
+        total: Money.create({ amount: 2000, currency: "USD" }),
       };
 
       expect(screen.getByTestId("amount-input-bob").props.value).toEqual("0");
@@ -64,7 +64,7 @@ describe("AmountSplit", () => {
 
   describe("createAmountSplit", () => {
     it("creates equal splits correctly", () => {
-      const total = dinero({ amount: 2000, currency: "USD" });
+      const total = Money.create({ amount: 2000, currency: "USD" });
       const members = ["user1", "user2"];
 
       const result = createAmountSplit(total, members);
@@ -74,7 +74,7 @@ describe("AmountSplit", () => {
     });
 
     it("handles no members", () => {
-      const total = dinero({ amount: 1000, currency: "USD" });
+      const total = Money.create({ amount: 1000, currency: "USD" });
       const members = [] as string[];
 
       const result = createAmountSplit(total, members);

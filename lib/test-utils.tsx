@@ -5,7 +5,7 @@ import { System } from "@/lib/system";
 import { generateId } from "@/lib/utils";
 import { render, type RenderOptions } from "@testing-library/react-native";
 import BetterSqliteDatabase from "better-sqlite3";
-import dinero from "dinero.js";
+import { Money } from "@/lib/money";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import {
   RenderRouterOptions,
@@ -71,7 +71,7 @@ const clearDatabase = (db: Database) => {
 const buildEqualSplit = (): EqualSplit => {
   return {
     type: "equal",
-    total: dinero({ amount: 100, currency: "USD" }),
+    total: Money.create({ amount: 100, currency: "USD" }),
     members: ["Alice", "Bob"],
   };
 };

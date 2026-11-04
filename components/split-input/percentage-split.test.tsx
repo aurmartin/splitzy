@@ -4,7 +4,7 @@ import {
 } from "@/components/split-input/percentage-split";
 import { type PercentageSplit } from "@/lib/expenses";
 import { render, userEvent, screen } from "@testing-library/react-native";
-import dinero from "dinero.js";
+import { Money } from "@/lib/money";
 import * as React from "react";
 
 describe("PercentageSplit", () => {
@@ -12,7 +12,7 @@ describe("PercentageSplit", () => {
     it("renders correctly", async () => {
       const mockSplit = {
         type: "percentage" as const,
-        total: dinero({ amount: 1000, currency: "USD" }),
+        total: Money.create({ amount: 1000, currency: "USD" }),
         ratios: { user1: 100 },
         members: ["user1"],
       } as PercentageSplit;
@@ -28,7 +28,7 @@ describe("PercentageSplit", () => {
 
       const mockSplit = {
         type: "percentage" as const,
-        total: dinero({ amount: 1000, currency: "USD" }),
+        total: Money.create({ amount: 1000, currency: "USD" }),
         ratios: { user1: 60, user2: 40 },
         members: ["user1", "user2"],
       } as PercentageSplit;
@@ -52,7 +52,7 @@ describe("PercentageSplit", () => {
 
   describe("createPercentageSplit", () => {
     it("creates equal percentage splits correctly", () => {
-      const total = dinero({ amount: 2000, currency: "USD" });
+      const total = Money.create({ amount: 2000, currency: "USD" });
       const members = ["user1", "user2"];
 
       const result = createPercentageSplit(total, members);
@@ -66,7 +66,7 @@ describe("PercentageSplit", () => {
     });
 
     it("handles odd number of members correctly", () => {
-      const total = dinero({ amount: 3000, currency: "USD" });
+      const total = Money.create({ amount: 3000, currency: "USD" });
       const members = ["user1", "user2", "user3"];
 
       const result = createPercentageSplit(total, members);
@@ -84,7 +84,7 @@ describe("PercentageSplit", () => {
     });
 
     it("handles single member", () => {
-      const total = dinero({ amount: 1000, currency: "USD" });
+      const total = Money.create({ amount: 1000, currency: "USD" });
       const members = ["user1"];
 
       const result = createPercentageSplit(total, members);
@@ -94,7 +94,7 @@ describe("PercentageSplit", () => {
     });
 
     it("handles no members", () => {
-      const total = dinero({ amount: 1000, currency: "USD" });
+      const total = Money.create({ amount: 1000, currency: "USD" });
       const members = [] as string[];
 
       const result = createPercentageSplit(total, members);

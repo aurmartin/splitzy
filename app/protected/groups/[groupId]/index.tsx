@@ -18,6 +18,7 @@ import { Env } from "@/lib/env";
 import { Expense, useExpenses } from "@/lib/expenses";
 import { Group, useGroup, useMe, getMe } from "@/lib/groups";
 import { getLocale } from "@/lib/locale";
+import { Money } from "@/lib/money";
 import { Ionicons } from "@expo/vector-icons";
 import { Redirect, router, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
@@ -55,9 +56,7 @@ const ExpenseItem = (props: { group: Group; expense: Expense }) => {
           </Text>
         </View>
 
-        <Text>
-          {expense.splitExpense.total.setLocale(getLocale()).toFormat()}
-        </Text>
+        <Text>{Money.format(expense.splitExpense.total, getLocale())}</Text>
       </View>
     </Card>
   );
@@ -172,9 +171,9 @@ const BalanceDisplay = React.memo(function BalanceDisplay(props: {
       }}
     >
       <Text type="title">{getBalanceMessage(myBalance)}</Text>
-      {myBalance.isZero() ? null : (
+      {Money.isZero(myBalance) ? null : (
         <Text type="title" style={{ color: getAmountColor(myBalance) }}>
-          {getAbsoluteAmount(myBalance).setLocale(getLocale()).toFormat()}
+          {Money.format(getAbsoluteAmount(myBalance), getLocale())}
         </Text>
       )}
       <Button

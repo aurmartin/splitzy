@@ -2,6 +2,7 @@ import { convertSplit } from "@/components/split-input/convert";
 import { Text } from "@/components/text";
 import { type Receipt, type ReceiptSplit } from "@/lib/expenses";
 import { getLocale } from "@/lib/locale";
+import { Money } from "@/lib/money";
 import { produce } from "immer";
 import React from "react";
 import { View } from "react-native";
@@ -50,7 +51,7 @@ const ReceiptSplitInput = (props: {
             }}
           >
             <Text numberOfLines={1}>{member}</Text>
-            <Text>{amount.setLocale(getLocale()).toFormat()}</Text>
+            <Text>{Money.format(amount, getLocale())}</Text>
           </View>
         ))}
       </View>
@@ -90,7 +91,7 @@ const ReceiptSplitInput = (props: {
               </View>
 
               <Text style={{ marginLeft: 8 }}>
-                {item.price.setLocale(getLocale()).toFormat()}
+                {Money.format(item.price, getLocale())}
               </Text>
             </View>
 
