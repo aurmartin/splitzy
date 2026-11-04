@@ -1,92 +1,68 @@
 version: 2
 
-# All version updates land in a single weekly pull request.
-multi-ecosystem-groups:
-  dependencies:
+updates:
+  # Mobile app (Expo)
+  - package-ecosystem: npm
+    directory: /
     schedule:
       interval: weekly
       day: monday
     commit-message:
       prefix: build
       include: scope
-
-updates:
-  # Mobile app (Expo)
-  - package-ecosystem: npm
-    directory: /
-    patterns: ["*"]
-    multi-ecosystem-group: dependencies
     ignore:
       # Major updates are done by hand.
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
-      # These versions are pinned by the Expo SDK: upgrade them with
-      # `npx expo install --fix` as part of an SDK upgrade instead.
+      # Versions managed by the Expo SDK are aligned by the
+      # expo-sdk-dependencies workflow (`npx expo install --fix`).
       - dependency-name: "expo"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "expo-*"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
-      - dependency-name: "@expo/*"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "@expo/metro-runtime"
+      - dependency-name: "@expo/vector-icons"
       - dependency-name: "jest-expo"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "eslint-config-expo"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "react"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "react-dom"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
-      - dependency-name: "@types/react"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "react-native"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "react-native-reanimated"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
-      - dependency-name: "react-native-worklets"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "react-native-safe-area-context"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "react-native-screens"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "react-native-web"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "react-native-worklets"
       - dependency-name: "@react-native-community/netinfo"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "@sentry/react-native"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
-      - dependency-name: "typescript"
-        update-types:
-          ["version-update:semver-major", "version-update:semver-minor"]
+      # Must stay on the same minor as react.
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-minor"]
+    groups:
+      app-dependencies:
+        patterns: ["*"]
 
   # Server
   - package-ecosystem: npm
     directory: /server
-    patterns: ["*"]
-    multi-ecosystem-group: dependencies
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: build
+      include: scope
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    groups:
+      server-dependencies:
+        patterns: ["*"]
 
   - package-ecosystem: docker
     directory: /server
-    patterns: ["*"]
-    multi-ecosystem-group: dependencies
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: build
+      include: scope
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
@@ -96,5 +72,12 @@ updates:
     directories:
       - /
       - /.github/actions/*
-    patterns: ["*"]
-    multi-ecosystem-group: dependencies
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      github-actions:
+        patterns: ["*"]
