@@ -27,7 +27,7 @@
     "@sentry/react-native": "~8.28.0",
     "@supabase/supabase-js": "~2.118.0",
     "dinero.js": "^1.9.1",
-    "drizzle-orm": "^0.43.1",
+    "drizzle-orm": "^0.45.4",
     "expo": "~58.0.22",
     "expo-constants": "~58.0.14",
     "expo-crypto": "~58.0.7",
