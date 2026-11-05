@@ -38,6 +38,15 @@ jest.spyOn(SupabaseConnector.prototype, "delete").mockResolvedValue({
   statusText: "OK",
 });
 
+jest.spyOn(SupabaseConnector.prototype, "leaveGroup").mockResolvedValue({
+  data: null,
+  error: null,
+  success: true,
+  count: 0,
+  status: 204,
+  statusText: "No Content",
+});
+
 jest.spyOn(SupabaseConnector.prototype, "signInWithOtp").mockResolvedValue({
   error: null,
   data: { user: null, session: null },

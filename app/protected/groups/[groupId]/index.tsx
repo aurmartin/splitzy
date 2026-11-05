@@ -13,7 +13,6 @@ import {
   getAmountColor,
   getBalanceMessage,
 } from "@/lib/currency";
-import { tables } from "@/lib/db/schema";
 import { Env } from "@/lib/env";
 import {
   Expense,
@@ -158,7 +157,8 @@ const Expenses = React.memo(function Expenses(props: { group: Group }) {
     setRefreshing(true);
 
     try {
-      await system.syncEngine.syncTableFromRemote(tables.expenses);
+      // Groups too: another member may have added someone to this group.
+      await system.syncEngine.syncAllTablesFromRemote();
     } catch {
       snackBar.show(
         "Une erreur est survenue lors de la synchronisation des dépenses.",
@@ -255,11 +255,12 @@ const GroupScreen = React.memo(function GroupScreen() {
     });
   }, [group]);
 
-  if (!group) {
-    throw new Error("Group not found");
+  if (!group || group.deletedAt) {
+    return <Redirect href="/protected" />;
   }
 
-  if (getMe(system, groupId) === null) {
+  const me = getMe(system, groupId);
+  if (me === null || !group.members.includes(me)) {
     return <Redirect href={`/protected/groups/${groupId}/set-me`} />;
   }
 
@@ -268,12 +269,22 @@ const GroupScreen = React.memo(function GroupScreen() {
       <TopBar
         title={group.name}
         rightActions={
-          <TopBarAction
-            key="share"
-            label="Partager"
-            iconName="share-outline"
-            onPress={shareGroup}
-          />
+          <>
+            <TopBarAction
+              key="share"
+              label="Partager"
+              iconName="share-outline"
+              onPress={shareGroup}
+            />
+            <TopBarAction
+              key="settings"
+              label="Paramètres du groupe"
+              iconName="settings-outline"
+              onPress={() =>
+                router.navigate(`/protected/groups/${group.id}/settings`)
+              }
+            />
+          </>
         }
       />
 

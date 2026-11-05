@@ -47,7 +47,7 @@ function TextInput(props: TextInputProps) {
             paddingBottom: 0,
           }}
           placeholderTextColor="#888"
-          accessibilityLabel={label}
+          accessibilityLabel={label ?? rest.accessibilityLabel}
         />
       </View>
 

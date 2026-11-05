@@ -7,7 +7,13 @@ import {
   buildGroupRecord,
   renderRouter,
 } from "@/lib/test-utils";
-import { fireEvent, screen, userEvent } from "@testing-library/react-native";
+import {
+  act,
+  fireEvent,
+  screen,
+  userEvent,
+} from "@testing-library/react-native";
+import { eq } from "drizzle-orm";
 import { Share, Text } from "react-native";
 
 const share = jest.spyOn(Share, "share").mockResolvedValue({
@@ -15,13 +21,16 @@ const share = jest.spyOn(Share, "share").mockResolvedValue({
   activityType: undefined,
 });
 
+const group = buildGroupRecord({ id: "test-group-id" });
+
 beforeEach(async () => {
-  const group = buildGroupRecord({ id: "test-group-id" });
   await system.db.insert(tables.groups).values(group);
   setMe(system, group.id, "Alice");
 });
 
 const routerContext = {
+  "/protected/index": () => <Text>Group list</Text>,
+  "/protected/groups/[groupId]/settings": () => <Text>Settings</Text>,
   "/protected/groups/[groupId]/index": () => <GroupScreen />,
   "/protected/groups/[groupId]/set-me": () => <Text>Set me</Text>,
   "/protected/groups/[groupId]/new-expense": () => <Text>New expense</Text>,
@@ -50,12 +59,53 @@ describe("GroupScreen", () => {
     screen.getByText("Set me");
   });
 
-  it("should throw if group is not found", async () => {
-    await expect(
-      renderRouter(routerContext, system, {
-        initialUrl: "/protected/groups/not-found",
+  it("should redirect to set-me if me was removed from the members", async () => {
+    setMe(system, "test-group-id", "Charlie");
+    await renderRouter(routerContext, system, {
+      initialUrl: testGroupScreenUrl,
+    });
+    screen.getByText("Set me");
+  });
+
+  it("should redirect to the group list if group is not found", async () => {
+    await renderRouter(routerContext, system, {
+      initialUrl: "/protected/groups/not-found",
+    });
+    screen.getByText("Group list");
+  });
+
+  it("should redirect to the group list if group is deleted", async () => {
+    await system.db
+      .update(tables.groups)
+      .set({ deletedAt: new Date().toISOString() })
+      .where(eq(tables.groups.id, "test-group-id"));
+    await renderRouter(routerContext, system, {
+      initialUrl: testGroupScreenUrl,
+    });
+    screen.getByText("Group list");
+  });
+
+  it("should navigate to the group settings", async () => {
+    const user = userEvent.setup();
+    await renderRouter(routerContext, system, {
+      initialUrl: testGroupScreenUrl,
+    });
+    await user.press(screen.getByLabelText("Paramètres du groupe"));
+    screen.getByText("Settings");
+  });
+
+  it("should show the new group name after a rename", async () => {
+    await renderRouter(routerContext, system, {
+      initialUrl: testGroupScreenUrl,
+    });
+
+    await act(() =>
+      system.syncEngine.update(tables.groups, "test-group-id", {
+        name: "renamed group",
       }),
-    ).rejects.toThrow("Group not found");
+    );
+
+    screen.getByText("renamed group");
   });
 
   it("should share the group", async () => {
@@ -148,10 +198,13 @@ describe("GroupScreen", () => {
     });
     screen.getByText("Aucune dépense");
 
-    (system.supabaseConnector.selectAll as jest.Mock).mockResolvedValueOnce({
-      data: [buildExpenseRecord({ groupId: "test-group-id" })],
-      error: null,
-    });
+    // Groups are synced first, then expenses.
+    (system.supabaseConnector.selectAll as jest.Mock)
+      .mockResolvedValueOnce({ data: [group], error: null })
+      .mockResolvedValueOnce({
+        data: [buildExpenseRecord({ groupId: "test-group-id" })],
+        error: null,
+      });
 
     await fireEvent(screen.getByTestId("expenses-list"), "onRefresh");
 

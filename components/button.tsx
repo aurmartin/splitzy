@@ -6,7 +6,7 @@ import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 interface ButtonProps extends PressableProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
-  type?: "primary" | "secondary";
+  type?: "primary" | "secondary" | "destructive";
 }
 
 export default function Button(props: ButtonProps) {
@@ -18,7 +18,15 @@ export default function Button(props: ButtonProps) {
       style={[styles.button, styles[type], style]}
       accessibilityRole="button"
     >
-      <Text style={styles.text}>{children}</Text>
+      <Text
+        style={
+          type === "destructive"
+            ? [styles.text, styles.destructiveText]
+            : styles.text
+        }
+      >
+        {children}
+      </Text>
     </Pressable>
   );
 }
@@ -30,6 +38,9 @@ const styles = StyleSheet.create({
   secondary: {
     backgroundColor: "transparent",
   },
+  destructive: {
+    backgroundColor: "white",
+  },
   button: {
     borderRadius: 40,
     height: 40,
@@ -39,5 +50,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: Colors.primary,
+  },
+  destructiveText: {
+    color: Colors.red,
   },
 });

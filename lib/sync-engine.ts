@@ -46,21 +46,23 @@ class SyncEngine {
 
     await this.syncAllTablesFromRemote();
 
-    this.supabaseConnector.addRealtimeEventListener(
-      "expenses",
-      async (remoteOperation) => {
-        try {
-          await this.handleRemoteOperation(remoteOperation);
-        } catch (error) {
-          Sentry.captureException(error, { level: "error" });
-          logger.error(
-            "Error handling remote operation",
-            remoteOperation,
-            error,
-          );
-        }
-      },
-    );
+    for (const table of ["groups", "expenses"] as const) {
+      this.supabaseConnector.addRealtimeEventListener(
+        table,
+        async (remoteOperation) => {
+          try {
+            await this.handleRemoteOperation(remoteOperation);
+          } catch (error) {
+            Sentry.captureException(error, { level: "error" });
+            logger.error(
+              "Error handling remote operation",
+              remoteOperation,
+              error,
+            );
+          }
+        },
+      );
+    }
 
     logger.info("Sync engine initialized");
   }

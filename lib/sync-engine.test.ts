@@ -268,6 +268,27 @@ describe("realtime updates", () => {
     });
   });
 
+  it("should handle group update operations", async () => {
+    await system.syncEngine.init();
+
+    const initialGroup = buildGroupRecord({ name: "initial group name" });
+    await system.db.insert(tables.groups).values(initialGroup);
+
+    const updatedGroup = {
+      ...initialGroup,
+      name: "updated group name",
+      members: JSON.stringify(["Alice", "Bob", "Charlie"]),
+    };
+    const message = buildRealtimeMessage("UPDATE", "groups", updatedGroup);
+    system.supabaseConnector.handleRealtimeMessage("groups", message);
+
+    await waitFor(() => {
+      const [group] = system.db.select().from(tables.groups).all();
+      expect(group.name).toBe("updated group name");
+      expect(group.members).toBe(updatedGroup.members);
+    });
+  });
+
   it("should handle delete operations", async () => {
     await system.syncEngine.init();
 

@@ -151,6 +151,22 @@ export class SupabaseConnector {
   delete(table: string, id: string) {
     return this.client.from(table).delete().eq("id", id);
   }
+
+  // Deletes the signed-in user's membership: the group and its expenses are
+  // then no longer visible to them.
+  async leaveGroup(groupId: string) {
+    const { data, error } = await this.getUser();
+
+    if (error) {
+      return { error };
+    }
+
+    return this.client
+      .from("members")
+      .delete()
+      .eq("user_id", data.user.id)
+      .eq("group_id", groupId);
+  }
 }
 
 export type { RealtimePostgresChangesPayload };
