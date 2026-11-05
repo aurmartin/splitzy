@@ -1,10 +1,10 @@
-import { MMKV } from "react-native-mmkv";
+import { createMMKV, type MMKV } from "react-native-mmkv";
 
 export class KVStorage {
   private storage: MMKV;
 
   constructor() {
-    this.storage = new MMKV();
+    this.storage = createMMKV();
   }
 
   getItem(key: string): string | null {
@@ -16,6 +16,6 @@ export class KVStorage {
   }
 
   removeItem(key: string): void {
-    this.storage.delete(key);
+    this.storage.remove(key);
   }
 }

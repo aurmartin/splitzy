@@ -13,6 +13,12 @@ jest.mock("expo-font", () => {
 
 jest.mock("@react-native-community/netinfo", () => mockRNCNetInfo);
 
+// react-native-mmkv uses its own in-memory mock under Jest, but still imports
+// react-native-nitro-modules, which requires a native TurboModule on load.
+jest.mock("react-native-nitro-modules", () => ({
+  NitroModules: {},
+}));
+
 jest.mock("@expo/react-native-action-sheet");
 
 jest.mock("expo-image-picker", () => ({
