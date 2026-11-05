@@ -37,3 +37,7 @@ coverage/
 *.db
 
 eas-account.json
+
+# Local instructions and notes for Claude
+CLAUDE.md
+MEMORY.md
