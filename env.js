@@ -94,7 +94,7 @@ const withEnvSuffix = (name) => {
  *
  * Note: `z.string()` means that the variable exists and can be an empty string, but not `undefined`.
  * If you want to make the variable required, you should use `z.string().min(1)` instead.
- * Read more about zod here: https://zod.dev/?id=strings
+ * Read more about zod here: https://zod.dev/api#strings
  *
  */
 
@@ -107,8 +107,8 @@ const client = z.object({
   VERSION: z.string(),
 
   // ADD YOUR CLIENT ENV VARS HERE
-  SERVER_URL: z.string(),
-  SUPABASE_URL: z.string(),
+  SERVER_URL: z.url(),
+  SUPABASE_URL: z.url(),
   SUPABASE_ANON_KEY: z.string(),
 });
 
@@ -157,13 +157,13 @@ const _env = {
   ..._buildTimeEnv,
 };
 
-const merged = buildTime.merge(client);
+const merged = buildTime.extend(client.shape);
 const parsed = merged.safeParse(_env);
 
 if (parsed.success === false) {
   console.error(
     "❌ Invalid environment variables:",
-    parsed.error.flatten().fieldErrors,
+    `\n${z.prettifyError(parsed.error)}`,
 
     `\n❌ Missing variables in .env.${APP_ENV} file, Make sure all required variables are defined in the .env.${APP_ENV} file.`,
     `\n💡 Tip: If you recently updated the .env.${APP_ENV} file and the error still persists, try restarting the server with the -c flag to clear the cache.`,
