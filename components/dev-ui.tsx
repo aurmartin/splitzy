@@ -54,6 +54,7 @@ async function generateExpenses(system: System, groupId: string) {
       splitExpense,
       createdAt: date,
       updatedAt: date,
+      kind: "expense",
       deletedAt: undefined,
       receipt: null,
     });

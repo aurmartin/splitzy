@@ -41,9 +41,12 @@ interface Receipt {
   }[];
 }
 
+type ExpenseKind = "expense" | "reimbursement";
+
 interface Expense {
   id: string;
   groupId: string;
+  kind: ExpenseKind;
   title: string;
   payerName: string;
   splitExpense: Split;
@@ -72,6 +75,7 @@ interface ExpenseUpdateParams {
 
 export type {
   Expense,
+  ExpenseKind,
   ExpenseCreateParams,
   ExpenseUpdateParams,
   Receipt,

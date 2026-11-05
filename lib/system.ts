@@ -39,7 +39,8 @@ const getMigrations = (): Migration[] => [
           createdAt text NOT NULL,
           updatedAt text NOT NULL,
           deletedAt text,
-          receipt text
+          receipt text,
+          kind text NOT NULL DEFAULT 'expense'
         );
       `);
 

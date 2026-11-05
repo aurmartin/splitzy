@@ -1,3 +1,4 @@
+import { confirm } from "@/components/confirm";
 import Label from "@/components/label";
 import { ListGroup } from "@/components/list-group";
 import { Screen } from "@/components/screen";
@@ -8,14 +9,67 @@ import { TopBar } from "@/components/top-bar";
 import { TopBarAction, TopBarDeleteAction } from "@/components/top-bar-action";
 import {
   ExpenseService,
+  ReimbursementService,
   useAmounts,
   useExpense,
   type Expense,
+  type Reimbursement,
 } from "@/lib/expenses";
 import { getLocale } from "@/lib/locale";
 import { Money } from "@/lib/money";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScrollView, View } from "react-native";
+
+// A reimbursement cannot be edited: to fix one, delete it and settle again.
+function ShowReimbursementScreen({
+  reimbursement,
+}: {
+  reimbursement: Reimbursement;
+}) {
+  const snackBar = useSnackBar();
+  const system = useSystem();
+
+  const deleteReimbursement = async () => {
+    try {
+      await ExpenseService.deleteExpense(system, reimbursement.id);
+      router.back();
+      snackBar.show("Remboursement supprimé", "success");
+    } catch (error) {
+      console.error("Delete reimbursement error", error);
+      snackBar.show("Une erreur est survenue", "error");
+    }
+  };
+
+  const handleDelete = async () => {
+    const confirmed = await confirm({
+      title: "Supprimer ce remboursement ?",
+      message: "La balance sera recalculée.",
+      confirmText: "Supprimer",
+      destructive: true,
+    });
+
+    if (confirmed) {
+      await deleteReimbursement();
+    }
+  };
+
+  return (
+    <Screen>
+      <TopBar rightActions={<TopBarDeleteAction onPress={handleDelete} />} />
+
+      <Text type="headlineMedium" style={{ marginBottom: 16 }}>
+        Remboursement{" "}
+        {Money.format(reimbursement.splitExpense.total, getLocale())}
+      </Text>
+
+      <Text style={{ marginBottom: 16 }}>
+        {reimbursement.payerName} a remboursé{" "}
+        {ReimbursementService.getRecipient(reimbursement)} le{" "}
+        {reimbursement.createdAt.toLocaleDateString()}
+      </Text>
+    </Screen>
+  );
+}
 
 interface ShowExpenseScreenProps {
   groupId: string;
@@ -120,6 +174,10 @@ export default function ShowExpenseRoute() {
 
   if (!expense) {
     return null;
+  }
+
+  if (ReimbursementService.isReimbursement(expense)) {
+    return <ShowReimbursementScreen reimbursement={expense} />;
   }
 
   return <ShowExpenseScreen groupId={groupId} expense={expense} />;

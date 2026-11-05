@@ -9,6 +9,7 @@ const createExpense = (overrides: Partial<Expense> = {}): Expense => ({
   title: "Test Expense",
   createdAt: new Date(),
   updatedAt: new Date(),
+  kind: "expense",
   deletedAt: undefined,
   receipt: null,
   payerName: "Alice",

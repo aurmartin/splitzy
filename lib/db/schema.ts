@@ -36,6 +36,7 @@ export const expensesTable = sqliteTable("expenses", {
   updatedAt: text().notNull(),
   deletedAt: text(),
   receipt: text(),
+  kind: text().notNull().default("expense"),
 });
 
 export const syncedTable = (
@@ -77,5 +78,4 @@ export type Transaction = SQLiteTransaction<
 >;
 
 export type Database =
-  | ExpoSQLiteDatabase<typeof tables>
-  | BetterSQLite3Database<typeof tables>;
+  ExpoSQLiteDatabase<typeof tables> | BetterSQLite3Database<typeof tables>;

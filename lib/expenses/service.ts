@@ -43,6 +43,7 @@ const createExpense = (validParams: ExpenseCreateParams): Expense => {
   return {
     ...validParams,
     id: generateId(),
+    kind: "expense",
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: undefined,

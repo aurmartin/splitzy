@@ -27,6 +27,7 @@ const createBasicExpense = (overrides: Partial<Expense> = {}): Expense => {
     },
     createdAt: date,
     updatedAt: date,
+    kind: "expense",
     deletedAt: undefined,
     receipt: null,
     ...overrides,

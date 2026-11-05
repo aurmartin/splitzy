@@ -4,9 +4,14 @@ import { Screen } from "@/components/screen";
 import { useSnackBar } from "@/components/snack-bar";
 import { useSystem } from "@/components/system-provider";
 import { DisplayableError } from "@/lib/displayable-error";
-import { type Expense, ExpenseService, useExpense } from "@/lib/expenses";
+import {
+  type Expense,
+  ExpenseService,
+  ReimbursementService,
+  useExpense,
+} from "@/lib/expenses";
 import { Group, useGroup } from "@/lib/groups";
-import { router, useLocalSearchParams } from "expo-router";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
 import React from "react";
 
 const EditExpenseForm = (props: {
@@ -65,6 +70,13 @@ export default function EditExpenseScreen() {
 
   if (!expense) {
     return <LoadingScreen message="Chargement en cours..." />;
+  }
+
+  // Reimbursements cannot be edited.
+  if (ReimbursementService.isReimbursement(expense)) {
+    return (
+      <Redirect href={`/protected/groups/${groupId}/expenses/${expenseId}`} />
+    );
   }
 
   const handleDelete = async () => {

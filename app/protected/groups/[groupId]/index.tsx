@@ -15,7 +15,12 @@ import {
 } from "@/lib/currency";
 import { tables } from "@/lib/db/schema";
 import { Env } from "@/lib/env";
-import { Expense, useExpenses } from "@/lib/expenses";
+import {
+  Expense,
+  ReimbursementService,
+  useExpenses,
+  type Reimbursement,
+} from "@/lib/expenses";
 import { Group, useGroup, useMe, getMe } from "@/lib/groups";
 import { getLocale } from "@/lib/locale";
 import { Money } from "@/lib/money";
@@ -29,9 +34,43 @@ interface ExpenseSection {
   data: Expense[];
 }
 
+const ReimbursementItem = (props: {
+  group: Group;
+  reimbursement: Reimbursement;
+}) => {
+  const { group, reimbursement } = props;
+  const router = useRouter();
+
+  return (
+    <Card
+      style={{ paddingVertical: 12 }}
+      onPress={() =>
+        router.navigate(
+          `/protected/groups/${group.id}/expenses/${reimbursement.id}`,
+        )
+      }
+    >
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+        <Ionicons name="swap-horizontal" size={20} color="hsl(0 0% 40%)" />
+        <Text style={{ flex: 1, color: "hsl(0 0% 40%)" }} numberOfLines={1}>
+          {reimbursement.payerName} a remboursé{" "}
+          {ReimbursementService.getRecipient(reimbursement)}
+        </Text>
+        <Text style={{ color: "hsl(0 0% 40%)" }}>
+          {Money.format(reimbursement.splitExpense.total, getLocale())}
+        </Text>
+      </View>
+    </Card>
+  );
+};
+
 const ExpenseItem = (props: { group: Group; expense: Expense }) => {
   const { group, expense } = props;
   const router = useRouter();
+
+  if (ReimbursementService.isReimbursement(expense)) {
+    return <ReimbursementItem group={group} reimbursement={expense} />;
+  }
 
   return (
     <Card

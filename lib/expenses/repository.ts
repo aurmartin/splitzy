@@ -92,6 +92,7 @@ function decodeExpenseRecord(record: ExpenseRecord): Expense {
   return {
     id: record.id,
     groupId: record.groupId as string,
+    kind: record.kind === "reimbursement" ? "reimbursement" : "expense",
     title: record.title as string,
     payerName: record.payerName as string,
     splitExpense: decodedSplitExpense,

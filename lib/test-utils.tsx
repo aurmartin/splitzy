@@ -104,6 +104,7 @@ const buildExpenseRecord = (
     updatedAt: new Date().toISOString(),
     deletedAt: null,
     receipt: null,
+    kind: "expense",
     ...overrides,
   };
 };
