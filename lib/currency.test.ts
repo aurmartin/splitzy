@@ -1,10 +1,5 @@
 import { Money } from "@/lib/money";
-import {
-  getAmountColor,
-  getAbsoluteAmount,
-  getBalanceMessage,
-  getMinorUnitAmount,
-} from "./currency";
+import { getAmountColor, getAbsoluteAmount, getBalanceMessage, getMinorUnitAmount } from "./currency";
 
 describe("getAmountColor", () => {
   it("should return green for positive amounts", () => {

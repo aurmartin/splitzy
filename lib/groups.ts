@@ -2,11 +2,7 @@ import { useSystem } from "@/components/system-provider";
 import { DisplayableError } from "@/lib/displayable-error";
 import { ValidationError } from "@/lib/validation-error";
 import { GroupRecord, groupsTable } from "@/lib/db/schema";
-import {
-  ExpenseService,
-  ExpensesRepository,
-  type Expense,
-} from "@/lib/expenses";
+import { ExpenseService, ExpensesRepository, type Expense } from "@/lib/expenses";
 import { System } from "@/lib/system";
 import { generateId, time } from "@/lib/utils";
 import { type Currency } from "@/lib/money";
@@ -38,14 +34,10 @@ export type GroupUpdateParams = {
 export const useAddGroup = () => {
   const system = useSystem();
 
-  return useCallback(
-    async (params: GroupCreateParams) => addGroup(system, params),
-    [system],
-  );
+  return useCallback(async (params: GroupCreateParams) => addGroup(system, params), [system]);
 };
 
-const addGroup = (system: System, params: GroupCreateParams) =>
-  time("addGroup", () => _addGroup(system, params));
+const addGroup = (system: System, params: GroupCreateParams) => time("addGroup", () => _addGroup(system, params));
 
 const _addGroup = async (system: System, params: GroupCreateParams) => {
   params = checkGroupCreateParams(params);
@@ -127,9 +119,7 @@ const _useGroups = (): Group[] => {
   const [groups, setGroups] = useState<Group[]>(initialGroups);
 
   useEffect(() => {
-    return system.syncEngine.watchTable(groupsTable, () =>
-      setGroups(getGroups(system)),
-    );
+    return system.syncEngine.watchTable(groupsTable, () => setGroups(getGroups(system)));
   }, [system]);
 
   return groups;
@@ -139,18 +129,13 @@ export const useGroups = () => time("useGroups", _useGroups);
 
 export const useGroup = (groupId: string): Group | undefined => {
   const system = useSystem();
-  const initialGroup = useMemo(
-    () => getGroupRow(system, groupId),
-    [system, groupId],
-  );
+  const initialGroup = useMemo(() => getGroupRow(system, groupId), [system, groupId]);
   const [group, setGroup] = useState(initialGroup);
 
   useEffect(() => {
     setGroup(getGroupRow(system, groupId));
 
-    return system.syncEngine.watchTable(groupsTable, () =>
-      setGroup(getGroupRow(system, groupId)),
-    );
+    return system.syncEngine.watchTable(groupsTable, () => setGroup(getGroupRow(system, groupId)));
   }, [system, groupId]);
 
   return group;
@@ -167,25 +152,14 @@ export const useMe = (groupId: string): string => {
   return me;
 };
 
-export const getMe = (system: System, groupId: string) =>
-  system.kvStorage.getItem(`me:${groupId}`);
+export const getMe = (system: System, groupId: string) => system.kvStorage.getItem(`me:${groupId}`);
 
-export const setMe = (system: System, groupId: string, me: string) =>
-  system.kvStorage.setItem(`me:${groupId}`, me);
+export const setMe = (system: System, groupId: string, me: string) => system.kvStorage.setItem(`me:${groupId}`, me);
 
-export const removeMe = (system: System, groupId: string) =>
-  system.kvStorage.removeItem(`me:${groupId}`);
+export const removeMe = (system: System, groupId: string) => system.kvStorage.removeItem(`me:${groupId}`);
 
-export const getGroupRow = (
-  system: System,
-  groupId: string,
-): Group | undefined => {
-  const group = system.db
-    .select()
-    .from(groupsTable)
-    .where(eq(groupsTable.id, groupId))
-    .limit(1)
-    .all();
+export const getGroupRow = (system: System, groupId: string): Group | undefined => {
+  const group = system.db.select().from(groupsTable).where(eq(groupsTable.id, groupId)).limit(1).all();
 
   if (group.length === 0) {
     return undefined;
@@ -212,9 +186,7 @@ const decodeGroup = (groupRecord: GroupRecord): Group => {
     currency: groupRecord.currency as Currency,
     createdAt: new Date(groupRecord.createdAt as string),
     updatedAt: new Date(groupRecord.updatedAt as string),
-    deletedAt: groupRecord.deletedAt
-      ? new Date(groupRecord.deletedAt as string)
-      : undefined,
+    deletedAt: groupRecord.deletedAt ? new Date(groupRecord.deletedAt as string) : undefined,
   };
 };
 
@@ -226,46 +198,29 @@ export const getMembersInExpenses = (expenses: Expense[]): Set<string> => {
   for (const expense of expenses) {
     members.add(expense.payerName);
     expense.splitExpense.members.forEach((member) => members.add(member));
-    Object.keys(ExpenseService.getAmounts(expense)).forEach((member) =>
-      members.add(member),
-    );
+    Object.keys(ExpenseService.getAmounts(expense)).forEach((member) => members.add(member));
   }
 
   return members;
 };
 
-const sameName = (a: string, b: string) =>
-  a.localeCompare(b, undefined, { sensitivity: "accent" }) === 0;
+const sameName = (a: string, b: string) => a.localeCompare(b, undefined, { sensitivity: "accent" }) === 0;
 
-const validateGroupUpdateParams = (
-  system: System,
-  group: Group,
-  params: GroupUpdateParams,
-): GroupUpdateParams => {
+const validateGroupUpdateParams = (system: System, group: Group, params: GroupUpdateParams): GroupUpdateParams => {
   const name = params.name.trim();
-  const members = params.members
-    .map((member) => member.trim())
-    .filter((member) => member.length > 0);
+  const members = params.members.map((member) => member.trim()).filter((member) => member.length > 0);
 
   if (name.length === 0) {
     throw new DisplayableError("Le nom est invalide", "Veuillez entrer un nom");
   }
 
   if (members.length === 0) {
-    throw new DisplayableError(
-      "Les membres sont invalides",
-      "Veuillez entrer au moins un membre",
-    );
+    throw new DisplayableError("Les membres sont invalides", "Veuillez entrer au moins un membre");
   }
 
-  const duplicate = members.find((member, index) =>
-    members.slice(0, index).some((other) => sameName(member, other)),
-  );
+  const duplicate = members.find((member, index) => members.slice(0, index).some((other) => sameName(member, other)));
   if (duplicate) {
-    throw new DisplayableError(
-      "Les membres sont invalides",
-      `${duplicate} fait déjà partie du groupe`,
-    );
+    throw new DisplayableError("Les membres sont invalides", `${duplicate} fait déjà partie du groupe`);
   }
 
   const removed = group.members.filter((member) => !members.includes(member));
@@ -278,9 +233,7 @@ const validateGroupUpdateParams = (
     );
   }
 
-  const membersInExpenses = getMembersInExpenses(
-    ExpensesRepository.getGroupExpenses(system, group.id),
-  );
+  const membersInExpenses = getMembersInExpenses(ExpensesRepository.getGroupExpenses(system, group.id));
   const used = removed.find((member) => membersInExpenses.has(member));
   if (used) {
     throw new DisplayableError(
@@ -302,11 +255,7 @@ const getGroupOrThrow = (system: System, groupId: string): Group => {
   return group;
 };
 
-export const updateGroup = async (
-  system: System,
-  groupId: string,
-  params: GroupUpdateParams,
-) => {
+export const updateGroup = async (system: System, groupId: string, params: GroupUpdateParams) => {
   const group = getGroupOrThrow(system, groupId);
   const { name, members } = validateGroupUpdateParams(system, group, params);
 

@@ -19,9 +19,7 @@ describe("MoneyInput", () => {
     const mockOnChange = jest.fn((value: Money) => value.amount);
     const value = Money.create({ amount: 1000, currency: "USD" });
 
-    await render(
-      <MoneyInput label="test-input" value={value} onChange={mockOnChange} />,
-    );
+    await render(<MoneyInput label="test-input" value={value} onChange={mockOnChange} />);
 
     const input = screen.getByLabelText("test-input");
 
@@ -37,9 +35,7 @@ describe("MoneyInput", () => {
     const mockOnChange = jest.fn((value: Money) => value.amount);
     const value = Money.create({ amount: 1000, currency: "USD" });
 
-    await render(
-      <MoneyInput label="test-input" value={value} onChange={mockOnChange} />,
-    );
+    await render(<MoneyInput label="test-input" value={value} onChange={mockOnChange} />);
 
     const input = screen.getByLabelText("test-input");
 

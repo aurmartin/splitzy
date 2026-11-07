@@ -8,10 +8,7 @@ import React from "react";
 import { View } from "react-native";
 import { ChipList } from "../chip-list";
 
-const ReceiptSplitInput = (props: {
-  value: ReceiptSplit;
-  onChange: (value: ReceiptSplit) => void;
-}) => {
+const ReceiptSplitInput = (props: { value: ReceiptSplit; onChange: (value: ReceiptSplit) => void }) => {
   const { value, onChange } = props;
 
   const toggleSelect = (itemIndex: number, member: string) => {
@@ -80,19 +77,12 @@ const ReceiptSplitInput = (props: {
                   {item.humanReadableDescription}
                 </Text>
 
-                <Text
-                  numberOfLines={1}
-                  ellipsizeMode="middle"
-                  type="bodyMedium"
-                  style={{ color: "hsl(0, 0%, 40%)" }}
-                >
+                <Text numberOfLines={1} ellipsizeMode="middle" type="bodyMedium" style={{ color: "hsl(0, 0%, 40%)" }}>
                   {item.description}
                 </Text>
               </View>
 
-              <Text style={{ marginLeft: 8 }}>
-                {Money.format(item.price, getLocale())}
-              </Text>
+              <Text style={{ marginLeft: 8 }}>{Money.format(item.price, getLocale())}</Text>
             </View>
 
             <ChipList

@@ -15,10 +15,7 @@ type PromiseState = {
   success?: string;
 };
 
-type Action =
-  | { type: "start" }
-  | { type: "error"; payload: string }
-  | { type: "success"; payload: string };
+type Action = { type: "start" } | { type: "error"; payload: string } | { type: "success"; payload: string };
 
 function promiseStateReducer(_state: PromiseState, action: Action) {
   switch (action.type) {
@@ -79,27 +76,19 @@ export default function LoginScreen() {
   return (
     <Screen>
       <View style={styles.container}>
-        <Text
-          type="displayLarge"
-          style={{ textAlign: "center", marginBottom: 32, marginTop: 32 }}
-        >
+        <Text type="displayLarge" style={{ textAlign: "center", marginBottom: 32, marginTop: 32 }}>
           Bienvenue !
         </Text>
 
         <Text type="headlineMedium">Connectez-vous ou créez un compte</Text>
 
-        {state.error && (
-          <Text style={{ color: Colors.red }}>{state.error}</Text>
-        )}
+        {state.error && <Text style={{ color: Colors.red }}>{state.error}</Text>}
 
-        {state.success && (
-          <Text style={{ color: Colors.green }}>{state.success}</Text>
-        )}
+        {state.success && <Text style={{ color: Colors.green }}>{state.success}</Text>}
 
         <Text>
-          Saisissez votre adresse e-mail ci-dessous. Si vous n&apos;avez pas
-          encore de compte, nous en créerons automatiquement un pour vous lors
-          de votre première connexion !
+          Saisissez votre adresse e-mail ci-dessous. Si vous n&apos;avez pas encore de compte, nous en créerons
+          automatiquement un pour vous lors de votre première connexion !
         </Text>
 
         <TextInput

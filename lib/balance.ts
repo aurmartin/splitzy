@@ -37,9 +37,7 @@ export const useBalance = (group: Group): Balance => {
   return computeBalance(group, expenses);
 };
 
-export function computeOptimalReimbursements(
-  balance: Balance,
-): Reimbursement[] {
+export function computeOptimalReimbursements(balance: Balance): Reimbursement[] {
   const reimbursements: Reimbursement[] = [];
   const members = Object.keys(balance);
 
@@ -52,36 +50,24 @@ export function computeOptimalReimbursements(
   // Continue while there are non-zero balances
   while (members.some((member) => !Money.isZero(workingBalance[member]))) {
     // Find the person who owes the most (most negative balance)
-    const maxDebtor = members.reduce((a, b) =>
-      Money.lessThan(workingBalance[a], workingBalance[b]) ? a : b,
-    );
+    const maxDebtor = members.reduce((a, b) => (Money.lessThan(workingBalance[a], workingBalance[b]) ? a : b));
 
     // Find the person who is owed the most (most positive balance)
-    const maxCreditor = members.reduce((a, b) =>
-      Money.greaterThan(workingBalance[a], workingBalance[b]) ? a : b,
-    );
+    const maxCreditor = members.reduce((a, b) => (Money.greaterThan(workingBalance[a], workingBalance[b]) ? a : b));
 
     // If both balances are effectively zero (less than 1 cent), break
-    if (
-      Money.isZero(workingBalance[maxDebtor]) &&
-      Money.isZero(workingBalance[maxCreditor])
-    ) {
+    if (Money.isZero(workingBalance[maxDebtor]) && Money.isZero(workingBalance[maxCreditor])) {
       break;
     }
 
     // Calculate the reimbursement amount (minimum of absolute values)
     const debtorAmount = Money.negate(workingBalance[maxDebtor]); // Make positive
     const creditorAmount = workingBalance[maxCreditor];
-    const amount = Money.lessThan(debtorAmount, creditorAmount)
-      ? debtorAmount
-      : creditorAmount;
+    const amount = Money.lessThan(debtorAmount, creditorAmount) ? debtorAmount : creditorAmount;
 
     // Update the balances
     workingBalance[maxDebtor] = Money.add(workingBalance[maxDebtor], amount);
-    workingBalance[maxCreditor] = Money.subtract(
-      workingBalance[maxCreditor],
-      amount,
-    );
+    workingBalance[maxCreditor] = Money.subtract(workingBalance[maxCreditor], amount);
 
     // Record the reimbursement
     reimbursements.push({

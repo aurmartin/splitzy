@@ -8,18 +8,9 @@ import { Text } from "@/components/text";
 import { TopBar } from "@/components/top-bar";
 import { TopBarAction } from "@/components/top-bar-action";
 import { useBalance } from "@/lib/balance";
-import {
-  getAbsoluteAmount,
-  getAmountColor,
-  getBalanceMessage,
-} from "@/lib/currency";
+import { getAbsoluteAmount, getAmountColor, getBalanceMessage } from "@/lib/currency";
 import { Env } from "@/lib/env";
-import {
-  Expense,
-  ReimbursementService,
-  useExpenses,
-  type Reimbursement,
-} from "@/lib/expenses";
+import { Expense, ReimbursementService, useExpenses, type Reimbursement } from "@/lib/expenses";
 import { Group, useGroup, useMe, getMe } from "@/lib/groups";
 import { getLocale } from "@/lib/locale";
 import { Money } from "@/lib/money";
@@ -33,31 +24,21 @@ interface ExpenseSection {
   data: Expense[];
 }
 
-const ReimbursementItem = (props: {
-  group: Group;
-  reimbursement: Reimbursement;
-}) => {
+const ReimbursementItem = (props: { group: Group; reimbursement: Reimbursement }) => {
   const { group, reimbursement } = props;
   const router = useRouter();
 
   return (
     <Card
       style={{ paddingVertical: 12 }}
-      onPress={() =>
-        router.navigate(
-          `/protected/groups/${group.id}/expenses/${reimbursement.id}`,
-        )
-      }
+      onPress={() => router.navigate(`/protected/groups/${group.id}/expenses/${reimbursement.id}`)}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
         <Ionicons name="swap-horizontal" size={20} color="hsl(0 0% 40%)" />
         <Text style={{ flex: 1, color: "hsl(0 0% 40%)" }} numberOfLines={1}>
-          {reimbursement.payerName} a remboursé{" "}
-          {ReimbursementService.getRecipient(reimbursement)}
+          {reimbursement.payerName} a remboursé {ReimbursementService.getRecipient(reimbursement)}
         </Text>
-        <Text style={{ color: "hsl(0 0% 40%)" }}>
-          {Money.format(reimbursement.splitExpense.total, getLocale())}
-        </Text>
+        <Text style={{ color: "hsl(0 0% 40%)" }}>{Money.format(reimbursement.splitExpense.total, getLocale())}</Text>
       </View>
     </Card>
   );
@@ -72,12 +53,7 @@ const ExpenseItem = (props: { group: Group; expense: Expense }) => {
   }
 
   return (
-    <Card
-      key={expense.id}
-      onPress={() =>
-        router.navigate(`/protected/groups/${group.id}/expenses/${expense.id}`)
-      }
-    >
+    <Card key={expense.id} onPress={() => router.navigate(`/protected/groups/${group.id}/expenses/${expense.id}`)}>
       <View
         style={{
           flexDirection: "row",
@@ -145,9 +121,7 @@ const Expenses = React.memo(function Expenses(props: { group: Group }) {
     }));
   }, [expenses]);
 
-  const renderItem = ({ item }: { item: Expense }) => (
-    <ExpenseItem group={group} expense={item} />
-  );
+  const renderItem = ({ item }: { item: Expense }) => <ExpenseItem group={group} expense={item} />;
 
   const renderSectionHeader = ({ section }: { section: ExpenseSection }) => (
     <Text style={{ fontWeight: "bold" }}>{section.title}</Text>
@@ -160,10 +134,7 @@ const Expenses = React.memo(function Expenses(props: { group: Group }) {
       // Groups too: another member may have added someone to this group.
       await system.syncEngine.syncAllTablesFromRemote();
     } catch {
-      snackBar.show(
-        "Une erreur est survenue lors de la synchronisation des dépenses.",
-        "error",
-      );
+      snackBar.show("Une erreur est survenue lors de la synchronisation des dépenses.", "error");
     } finally {
       setRefreshing(false);
     }
@@ -190,9 +161,7 @@ const Expenses = React.memo(function Expenses(props: { group: Group }) {
   );
 });
 
-const BalanceDisplay = React.memo(function BalanceDisplay(props: {
-  group: Group;
-}) {
+const BalanceDisplay = React.memo(function BalanceDisplay(props: { group: Group }) {
   const { group } = props;
   const balance = useBalance(group);
   const me = useMe(group.id);
@@ -215,10 +184,7 @@ const BalanceDisplay = React.memo(function BalanceDisplay(props: {
           {Money.format(getAbsoluteAmount(myBalance), getLocale())}
         </Text>
       )}
-      <Button
-        onPress={() => router.navigate(`/protected/groups/${group.id}/balance`)}
-        style={{ marginTop: 8 }}
-      >
+      <Button onPress={() => router.navigate(`/protected/groups/${group.id}/balance`)} style={{ marginTop: 8 }}>
         Remboursements
       </Button>
     </View>
@@ -270,19 +236,12 @@ const GroupScreen = React.memo(function GroupScreen() {
         title={group.name}
         rightActions={
           <>
-            <TopBarAction
-              key="share"
-              label="Partager"
-              iconName="share-outline"
-              onPress={shareGroup}
-            />
+            <TopBarAction key="share" label="Partager" iconName="share-outline" onPress={shareGroup} />
             <TopBarAction
               key="settings"
               label="Paramètres du groupe"
               iconName="settings-outline"
-              onPress={() =>
-                router.navigate(`/protected/groups/${group.id}/settings`)
-              }
+              onPress={() => router.navigate(`/protected/groups/${group.id}/settings`)}
             />
           </>
         }
@@ -292,11 +251,7 @@ const GroupScreen = React.memo(function GroupScreen() {
 
       <Expenses group={group} />
 
-      <FAB
-        onPress={() =>
-          router.navigate(`/protected/groups/${group.id}/new-expense`)
-        }
-      >
+      <FAB onPress={() => router.navigate(`/protected/groups/${group.id}/new-expense`)}>
         <Ionicons name="add-outline" size={24} color="white" />
       </FAB>
     </Screen>

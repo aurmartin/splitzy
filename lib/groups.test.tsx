@@ -1,20 +1,8 @@
 import { tables } from "@/lib/db/schema";
 import { DisplayableError } from "@/lib/displayable-error";
-import {
-  deleteGroup,
-  getGroupRow,
-  getMe,
-  leaveGroup,
-  updateGroup,
-  useGroups,
-} from "@/lib/groups";
+import { deleteGroup, getGroupRow, getMe, leaveGroup, updateGroup, useGroups } from "@/lib/groups";
 import { system } from "@/lib/test-setup";
-import {
-  buildEqualSplit,
-  buildGroup,
-  createExpense,
-  createGroup,
-} from "@/lib/test-factories";
+import { buildEqualSplit, buildGroup, createExpense, createGroup } from "@/lib/test-factories";
 import { render, screen } from "@/lib/test-utils";
 import { eq } from "drizzle-orm";
 import { Text } from "react-native";
@@ -23,11 +11,7 @@ const group = buildGroup({ name: "Trip", members: ["Alice", "Bob"] });
 const groupId = group.id;
 
 const queuedOperations = () =>
-  system.db
-    .select()
-    .from(tables.syncQueue)
-    .where(eq(tables.syncQueue.entityId, groupId))
-    .all();
+  system.db.select().from(tables.syncQueue).where(eq(tables.syncQueue.entityId, groupId)).all();
 
 beforeEach(() => {
   createGroup(system, group, { me: "Alice" });
@@ -61,18 +45,10 @@ describe("updateGroup", () => {
   it.each([
     [{ name: " ", members: ["Alice"] }, "Veuillez entrer un nom"],
     [{ name: "Trip", members: [""] }, "Veuillez entrer au moins un membre"],
-    [
-      { name: "Trip", members: ["Alice", "Bob", "bob"] },
-      "bob fait déjà partie du groupe",
-    ],
-    [
-      { name: "Trip", members: ["Bob"] },
-      "Vous ne pouvez pas vous retirer vous-même. Quittez le groupe à la place.",
-    ],
+    [{ name: "Trip", members: ["Alice", "Bob", "bob"] }, "bob fait déjà partie du groupe"],
+    [{ name: "Trip", members: ["Bob"] }, "Vous ne pouvez pas vous retirer vous-même. Quittez le groupe à la place."],
   ])("refuses %j", async (params, message) => {
-    await expect(updateGroup(system, groupId, params)).rejects.toEqual(
-      expect.objectContaining({ message }),
-    );
+    await expect(updateGroup(system, groupId, params)).rejects.toEqual(expect.objectContaining({ message }));
 
     expect(getGroupRow(system, groupId)!.members).toEqual(["Alice", "Bob"]);
     expect(queuedOperations()).toEqual([]);
@@ -81,26 +57,21 @@ describe("updateGroup", () => {
   it.each([
     ["the payer", "Bob", ["Alice"]],
     ["a participant", "Alice", ["Alice", "Bob"]],
-  ])(
-    "refuses to remove %s of an expense",
-    async (_role, payerName, splitMembers) => {
-      createExpense(system, group, {
-        payerName,
-        splitExpense: buildEqualSplit(group, 1000, splitMembers),
-      });
+  ])("refuses to remove %s of an expense", async (_role, payerName, splitMembers) => {
+    createExpense(system, group, {
+      payerName,
+      splitExpense: buildEqualSplit(group, 1000, splitMembers),
+    });
 
-      await expect(
-        updateGroup(system, groupId, { name: "Trip", members: ["Alice"] }),
-      ).rejects.toEqual(
-        new DisplayableError(
-          "Impossible de retirer ce membre",
-          "Bob apparaît dans des dépenses du groupe. Supprimez-les d'abord.",
-        ),
-      );
+    await expect(updateGroup(system, groupId, { name: "Trip", members: ["Alice"] })).rejects.toEqual(
+      new DisplayableError(
+        "Impossible de retirer ce membre",
+        "Bob apparaît dans des dépenses du groupe. Supprimez-les d'abord.",
+      ),
+    );
 
-      expect(getGroupRow(system, groupId)!.members).toEqual(["Alice", "Bob"]);
-    },
-  );
+    expect(getGroupRow(system, groupId)!.members).toEqual(["Alice", "Bob"]);
+  });
 });
 
 describe("deleteGroup", () => {
@@ -114,9 +85,7 @@ describe("deleteGroup", () => {
 
     const [operation] = queuedOperations();
     expect(operation.operationType).toBe("update");
-    expect(JSON.parse(operation.changes!).deletedAt).toEqual(
-      expect.any(String),
-    );
+    expect(JSON.parse(operation.changes!).deletedAt).toEqual(expect.any(String));
 
     const GroupNames = () => (
       <Text>

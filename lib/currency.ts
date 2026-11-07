@@ -38,10 +38,4 @@ const getMajorUnitAmount = (amount: number, currency: Currency): number => {
   return amount / factor;
 };
 
-export {
-  getAmountColor,
-  getAbsoluteAmount,
-  getBalanceMessage,
-  getMinorUnitAmount,
-  getMajorUnitAmount,
-};
+export { getAmountColor, getAbsoluteAmount, getBalanceMessage, getMinorUnitAmount, getMajorUnitAmount };

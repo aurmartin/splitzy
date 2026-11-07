@@ -11,22 +11,13 @@ import type { Receipt, ReceiptSplit } from "./types";
 const group = buildGroup();
 
 const getExpenseById = (system: System, id: string) => {
-  const [result] = system.db
-    .select()
-    .from(expensesTable)
-    .where(eq(expensesTable.id, id))
-    .limit(1)
-    .all();
+  const [result] = system.db.select().from(expensesTable).where(eq(expensesTable.id, id)).limit(1).all();
 
   return result;
 };
 
 const getExpensesByGroupId = (system: System, groupId: string) => {
-  return system.db
-    .select()
-    .from(expensesTable)
-    .where(eq(expensesTable.groupId, groupId))
-    .all();
+  return system.db.select().from(expensesTable).where(eq(expensesTable.groupId, groupId)).all();
 };
 
 const expectReceiptEqual = (left: Receipt, right: Receipt) => {
@@ -35,9 +26,7 @@ const expectReceiptEqual = (left: Receipt, right: Receipt) => {
   expect(left.items.length).toEqual(right.items.length);
   left.items.forEach((item, index) => {
     expect(item.description).toEqual(right.items[index].description);
-    expect(item.humanReadableDescription).toEqual(
-      right.items[index].humanReadableDescription,
-    );
+    expect(item.humanReadableDescription).toEqual(right.items[index].humanReadableDescription);
     expect(item.price.amount).toEqual(right.items[index].price.amount);
     expect(item.paid_for).toEqual(right.items[index].paid_for);
   });
@@ -69,10 +58,7 @@ describe("getExpense", () => {
     expect(resultExpense).not.toBeNull();
     expectReceiptEqual(resultReceipt, testExpense.receipt!);
     expect(resultSplitExpense.type).toEqual("receipt");
-    expectReceiptEqual(
-      resultSplitExpense.receipt,
-      (testExpense.splitExpense as ReceiptSplit).receipt,
-    );
+    expectReceiptEqual(resultSplitExpense.receipt, (testExpense.splitExpense as ReceiptSplit).receipt);
   });
 });
 
@@ -91,9 +77,7 @@ describe("getExpenseOrThrow", () => {
     const testExpense = buildExpense(group);
     await ExpensesRepository.insertExpense(system, testExpense);
 
-    expect(() =>
-      ExpensesRepository.getExpenseOrThrow(system, "non-existent-id"),
-    ).toThrow();
+    expect(() => ExpensesRepository.getExpenseOrThrow(system, "non-existent-id")).toThrow();
   });
 });
 
@@ -113,9 +97,7 @@ describe("insertExpense", () => {
     expect(result.groupId).toEqual(testExpense.groupId);
     expect(result.title).toEqual(testExpense.title);
     expect(result.payerName).toEqual(testExpense.payerName);
-    expect(result.splitExpense).toEqual(
-      JSON.stringify(testExpense.splitExpense),
-    );
+    expect(result.splitExpense).toEqual(JSON.stringify(testExpense.splitExpense));
     expect(result.createdAt).toEqual(testExpense.createdAt.toISOString());
     expect(result.updatedAt).toEqual(testExpense.updatedAt.toISOString());
     expect(result.deletedAt).toEqual(null);
@@ -139,9 +121,7 @@ describe("insertExpense", () => {
     expect(parsedReceipt.title).toEqual(receipt.title);
     expect(parsedReceipt.total.amount).toEqual(receipt.total.amount);
     expect(parsedReceipt.items).toHaveLength(receipt.items.length);
-    expect(parsedReceipt.items[0].description).toEqual(
-      receipt.items[0].description,
-    );
+    expect(parsedReceipt.items[0].description).toEqual(receipt.items[0].description);
     expect(parsedReceipt.items[0].paid_for).toEqual(receipt.items[0].paid_for);
     expect(parsedReceipt.items[1].paid_for).toEqual(receipt.items[1].paid_for);
   });

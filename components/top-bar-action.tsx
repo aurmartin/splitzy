@@ -42,17 +42,8 @@ const TopBarAction = (props: TopBarActionProps) => {
   }, [backgroundColor]);
 
   return (
-    <Pressable
-      onPress={onPress}
-      style={style}
-      android_ripple={{ color: rippleColor }}
-    >
-      <Ionicons
-        accessibilityLabel={label}
-        name={iconName}
-        size={24}
-        color={iconColor}
-      />
+    <Pressable onPress={onPress} style={style} android_ripple={{ color: rippleColor }}>
+      <Ionicons accessibilityLabel={label} name={iconName} size={24} color={iconColor} />
     </Pressable>
   );
 };
@@ -62,14 +53,7 @@ type TopBarSpecificActionProps = Omit<TopBarActionProps, "iconName"> & {
 };
 
 const TopBarDeleteAction = (props: TopBarSpecificActionProps) => {
-  return (
-    <TopBarAction
-      iconName="trash"
-      type="destructive"
-      label="Supprimer"
-      {...props}
-    />
-  );
+  return <TopBarAction iconName="trash" type="destructive" label="Supprimer" {...props} />;
 };
 
 const TopBarSaveAction = (props: TopBarSpecificActionProps) => {

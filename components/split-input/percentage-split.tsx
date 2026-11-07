@@ -5,10 +5,7 @@ import { type Money } from "@/lib/money";
 import React from "react";
 import { ListGroup } from "../list-group";
 
-const PercentageSplitInput = (props: {
-  value: PercentageSplit;
-  onChange: (value: PercentageSplit) => void;
-}) => {
+const PercentageSplitInput = (props: { value: PercentageSplit; onChange: (value: PercentageSplit) => void }) => {
   const { value, onChange } = props;
 
   const handleInputChange = (member: string, ratio: number) => {
@@ -37,10 +34,7 @@ const PercentageSplitInput = (props: {
   );
 };
 
-const createPercentageSplit = (
-  total: Money,
-  members: string[],
-): PercentageSplit => {
+const createPercentageSplit = (total: Money, members: string[]): PercentageSplit => {
   const ratio = Math.round(100 / members.length);
   const lastRatio = 100 - ratio * (members.length - 1);
   const ratios = members.reduce(

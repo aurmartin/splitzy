@@ -11,15 +11,7 @@ import { TopBar } from "@/components/top-bar";
 import { TopBarSaveAction } from "@/components/top-bar-action";
 import { DisplayableError } from "@/lib/displayable-error";
 import { useExpenses } from "@/lib/expenses";
-import {
-  deleteGroup,
-  getMe,
-  getMembersInExpenses,
-  leaveGroup,
-  updateGroup,
-  useGroup,
-  type Group,
-} from "@/lib/groups";
+import { deleteGroup, getMe, getMembersInExpenses, leaveGroup, updateGroup, useGroup, type Group } from "@/lib/groups";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
@@ -38,10 +30,7 @@ function GroupSettingsForm({ group }: { group: Group }) {
   const [newMembers, setNewMembers] = React.useState<string[]>([]);
 
   const me = getMe(system, group.id);
-  const membersInExpenses = React.useMemo(
-    () => getMembersInExpenses(expenses),
-    [expenses],
-  );
+  const membersInExpenses = React.useMemo(() => getMembersInExpenses(expenses), [expenses]);
 
   const removeMember = (member: string) => {
     if (member === me) {
@@ -110,18 +99,14 @@ function GroupSettingsForm({ group }: { group: Group }) {
       snackBar.show("Vous avez quitté le groupe", "success");
     } catch (error) {
       console.error("Leave group error", error);
-      snackBar.show(
-        "Impossible de quitter le groupe. Vérifiez votre connexion.",
-        "error",
-      );
+      snackBar.show("Impossible de quitter le groupe. Vérifiez votre connexion.", "error");
     }
   };
 
   const handleDelete = async () => {
     const confirmed = await confirm({
       title: "Supprimer le groupe ?",
-      message:
-        "Le groupe et toutes ses dépenses seront supprimés pour tous les membres.",
+      message: "Le groupe et toutes ses dépenses seront supprimés pour tous les membres.",
       confirmText: "Supprimer",
       destructive: true,
     });
@@ -143,22 +128,11 @@ function GroupSettingsForm({ group }: { group: Group }) {
 
   return (
     <Screen>
-      <TopBar
-        title="Paramètres du groupe"
-        rightActions={<TopBarSaveAction key="save" onPress={handleSave} />}
-      />
+      <TopBar title="Paramètres du groupe" rightActions={<TopBarSaveAction key="save" onPress={handleSave} />} />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        alwaysBounceVertical={false}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false}>
         <Label>Nom</Label>
-        <TextInput
-          value={name}
-          onChangeText={setName}
-          placeholder="Nom"
-          accessibilityLabel="Nom du groupe"
-        />
+        <TextInput value={name} onChangeText={setName} placeholder="Nom" accessibilityLabel="Nom du groupe" />
 
         <Label style={{ marginTop: 16 }}>Membres</Label>
         <ListGroup>
@@ -200,11 +174,7 @@ function GroupSettingsForm({ group }: { group: Group }) {
           ]}
         </ListGroup>
 
-        <Button
-          onPress={() => setNewMembers([...newMembers, ""])}
-          type="secondary"
-          style={{ marginTop: 8 }}
-        >
+        <Button onPress={() => setNewMembers([...newMembers, ""])} type="secondary" style={{ marginTop: 8 }}>
           Ajouter un membre
         </Button>
 

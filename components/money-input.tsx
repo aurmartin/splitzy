@@ -25,9 +25,7 @@ const MoneyInput = (props: MoneyInputProps) => {
     [onChangeProp, value],
   );
 
-  return (
-    <FloatInput value={Money.toUnit(value)} onChange={onChange} {...rest} />
-  );
+  return <FloatInput value={Money.toUnit(value)} onChange={onChange} {...rest} />;
 };
 
 export { MoneyInput, type MoneyInputProps };

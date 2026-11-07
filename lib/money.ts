@@ -10,11 +10,7 @@ type Money = {
 
 const DEFAULT_PRECISION = 2;
 
-function create(params: {
-  amount: number;
-  currency: Currency;
-  precision?: number;
-}): Money {
+function create(params: { amount: number; currency: Currency; precision?: number }): Money {
   const { amount, currency, precision = DEFAULT_PRECISION } = params;
 
   if (!Number.isInteger(amount)) {
@@ -68,20 +64,12 @@ function greaterThan(a: Money, b: Money): boolean {
 // is rounded down, then the remainder is handed out one unit at a time to the
 // shares with a non-zero ratio, starting from the first one.
 function allocate(money: Money, ratios: number[]): Money[] {
-  if (
-    ratios.length === 0 ||
-    ratios.some((ratio) => ratio < 0) ||
-    ratios.every((ratio) => ratio === 0)
-  ) {
-    throw new TypeError(
-      "Ratios must be a non-empty array of non-negative numbers with at least one greater than 0",
-    );
+  if (ratios.length === 0 || ratios.some((ratio) => ratio < 0) || ratios.every((ratio) => ratio === 0)) {
+    throw new TypeError("Ratios must be a non-empty array of non-negative numbers with at least one greater than 0");
   }
 
   const total = ratios.reduce((acc, ratio) => acc + ratio, 0);
-  const shares = ratios.map((ratio) =>
-    Math.floor((money.amount * ratio) / total),
-  );
+  const shares = ratios.map((ratio) => Math.floor((money.amount * ratio) / total));
 
   let remainder = shares.reduce((acc, share) => acc - share, money.amount);
   for (let i = 0; remainder > 0; i = (i + 1) % ratios.length) {

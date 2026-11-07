@@ -1,8 +1,4 @@
-import {
-  Text as BaseText,
-  StyleSheet,
-  type TextProps as BaseTextProps,
-} from "react-native";
+import { Text as BaseText, StyleSheet, type TextProps as BaseTextProps } from "react-native";
 
 export type TextProps = BaseTextProps & {
   lightColor?: string;
@@ -23,13 +19,7 @@ export type TextProps = BaseTextProps & {
     | "link";
 };
 
-export function Text({
-  style,
-  lightColor,
-  darkColor,
-  type = "body",
-  ...rest
-}: TextProps) {
+export function Text({ style, lightColor, darkColor, type = "body", ...rest }: TextProps) {
   return (
     <BaseText
       style={[

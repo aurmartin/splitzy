@@ -1,8 +1,6 @@
 import { Money } from "@/lib/money";
 
-const { ServerConnector } = jest.requireActual<
-  typeof import("@/lib/server-connector")
->("@/lib/server-connector");
+const { ServerConnector } = jest.requireActual<typeof import("@/lib/server-connector")>("@/lib/server-connector");
 
 jest.spyOn(ServerConnector.prototype, "parseReceipt").mockResolvedValue({
   items: [],

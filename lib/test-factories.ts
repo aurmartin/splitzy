@@ -1,11 +1,5 @@
 import { expensesTable, groupsTable } from "@/lib/db/schema";
-import type {
-  AmountSplit,
-  EqualSplit,
-  Expense,
-  PercentageSplit,
-  Receipt,
-} from "@/lib/expenses";
+import type { AmountSplit, EqualSplit, Expense, PercentageSplit, Receipt } from "@/lib/expenses";
 import { encodeExpense } from "@/lib/expenses/repository";
 import { encodeGroup, setMe, type Group } from "@/lib/groups";
 import { Money } from "@/lib/money";
@@ -17,8 +11,7 @@ let sequence = 0;
 
 const nextDate = () => new Date(BASE_DATE + ++sequence * 60_000);
 
-const money = (group: Group, amount: number) =>
-  Money.create({ amount, currency: group.currency });
+const money = (group: Group, amount: number) => Money.create({ amount, currency: group.currency });
 
 const buildGroup = (overrides: Partial<Group> = {}): Group => {
   const date = nextDate();
@@ -37,53 +30,32 @@ const buildGroup = (overrides: Partial<Group> = {}): Group => {
 
 type Amounts = Record<string, number>;
 
-const sum = (amounts: Amounts) =>
-  Object.values(amounts).reduce((a, b) => a + b, 0);
+const sum = (amounts: Amounts) => Object.values(amounts).reduce((a, b) => a + b, 0);
 
 const toMoney = (group: Group, amounts: Amounts) =>
-  Object.fromEntries(
-    Object.entries(amounts).map(([member, amount]) => [
-      member,
-      money(group, amount),
-    ]),
-  );
+  Object.fromEntries(Object.entries(amounts).map(([member, amount]) => [member, money(group, amount)]));
 
-const buildEqualSplit = (
-  group: Group,
-  total = 1000,
-  members = group.members,
-): EqualSplit => ({
+const buildEqualSplit = (group: Group, total = 1000, members = group.members): EqualSplit => ({
   type: "equal",
   total: money(group, total),
   members,
 });
 
-const buildAmountSplit = (
-  group: Group,
-  amounts: Amounts,
-  total = sum(amounts),
-): AmountSplit => ({
+const buildAmountSplit = (group: Group, amounts: Amounts, total = sum(amounts)): AmountSplit => ({
   type: "amount",
   total: money(group, total),
   members: group.members,
   amounts: toMoney(group, amounts),
 });
 
-const buildPercentageSplit = (
-  group: Group,
-  ratios: Amounts,
-  total = 1000,
-): PercentageSplit => ({
+const buildPercentageSplit = (group: Group, ratios: Amounts, total = 1000): PercentageSplit => ({
   type: "percentage",
   total: money(group, total),
   members: Object.keys(ratios),
   ratios,
 });
 
-const buildReceipt = (
-  group: Group,
-  overrides: Partial<Receipt> = {},
-): Receipt => {
+const buildReceipt = (group: Group, overrides: Partial<Receipt> = {}): Receipt => {
   const [first, second] = group.members;
   const items: Receipt["items"] = [
     {
@@ -109,10 +81,7 @@ const buildReceipt = (
   };
 };
 
-const buildExpense = (
-  group: Group,
-  overrides: Partial<Expense> = {},
-): Expense => {
+const buildExpense = (group: Group, overrides: Partial<Expense> = {}): Expense => {
   const date = nextDate();
 
   return {
@@ -130,17 +99,12 @@ const buildExpense = (
   };
 };
 
-const buildGroupRecord = (overrides: Partial<Group> = {}) =>
-  encodeGroup(buildGroup(overrides));
+const buildGroupRecord = (overrides: Partial<Group> = {}) => encodeGroup(buildGroup(overrides));
 
 const buildExpenseRecord = (group: Group, overrides: Partial<Expense> = {}) =>
   encodeExpense(buildExpense(group, overrides));
 
-const createGroup = (
-  system: System,
-  overrides: Partial<Group> = {},
-  { me }: { me?: string } = {},
-): Group => {
+const createGroup = (system: System, overrides: Partial<Group> = {}, { me }: { me?: string } = {}): Group => {
   const group = buildGroup(overrides);
   system.db.insert(groupsTable).values(encodeGroup(group)).run();
 
@@ -151,11 +115,7 @@ const createGroup = (
   return group;
 };
 
-const createExpense = (
-  system: System,
-  group: Group,
-  overrides: Partial<Expense> = {},
-): Expense => {
+const createExpense = (system: System, group: Group, overrides: Partial<Expense> = {}): Expense => {
   const expense = buildExpense(group, overrides);
   system.db.insert(expensesTable).values(encodeExpense(expense)).run();
   return expense;

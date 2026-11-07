@@ -18,41 +18,27 @@ type Reimbursement = Expense & {
   splitExpense: AmountSplit;
 };
 
-const isReimbursement = (expense: Expense): expense is Reimbursement =>
-  expense.kind === "reimbursement";
+const isReimbursement = (expense: Expense): expense is Reimbursement => expense.kind === "reimbursement";
 
 // The member who received the money: a reimbursement is an expense paid by
 // "from" and entirely attributed to "to".
-const getRecipient = (reimbursement: Reimbursement): string =>
-  reimbursement.splitExpense.members[0];
+const getRecipient = (reimbursement: Reimbursement): string => reimbursement.splitExpense.members[0];
 
 const validate = (params: ReimbursementParams) => {
   if (params.from.length === 0 || params.to.length === 0) {
-    throw new DisplayableError(
-      "Le membre est invalide",
-      "Veuillez sélectionner deux membres",
-    );
+    throw new DisplayableError("Le membre est invalide", "Veuillez sélectionner deux membres");
   }
 
   if (params.from === params.to) {
-    throw new DisplayableError(
-      "Les membres sont invalides",
-      "Choisissez deux membres différents",
-    );
+    throw new DisplayableError("Les membres sont invalides", "Choisissez deux membres différents");
   }
 
   if (params.amount.amount <= 0) {
-    throw new DisplayableError(
-      "Le montant est invalide",
-      "Veuillez entrer un montant",
-    );
+    throw new DisplayableError("Le montant est invalide", "Veuillez entrer un montant");
   }
 };
 
-const insertReimbursement = async (
-  system: System,
-  params: ReimbursementParams,
-): Promise<Reimbursement> => {
+const insertReimbursement = async (system: System, params: ReimbursementParams): Promise<Reimbursement> => {
   validate(params);
 
   const now = new Date();

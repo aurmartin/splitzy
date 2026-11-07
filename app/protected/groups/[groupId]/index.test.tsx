@@ -2,19 +2,9 @@ import GroupScreen from "@/app/protected/groups/[groupId]/index";
 import { tables } from "@/lib/db/schema";
 import { encodeGroup, removeMe, setMe } from "@/lib/groups";
 import { system } from "@/lib/test-setup";
-import {
-  buildExpenseRecord,
-  buildGroup,
-  createExpense,
-  createGroup,
-} from "@/lib/test-factories";
+import { buildExpenseRecord, buildGroup, createExpense, createGroup } from "@/lib/test-factories";
 import { renderRouter } from "@/lib/test-utils";
-import {
-  act,
-  fireEvent,
-  screen,
-  userEvent,
-} from "@testing-library/react-native";
+import { act, fireEvent, screen, userEvent } from "@testing-library/react-native";
 import { eq } from "drizzle-orm";
 import { Share, Text } from "react-native";
 
@@ -36,9 +26,7 @@ const routerContext = {
   "/protected/groups/[groupId]/set-me": () => <Text>Set me</Text>,
   "/protected/groups/[groupId]/new-expense": () => <Text>New expense</Text>,
   "/protected/groups/[groupId]/balance": () => <Text>Balance</Text>,
-  "/protected/groups/[groupId]/expenses/[expenseId]": () => (
-    <Text>Expense</Text>
-  ),
+  "/protected/groups/[groupId]/expenses/[expenseId]": () => <Text>Expense</Text>,
 };
 
 const testGroupScreenUrl = "/protected/groups/test-group-id";

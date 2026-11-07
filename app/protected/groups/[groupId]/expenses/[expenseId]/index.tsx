@@ -21,11 +21,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { ScrollView, View } from "react-native";
 
 // A reimbursement cannot be edited: to fix one, delete it and settle again.
-function ShowReimbursementScreen({
-  reimbursement,
-}: {
-  reimbursement: Reimbursement;
-}) {
+function ShowReimbursementScreen({ reimbursement }: { reimbursement: Reimbursement }) {
   const snackBar = useSnackBar();
   const system = useSystem();
 
@@ -58,13 +54,11 @@ function ShowReimbursementScreen({
       <TopBar rightActions={<TopBarDeleteAction onPress={handleDelete} />} />
 
       <Text type="headlineMedium" style={{ marginBottom: 16 }}>
-        Remboursement{" "}
-        {Money.format(reimbursement.splitExpense.total, getLocale())}
+        Remboursement {Money.format(reimbursement.splitExpense.total, getLocale())}
       </Text>
 
       <Text style={{ marginBottom: 16 }}>
-        {reimbursement.payerName} a remboursé{" "}
-        {ReimbursementService.getRecipient(reimbursement)} le{" "}
+        {reimbursement.payerName} a remboursé {ReimbursementService.getRecipient(reimbursement)} le{" "}
         {reimbursement.createdAt.toLocaleDateString()}
       </Text>
     </Screen>
@@ -115,14 +109,10 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
       </Text>
 
       <Text style={{ marginBottom: 16 }}>
-        Payé par {expense.payerName} le{" "}
-        {new Date(expense.createdAt).toLocaleDateString()}
+        Payé par {expense.payerName} le {new Date(expense.createdAt).toLocaleDateString()}
       </Text>
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        alwaysBounceVertical={false}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false}>
         <Label>Répartition</Label>
         <ListGroup style={{ marginBottom: 16 }}>
           {Object.entries(amounts).map(([name, amount]) => (
@@ -140,17 +130,10 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
               {expense.receipt.items.map((item) => (
                 <View key={item.description}>
                   <View style={{ gap: 4, flex: 1, marginRight: 16 }}>
-                    <Text
-                      style={{ flexShrink: 1 }}
-                      numberOfLines={1}
-                      ellipsizeMode="middle"
-                    >
+                    <Text style={{ flexShrink: 1 }} numberOfLines={1} ellipsizeMode="middle">
                       {item.humanReadableDescription}
                     </Text>
-                    <Text
-                      type="bodyMedium"
-                      style={{ color: "hsl(0, 0%, 40%)" }}
-                    >
+                    <Text type="bodyMedium" style={{ color: "hsl(0, 0%, 40%)" }}>
                       {item.description}
                     </Text>
                   </View>
@@ -167,8 +150,7 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
 }
 
 export default function ShowExpenseRoute() {
-  const { expenseId, groupId }: { expenseId: string; groupId: string } =
-    useLocalSearchParams();
+  const { expenseId, groupId }: { expenseId: string; groupId: string } = useLocalSearchParams();
 
   const expense = useExpense(expenseId);
 

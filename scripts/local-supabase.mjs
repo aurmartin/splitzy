@@ -21,9 +21,7 @@ const readStatus = () => {
       stdio: ["ignore", "pipe", "pipe"],
     });
   } catch {
-    console.error(
-      "Local Supabase is not running. Start it with: pnpm db:start",
-    );
+    console.error("Local Supabase is not running. Start it with: pnpm db:start");
     process.exit(1);
   }
 
@@ -63,11 +61,7 @@ const login = async (email = DEFAULT_EMAIL, simulator = "booted") => {
 
   // Verify the token here rather than through the link: the local auth server
   // rejects GET /verify, so the browser never reaches the app.
-  const { data, error } = await createClient(
-    url,
-    anonKey,
-    options,
-  ).auth.verifyOtp({
+  const { data, error } = await createClient(url, anonKey, options).auth.verifyOtp({
     token_hash: link.properties.hashed_token,
     type: "magiclink",
   });
@@ -92,9 +86,7 @@ const login = async (email = DEFAULT_EMAIL, simulator = "booted") => {
 const [command, ...args] = process.argv.slice(2);
 
 if (command !== "login") {
-  console.error(
-    "Usage: node scripts/local-supabase.mjs login [email] [simulator]",
-  );
+  console.error("Usage: node scripts/local-supabase.mjs login [email] [simulator]");
   process.exit(1);
 }
 

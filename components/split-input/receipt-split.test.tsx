@@ -63,9 +63,7 @@ describe("ReceiptSplit", () => {
       };
 
       const mockOnChange = jest.fn();
-      await render(
-        <ReceiptSplitInput value={mockSplit} onChange={mockOnChange} />,
-      );
+      await render(<ReceiptSplitInput value={mockSplit} onChange={mockOnChange} />);
 
       // Find and click user2's button for the first item
       const user2Buttons = screen.getAllByText("user2");

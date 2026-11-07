@@ -1,7 +1,4 @@
-import {
-  AmountSplitInput,
-  createAmountSplit,
-} from "@/components/split-input/amount-split";
+import { AmountSplitInput, createAmountSplit } from "@/components/split-input/amount-split";
 import { type AmountSplit } from "@/lib/expenses";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { Money } from "@/lib/money";
@@ -19,13 +16,7 @@ describe("AmountSplit", () => {
     const onChange = jest.fn();
 
     beforeEach(async () => {
-      await render(
-        <AmountSplitInput
-          testID="amount-split-input"
-          value={testSplit}
-          onChange={onChange}
-        />,
-      );
+      await render(<AmountSplitInput testID="amount-split-input" value={testSplit} onChange={onChange} />);
     });
 
     it("renders correctly", () => {
@@ -50,13 +41,7 @@ describe("AmountSplit", () => {
 
       expect(screen.getByTestId("amount-input-bob").props.value).toEqual("0");
 
-      await screen.rerender(
-        <AmountSplitInput
-          testID="amount-split-input"
-          value={updatedSplit}
-          onChange={onChange}
-        />,
-      );
+      await screen.rerender(<AmountSplitInput testID="amount-split-input" value={updatedSplit} onChange={onChange} />);
 
       expect(screen.getByTestId("amount-input-bob").props.value).toEqual("5");
     });

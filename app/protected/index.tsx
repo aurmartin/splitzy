@@ -22,9 +22,7 @@ const GroupListItem = ({ group }: { group: Group }) => {
   return (
     <Card key={group.id} onPress={handlePress}>
       <Text type="title">{group.name}</Text>
-      <Text style={{ color: "#888" }}>
-        {group.members.join(", ") || "(no members)"}
-      </Text>
+      <Text style={{ color: "#888" }}>{group.members.join(", ") || "(no members)"}</Text>
     </Card>
   );
 };
@@ -35,10 +33,7 @@ const Groups = React.memo(function Groups() {
   const [refreshing, setRefreshing] = React.useState(false);
   const snackBar = useSnackBar();
 
-  const renderItem = React.useCallback(
-    ({ item }: { item: Group }) => <GroupListItem group={item} />,
-    [],
-  );
+  const renderItem = React.useCallback(({ item }: { item: Group }) => <GroupListItem group={item} />, []);
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -46,10 +41,7 @@ const Groups = React.memo(function Groups() {
     try {
       await system.syncEngine.syncTableFromRemote(tables.groups);
     } catch {
-      snackBar.show(
-        "Une erreur est survenue lors de la synchronisation des groupes.",
-        "error",
-      );
+      snackBar.show("Une erreur est survenue lors de la synchronisation des groupes.", "error");
     } finally {
       setRefreshing(false);
     }
@@ -65,8 +57,7 @@ const Groups = React.memo(function Groups() {
       renderItem={renderItem}
       ListEmptyComponent={
         <Text style={{ textAlign: "center", marginVertical: 64 }}>
-          Aucun groupe trouvé. Créez-en un en utilisant le bouton &apos;+&apos;
-          !
+          Aucun groupe trouvé. Créez-en un en utilisant le bouton &apos;+&apos; !
         </Text>
       }
       showsVerticalScrollIndicator={false}

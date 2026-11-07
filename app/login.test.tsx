@@ -22,20 +22,16 @@ describe("LoginScreen", () => {
     await user.type(screen.getByPlaceholderText("E-mail"), "test@test.com");
     await user.press(screen.getByRole("button"));
 
-    await screen.findByText(
-      "Vérifiez votre e-mail pour un lien magique de connexion.",
-    );
+    await screen.findByText("Vérifiez votre e-mail pour un lien magique de connexion.");
   });
 
   it("should handle sign in error", async () => {
     const user = userEvent.setup();
     await renderRouter(routerContext, system, { initialUrl: "/login" });
 
-    (system.supabaseConnector.signInWithOtp as jest.Mock).mockImplementation(
-      () => {
-        throw new Error("Invalid email");
-      },
-    );
+    (system.supabaseConnector.signInWithOtp as jest.Mock).mockImplementation(() => {
+      throw new Error("Invalid email");
+    });
 
     await user.type(screen.getByPlaceholderText("E-mail"), "test@test.com");
     await user.press(screen.getByRole("button"));

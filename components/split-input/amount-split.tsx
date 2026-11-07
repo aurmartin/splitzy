@@ -34,10 +34,7 @@ const AmountSplitInput = (props: AmountSplitInputProps) => {
     }
   };
 
-  const remaningAmounts = React.useMemo(
-    () => getRemaningAmounts(value),
-    [value],
-  );
+  const remaningAmounts = React.useMemo(() => getRemaningAmounts(value), [value]);
 
   const valueForMember = (member: string) => {
     return value.amounts[member] || remaningAmounts[member];
@@ -52,10 +49,7 @@ const AmountSplitInput = (props: AmountSplitInputProps) => {
           testID={`amount-input-${member}`}
           right={
             value.amounts[member] ? (
-              <Pressable
-                onPress={() => handleResetMember(member)}
-                testID={`reset-amount-${member}`}
-              >
+              <Pressable onPress={() => handleResetMember(member)} testID={`reset-amount-${member}`}>
                 <MaterialIcons name="close" size={18} color="black" />
               </Pressable>
             ) : null
@@ -70,9 +64,7 @@ const AmountSplitInput = (props: AmountSplitInputProps) => {
 };
 
 const getRemaningAmounts = (split: AmountSplit): Record<string, Money> => {
-  const missingMembers = split.members.filter(
-    (member) => !(member in split.amounts),
-  );
+  const missingMembers = split.members.filter((member) => !(member in split.amounts));
 
   if (missingMembers.length === 0) {
     return {};
@@ -133,9 +125,4 @@ const getEffectiveAmounts = (split: AmountSplit): Record<string, Money> => {
   );
 };
 
-export {
-  AmountSplitInput,
-  createAmountSplit,
-  getEffectiveAmounts,
-  useEffectiveAmounts,
-};
+export { AmountSplitInput, createAmountSplit, getEffectiveAmounts, useEffectiveAmounts };

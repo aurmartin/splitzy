@@ -2,12 +2,7 @@ import BalanceScreen from "@/app/protected/groups/[groupId]/balance";
 import { ExpensesRepository, ReimbursementService } from "@/lib/expenses";
 import { Money } from "@/lib/money";
 import { system } from "@/lib/test-setup";
-import {
-  buildEqualSplit,
-  buildGroup,
-  createExpense,
-  createGroup,
-} from "@/lib/test-factories";
+import { buildEqualSplit, buildGroup, createExpense, createGroup } from "@/lib/test-factories";
 import { renderRouter } from "@/lib/test-utils";
 import { screen, userEvent } from "@testing-library/react-native";
 import { Alert, type AlertButton, Text } from "react-native";
@@ -24,9 +19,7 @@ const answerAlert = (buttonText: string) =>
   });
 
 const groupReimbursements = () =>
-  ExpensesRepository.getGroupExpenses(system, groupId).filter(
-    (expense) => expense.kind === "reimbursement",
-  );
+  ExpensesRepository.getGroupExpenses(system, groupId).filter((expense) => expense.kind === "reimbursement");
 
 // Only reset this spy: restoring every mock would also undo the Supabase
 // connector mocks, which are spies too.
@@ -47,9 +40,7 @@ beforeEach(() => {
 const routerContext = {
   "/protected/groups/[groupId]/index": () => <Text>Group screen</Text>,
   "/protected/groups/[groupId]/balance": () => <BalanceScreen />,
-  "/protected/groups/[groupId]/expenses/[expenseId]": () => (
-    <Text>Expense screen</Text>
-  ),
+  "/protected/groups/[groupId]/expenses/[expenseId]": () => <Text>Expense screen</Text>,
 };
 
 const renderBalance = () =>
@@ -77,9 +68,7 @@ describe("BalanceScreen", () => {
     const [reimbursement] = groupReimbursements();
     expect(reimbursement.payerName).toBe("Bob");
     expect(reimbursement.splitExpense.members).toEqual(["Alice"]);
-    expect(reimbursement.splitExpense.total).toEqual(
-      Money.create({ amount: 1000, currency: "EUR" }),
-    );
+    expect(reimbursement.splitExpense.total).toEqual(Money.create({ amount: 1000, currency: "EUR" }));
   });
 
   it("records nothing when the confirmation is cancelled", async () => {

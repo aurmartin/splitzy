@@ -1,8 +1,4 @@
-import {
-  createClient,
-  type SupabaseClient,
-  type RealtimePostgresChangesPayload,
-} from "@supabase/supabase-js";
+import { createClient, type SupabaseClient, type RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import { tables } from "./db/schema";
 import { Env } from "./env";
 import type { OperationType, RemoteOperation } from "./operation";
@@ -35,37 +31,25 @@ export class SupabaseConnector {
   }
 
   private realtimeSubscribe() {
-    Object.keys(this.realtimeEventListeners).forEach((table) =>
-      this.realtimeSubscribeToTable(table as TableName),
-    );
+    Object.keys(this.realtimeEventListeners).forEach((table) => this.realtimeSubscribeToTable(table as TableName));
   }
 
   private realtimeSubscribeToTable(table: TableName) {
     this.client
       .channel(table)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table },
-        (message) => this.handleRealtimeMessage(table, message),
+      .on("postgres_changes", { event: "*", schema: "public", table }, (message) =>
+        this.handleRealtimeMessage(table, message),
       )
       .subscribe();
   }
 
-  handleRealtimeMessage(
-    table: TableName,
-    payload: RealtimePostgresChangesPayload<any>,
-  ) {
+  handleRealtimeMessage(table: TableName, payload: RealtimePostgresChangesPayload<any>) {
     const remoteOperation = this.remoteOperationFromPayload(table, payload);
 
-    this.realtimeEventListeners[table].forEach((listener) =>
-      listener(remoteOperation),
-    );
+    this.realtimeEventListeners[table].forEach((listener) => listener(remoteOperation));
   }
 
-  private remoteOperationFromPayload(
-    table: TableName,
-    payload: RealtimePostgresChangesPayload<any>,
-  ): RemoteOperation {
+  private remoteOperationFromPayload(table: TableName, payload: RealtimePostgresChangesPayload<any>): RemoteOperation {
     let type: OperationType;
     let entityId: string;
 
@@ -161,11 +145,7 @@ export class SupabaseConnector {
       return { error };
     }
 
-    return this.client
-      .from("members")
-      .delete()
-      .eq("user_id", data.user.id)
-      .eq("group_id", groupId);
+    return this.client.from("members").delete().eq("user_id", data.user.id).eq("group_id", groupId);
   }
 }
 

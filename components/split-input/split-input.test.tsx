@@ -1,9 +1,4 @@
-import {
-  SplitInput,
-  changeTotal,
-  changeType,
-  createSplit,
-} from "@/components/split-input";
+import { SplitInput, changeTotal, changeType, createSplit } from "@/components/split-input";
 import { type PercentageSplit, type Split } from "@/lib/expenses";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { Money } from "@/lib/money";
@@ -21,13 +16,7 @@ describe("SplitInput", () => {
         members: mockMembers,
       };
 
-      await render(
-        <SplitInput
-          value={mockSplit}
-          onChange={() => {}}
-          onTypeChange={() => {}}
-        />,
-      );
+      await render(<SplitInput value={mockSplit} onChange={() => {}} onTypeChange={() => {}} />);
       expect(screen.toJSON()).toMatchSnapshot();
     });
 
@@ -39,17 +28,9 @@ describe("SplitInput", () => {
       };
 
       const mockOnTypeChange = jest.fn();
-      await render(
-        <SplitInput
-          value={mockSplit}
-          onChange={() => {}}
-          onTypeChange={mockOnTypeChange}
-        />,
-      );
+      await render(<SplitInput value={mockSplit} onChange={() => {}} onTypeChange={mockOnTypeChange} />);
 
-      await fireEvent.press(
-        screen.getByRole("button", { name: "Pourcentage" }),
-      );
+      await fireEvent.press(screen.getByRole("button", { name: "Pourcentage" }));
 
       expect(mockOnTypeChange).toHaveBeenCalledWith("percentage");
     });

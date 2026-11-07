@@ -1,10 +1,6 @@
 import { computeBalance, computeOptimalReimbursements } from "@/lib/balance";
 import { DisplayableError } from "@/lib/displayable-error";
-import {
-  ExpenseService,
-  ExpensesRepository,
-  ReimbursementService,
-} from "@/lib/expenses";
+import { ExpenseService, ExpensesRepository, ReimbursementService } from "@/lib/expenses";
 import { type Group } from "@/lib/groups";
 import { Money } from "@/lib/money";
 import { system } from "@/lib/test-setup";
@@ -31,8 +27,7 @@ const insertDinner = () =>
     receipt: null,
   });
 
-const groupExpenses = () =>
-  ExpensesRepository.getGroupExpenses(system, group.id);
+const groupExpenses = () => ExpensesRepository.getGroupExpenses(system, group.id);
 
 describe("ReimbursementService", () => {
   it("stores a reimbursement as an amount split attributed to the recipient", async () => {
@@ -61,17 +56,13 @@ describe("ReimbursementService", () => {
     await insertDinner();
 
     expect(groupExpenses()[0].kind).toBe("expense");
-    expect(ReimbursementService.isReimbursement(groupExpenses()[0])).toBe(
-      false,
-    );
+    expect(ReimbursementService.isReimbursement(groupExpenses()[0])).toBe(false);
   });
 
   it("settles every suggested reimbursement down to a zero balance", async () => {
     await insertDinner();
 
-    const suggestions = computeOptimalReimbursements(
-      computeBalance(group, groupExpenses()),
-    );
+    const suggestions = computeOptimalReimbursements(computeBalance(group, groupExpenses()));
     expect(suggestions).toHaveLength(2);
 
     for (const suggestion of suggestions) {

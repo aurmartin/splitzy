@@ -10,15 +10,9 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
-const TestComponent = (props: {
-  message: string;
-  type: "success" | "error";
-}) => {
+const TestComponent = (props: { message: string; type: "success" | "error" }) => {
   const snack = useSnackBar();
-  React.useEffect(
-    () => snack.show(props.message, props.type),
-    [snack, props.message, props.type],
-  );
+  React.useEffect(() => snack.show(props.message, props.type), [snack, props.message, props.type]);
   didRender();
   return <View />;
 };
@@ -51,8 +45,6 @@ describe("useSnackBar", () => {
   });
 
   it("should throw without context", async () => {
-    await expect(
-      baseRender(<TestComponent message="test message" type="success" />),
-    ).rejects.toThrow();
+    await expect(baseRender(<TestComponent message="test message" type="success" />)).rejects.toThrow();
   });
 });

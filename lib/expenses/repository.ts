@@ -12,12 +12,7 @@ interface MoneyRecord {
 }
 
 function getExpense(system: System, id: string): Expense | null {
-  const rows = system.db
-    .select()
-    .from(expensesTable)
-    .where(eq(expensesTable.id, id))
-    .limit(1)
-    .all();
+  const rows = system.db.select().from(expensesTable).where(eq(expensesTable.id, id)).limit(1).all();
 
   if (rows.length === 0) {
     return null;
@@ -59,21 +54,13 @@ function getGroupExpenses(system: System, groupId: string): Expense[] {
   return expenses.map(decodeExpenseRecord);
 }
 
-function watchGroupExpenses(
-  system: System,
-  groupId: string,
-  callback: (expenses: Expense[]) => void,
-): () => void {
+function watchGroupExpenses(system: System, groupId: string, callback: (expenses: Expense[]) => void): () => void {
   return system.syncEngine.watchTable(expensesTable, () => {
     callback(getGroupExpenses(system, groupId));
   });
 }
 
-function watchExpense(
-  system: System,
-  id: string,
-  callback: (expense: Expense) => void,
-): () => void {
+function watchExpense(system: System, id: string, callback: (expense: Expense) => void): () => void {
   return system.syncEngine.watchTable(expensesTable, () => {
     const expense = getExpense(system, id);
 
@@ -85,9 +72,7 @@ function watchExpense(
 
 function decodeExpenseRecord(record: ExpenseRecord): Expense {
   const decodedReceipt = decodeReceipt(JSON.parse(record.receipt as string));
-  const decodedSplitExpense = decodeSplitExpense(
-    JSON.parse(record.splitExpense as string),
-  );
+  const decodedSplitExpense = decodeSplitExpense(JSON.parse(record.splitExpense as string));
 
   return {
     id: record.id,
@@ -99,9 +84,7 @@ function decodeExpenseRecord(record: ExpenseRecord): Expense {
     receipt: decodedReceipt,
     createdAt: new Date(record.createdAt as string),
     updatedAt: new Date(record.updatedAt as string),
-    deletedAt: record.deletedAt
-      ? new Date(record.deletedAt as string)
-      : undefined,
+    deletedAt: record.deletedAt ? new Date(record.deletedAt as string) : undefined,
   };
 }
 

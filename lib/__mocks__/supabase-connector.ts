@@ -1,6 +1,4 @@
-const { SupabaseConnector } = jest.requireActual<
-  typeof import("@/lib/supabase-connector")
->("@/lib/supabase-connector");
+const { SupabaseConnector } = jest.requireActual<typeof import("@/lib/supabase-connector")>("@/lib/supabase-connector");
 
 jest.spyOn(SupabaseConnector.prototype, "selectAll").mockResolvedValue({
   data: [],

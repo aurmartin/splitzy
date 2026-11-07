@@ -1,10 +1,6 @@
 import { ExpenseRecord, GroupRecord, tables } from "@/lib/db/schema";
 import { system } from "@/lib/test-setup";
-import {
-  buildExpenseRecord,
-  buildGroup,
-  buildGroupRecord,
-} from "@/lib/test-factories";
+import { buildExpenseRecord, buildGroup, buildGroupRecord } from "@/lib/test-factories";
 import { waitFor } from "@/lib/test-utils";
 import { generateId } from "@/lib/utils";
 import { expect } from "@jest/globals";
@@ -208,28 +204,17 @@ describe("processLocalOperations", () => {
   it("should handle inserting and updating the same entity", async () => {
     // Setup
     const initialGroup = buildGroupRecord({ name: "initial group name" });
-    await system.db
-      .insert(tables.syncQueue)
-      .values(buildOperationRecordFromEntity("insert", "groups", initialGroup));
+    await system.db.insert(tables.syncQueue).values(buildOperationRecordFromEntity("insert", "groups", initialGroup));
 
     const updatedGroup = { ...initialGroup, name: "updated group name" };
-    await system.db
-      .insert(tables.syncQueue)
-      .values(buildOperationRecordFromEntity("update", "groups", updatedGroup));
+    await system.db.insert(tables.syncQueue).values(buildOperationRecordFromEntity("update", "groups", updatedGroup));
 
     // Act
     await system.syncEngine.processLocalOperations();
 
     // Assert
-    expect(system.supabaseConnector.insert).toHaveBeenCalledWith(
-      "groups",
-      initialGroup,
-    );
-    expect(system.supabaseConnector.update).toHaveBeenCalledWith(
-      "groups",
-      initialGroup.id,
-      updatedGroup,
-    );
+    expect(system.supabaseConnector.insert).toHaveBeenCalledWith("groups", initialGroup);
+    expect(system.supabaseConnector.update).toHaveBeenCalledWith("groups", initialGroup.id, updatedGroup);
   });
 });
 

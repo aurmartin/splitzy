@@ -1,27 +1,9 @@
-import {
-  AmountSplitInput,
-  createAmountSplit,
-} from "@/components/split-input/amount-split";
+import { AmountSplitInput, createAmountSplit } from "@/components/split-input/amount-split";
 import { convertSplit } from "@/components/split-input/convert";
-import {
-  EqualSplitInput,
-  createEqualSplit,
-} from "@/components/split-input/equal-split";
-import {
-  PercentageSplitInput,
-  createPercentageSplit,
-} from "@/components/split-input/percentage-split";
-import {
-  ReceiptSplitInput,
-  createReceiptSplit,
-} from "@/components/split-input/receipt-split";
-import {
-  type AmountSplit,
-  type EqualSplit,
-  type PercentageSplit,
-  type ReceiptSplit,
-  type Split,
-} from "@/lib/expenses";
+import { EqualSplitInput, createEqualSplit } from "@/components/split-input/equal-split";
+import { PercentageSplitInput, createPercentageSplit } from "@/components/split-input/percentage-split";
+import { ReceiptSplitInput, createReceiptSplit } from "@/components/split-input/receipt-split";
+import { type AmountSplit, type EqualSplit, type PercentageSplit, type ReceiptSplit, type Split } from "@/lib/expenses";
 import { type Money } from "@/lib/money";
 import React from "react";
 import { View } from "react-native";
@@ -50,26 +32,14 @@ type ChangeTypeReturn<T extends Split["type"]> = T extends "equal"
       ? AmountSplit
       : ReceiptSplit;
 
-function changeType<Type extends Split["type"]>(
-  split: Split,
-  type: Type,
-): ChangeTypeReturn<Type> {
+function changeType<Type extends Split["type"]>(split: Split, type: Type): ChangeTypeReturn<Type> {
   switch (type) {
     case "equal":
-      return createEqualSplit(
-        split.total,
-        split.members,
-      ) as ChangeTypeReturn<Type>;
+      return createEqualSplit(split.total, split.members) as ChangeTypeReturn<Type>;
     case "percentage":
-      return createPercentageSplit(
-        split.total,
-        split.members,
-      ) as ChangeTypeReturn<Type>;
+      return createPercentageSplit(split.total, split.members) as ChangeTypeReturn<Type>;
     case "amount":
-      return createAmountSplit(
-        split.total,
-        split.members,
-      ) as ChangeTypeReturn<Type>;
+      return createAmountSplit(split.total, split.members) as ChangeTypeReturn<Type>;
     default:
       throw new Error("Invalid split type");
   }
@@ -84,22 +54,13 @@ const SplitInput = (props: {
 
   let splitInput = <></>;
   if (value.type === "percentage") {
-    splitInput = (
-      <PercentageSplitInput
-        value={value as PercentageSplit}
-        onChange={onChange}
-      />
-    );
+    splitInput = <PercentageSplitInput value={value as PercentageSplit} onChange={onChange} />;
   } else if (value.type === "equal") {
     splitInput = <EqualSplitInput value={value as EqualSplit} />;
   } else if (value.type === "amount") {
-    splitInput = (
-      <AmountSplitInput value={value as AmountSplit} onChange={onChange} />
-    );
+    splitInput = <AmountSplitInput value={value as AmountSplit} onChange={onChange} />;
   } else if (value.type === "receipt") {
-    splitInput = (
-      <ReceiptSplitInput value={value as ReceiptSplit} onChange={onChange} />
-    );
+    splitInput = <ReceiptSplitInput value={value as ReceiptSplit} onChange={onChange} />;
   } else {
     throw new Error("Invalid split type");
   }
@@ -131,11 +92,7 @@ type CreateSplitReturn<Type extends Split["type"]> = Type extends "equal"
       ? AmountSplit
       : ReceiptSplit;
 
-function createSplit<Type extends Split["type"]>(
-  type: Type,
-  total: Money,
-  members: string[],
-): CreateSplitReturn<Type> {
+function createSplit<Type extends Split["type"]>(type: Type, total: Money, members: string[]): CreateSplitReturn<Type> {
   switch (type) {
     case "equal":
       return createEqualSplit(total, members) as CreateSplitReturn<Type>;
@@ -148,11 +105,4 @@ function createSplit<Type extends Split["type"]>(
   }
 }
 
-export {
-  SplitInput,
-  changeTotal,
-  changeType,
-  convertSplit,
-  createReceiptSplit,
-  createSplit,
-};
+export { SplitInput, changeTotal, changeType, convertSplit, createReceiptSplit, createSplit };

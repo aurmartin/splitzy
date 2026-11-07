@@ -11,11 +11,7 @@ interface PressableProps extends RNPressableProps {
 }
 
 function Pressable(props: PressableProps) {
-  const {
-    style: styleProps,
-    android_ripple: androidRippleProps,
-    ...rest
-  } = props;
+  const { style: styleProps, android_ripple: androidRippleProps, ...rest } = props;
 
   const style: StyleProp<ViewStyle> = StyleSheet.compose(styleProps, {
     overflow: "hidden",

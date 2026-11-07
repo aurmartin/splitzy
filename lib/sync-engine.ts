@@ -47,21 +47,14 @@ class SyncEngine {
     await this.syncAllTablesFromRemote();
 
     for (const table of ["groups", "expenses"] as const) {
-      this.supabaseConnector.addRealtimeEventListener(
-        table,
-        async (remoteOperation) => {
-          try {
-            await this.handleRemoteOperation(remoteOperation);
-          } catch (error) {
-            Sentry.captureException(error, { level: "error" });
-            logger.error(
-              "Error handling remote operation",
-              remoteOperation,
-              error,
-            );
-          }
-        },
-      );
+      this.supabaseConnector.addRealtimeEventListener(table, async (remoteOperation) => {
+        try {
+          await this.handleRemoteOperation(remoteOperation);
+        } catch (error) {
+          Sentry.captureException(error, { level: "error" });
+          logger.error("Error handling remote operation", remoteOperation, error);
+        }
+      });
     }
 
     logger.info("Sync engine initialized");
@@ -117,16 +110,11 @@ class SyncEngine {
           id: remoteOperation.entityId,
         };
 
-        await this.db
-          .update(table)
-          .set(updateFields)
-          .where(eq(table.id, remoteOperation.entityId));
+        await this.db.update(table).set(updateFields).where(eq(table.id, remoteOperation.entityId));
         break;
 
       case "delete":
-        await this.db
-          .delete(table)
-          .where(eq(table.id, remoteOperation.entityId));
+        await this.db.delete(table).where(eq(table.id, remoteOperation.entityId));
         break;
     }
 
@@ -226,17 +214,14 @@ class SyncEngine {
 
   private async _syncTableFromRemote(table: SyncableTable) {
     try {
-      const { data: remoteEntities, error } =
-        await this.supabaseConnector.selectAll(getTableName(table));
+      const { data: remoteEntities, error } = await this.supabaseConnector.selectAll(getTableName(table));
 
       if (error) {
         throw error;
       }
 
       if (remoteEntities) {
-        logger.info(
-          `syncTableFromRemote(${getTableName(table)}) found ${remoteEntities.length} entities in supabase.`,
-        );
+        logger.info(`syncTableFromRemote(${getTableName(table)}) found ${remoteEntities.length} entities in supabase.`);
 
         const localOperations = this.getLocalOperationsForTable(table);
 
@@ -244,10 +229,7 @@ class SyncEngine {
 
         // Upsert the rows into the database
         for (const remoteEntity of remoteEntities) {
-          const updatedEntity = this.mergeLocalOperations(
-            remoteEntity,
-            localOperations,
-          );
+          const updatedEntity = this.mergeLocalOperations(remoteEntity, localOperations);
 
           if (updatedEntity) {
             await this.db
@@ -263,13 +245,10 @@ class SyncEngine {
         // Delete missing rows from the database if they are not locally created
         for (const localEntity of localEntities) {
           const haveLocalInsertOperation = localOperations.some(
-            ({ entityId, operationType }) =>
-              entityId === localEntity.id && operationType === "insert",
+            ({ entityId, operationType }) => entityId === localEntity.id && operationType === "insert",
           );
 
-          const inRemoteEntities = remoteEntities.some(
-            ({ id }) => id === localEntity.id,
-          );
+          const inRemoteEntities = remoteEntities.some(({ id }) => id === localEntity.id);
 
           if (!inRemoteEntities && !haveLocalInsertOperation) {
             await this.db.delete(table).where(eq(table.id, localEntity.id));
@@ -278,17 +257,11 @@ class SyncEngine {
 
         this.notifyTableListeners(table);
       } else {
-        logger.warn(
-          `syncTableFromRemote(${getTableName(table)}) found no data in supabase.`,
-        );
+        logger.warn(`syncTableFromRemote(${getTableName(table)}) found no data in supabase.`);
       }
     } catch (error: any) {
       Sentry.captureException(error, { level: "error" });
-      logger.error(
-        "Error refreshing table",
-        getTableName(table),
-        error?.message || error,
-      );
+      logger.error("Error refreshing table", getTableName(table), error?.message || error);
       throw error;
     }
   }
@@ -366,26 +339,16 @@ class SyncEngine {
             id: operation.entityId,
           };
 
-          result = await this.supabaseConnector.insert(
-            operation.entityTable,
-            data,
-          );
+          result = await this.supabaseConnector.insert(operation.entityTable, data);
         } else if (operation.operationType === "update") {
           const data: any = {
             ...operation.changes,
             id: operation.entityId,
           };
 
-          result = await this.supabaseConnector.update(
-            operation.entityTable,
-            operation.entityId,
-            data,
-          );
+          result = await this.supabaseConnector.update(operation.entityTable, operation.entityId, data);
         } else if (operation.operationType === "delete") {
-          result = await this.supabaseConnector.delete(
-            operation.entityTable,
-            operation.entityId,
-          );
+          result = await this.supabaseConnector.delete(operation.entityTable, operation.entityId);
         }
 
         if (result.error) {
@@ -398,10 +361,7 @@ class SyncEngine {
         Sentry.captureException(error, { level: "error" });
         logger.error("Error processing operation.", operation, error);
 
-        if (
-          typeof error.code == "string" &&
-          FATAL_RESPONSE_CODES.some((regex) => regex.test(error.code))
-        ) {
+        if (typeof error.code == "string" && FATAL_RESPONSE_CODES.some((regex) => regex.test(error.code))) {
           await this.rollback(operation);
         } else {
           throw error;
@@ -416,10 +376,7 @@ class SyncEngine {
     try {
       logger.info("Rolling back operation", operation);
 
-      const supabaseRow = await this.supabaseConnector.selectSingle(
-        operation.entityTable,
-        operation.entityId,
-      );
+      const supabaseRow = await this.supabaseConnector.selectSingle(operation.entityTable, operation.entityId);
 
       this.db.transaction((tx) => {
         // Remove the operation from the queue
@@ -429,10 +386,7 @@ class SyncEngine {
 
         // If the row exists in supabase, update the row in the database, else delete the row
         if (supabaseRow.data) {
-          tx.update(table)
-            .set(supabaseRow.data)
-            .where(eq(table.id, operation.entityId))
-            .run();
+          tx.update(table).set(supabaseRow.data).where(eq(table.id, operation.entityId)).run();
         } else {
           tx.delete(table).where(eq(table.id, operation.entityId)).run();
         }
@@ -444,12 +398,7 @@ class SyncEngine {
   }
 
   private getNextLocalOperation(): SyncOperation | null {
-    const rows = this.db
-      .select()
-      .from(syncQueue)
-      .orderBy(asc(syncQueue.createdAt))
-      .limit(1)
-      .all();
+    const rows = this.db.select().from(syncQueue).orderBy(asc(syncQueue.createdAt)).limit(1).all();
 
     if (rows.length === 0) {
       return null;
@@ -490,9 +439,7 @@ class SyncEngine {
     this.tableListeners[tableName].push(listener);
 
     return () => {
-      this.tableListeners[tableName] = this.tableListeners[tableName].filter(
-        (l) => l !== listener,
-      );
+      this.tableListeners[tableName] = this.tableListeners[tableName].filter((l) => l !== listener);
     };
   }
 

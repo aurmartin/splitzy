@@ -49,9 +49,7 @@ describe("Money.allocate", () => {
 
   it("should hand out the remainder starting from the first share", () => {
     expect(amounts(Money.allocate(eur(1003), [50, 50]))).toEqual([502, 501]);
-    expect(amounts(Money.allocate(eur(1000), [1, 1, 1]))).toEqual([
-      334, 333, 333,
-    ]);
+    expect(amounts(Money.allocate(eur(1000), [1, 1, 1]))).toEqual([334, 333, 333]);
   });
 
   it("should never lose a minor unit with fractional ratios", () => {
@@ -61,9 +59,7 @@ describe("Money.allocate", () => {
   });
 
   it("should skip shares with a zero ratio", () => {
-    expect(amounts(Money.allocate(eur(1003), [0, 50, 50]))).toEqual([
-      0, 502, 501,
-    ]);
+    expect(amounts(Money.allocate(eur(1003), [0, 50, 50]))).toEqual([0, 502, 501]);
   });
 
   it("should allocate negative amounts", () => {

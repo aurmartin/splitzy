@@ -4,9 +4,7 @@ import { Money, type Currency } from "@/lib/money";
 import { buildExpense, buildGroup } from "@/lib/test-factories";
 import { system } from "@/lib/test-setup";
 
-const { ServerConnector } = jest.requireActual<
-  typeof import("@/lib/server-connector")
->("@/lib/server-connector");
+const { ServerConnector } = jest.requireActual<typeof import("@/lib/server-connector")>("@/lib/server-connector");
 
 // The connector mock stubs parseReceipt on the prototype.
 beforeAll(() => {
@@ -37,19 +35,14 @@ describe("ServerConnector.parseReceipt", () => {
       Money.create({ amount: 1250, currency: "USD" }),
       Money.create({ amount: 430, currency: "USD" }),
     ]);
-    expect(receipt.total).toEqual(
-      Money.create({ amount: 1680, currency: "USD" }),
-    );
+    expect(receipt.total).toEqual(Money.create({ amount: 1680, currency: "USD" }));
   });
 
   it("ignores the currency read on the receipt", async () => {
     const receipt = await parseReceipt(receiptResponse("GBP"), "EUR");
 
     expect(receipt.total.currency).toEqual("EUR");
-    expect(receipt.items.map((item) => item.price.currency)).toEqual([
-      "EUR",
-      "EUR",
-    ]);
+    expect(receipt.items.map((item) => item.price.currency)).toEqual(["EUR", "EUR"]);
   });
 
   it("gives a split that a balance in the group's currency accepts", async () => {

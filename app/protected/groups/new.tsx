@@ -36,8 +36,7 @@ const GroupForm = () => {
       } else {
         console.error("Error adding group", error);
 
-        const errorMessage =
-          error instanceof Error ? error.message : "Une erreur est survenue";
+        const errorMessage = error instanceof Error ? error.message : "Une erreur est survenue";
 
         Alert.alert("Une erreur est survenue", errorMessage);
       }
@@ -59,14 +58,8 @@ const GroupForm = () => {
 
   return (
     <Screen>
-      <TopBar
-        title="Créer un groupe"
-        rightActions={<TopBarSaveAction key="create" onPress={handleSubmit} />}
-      />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        alwaysBounceVertical={false}
-      >
+      <TopBar title="Créer un groupe" rightActions={<TopBarSaveAction key="create" onPress={handleSubmit} />} />
+      <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false}>
         <TextInput value={name} onChangeText={setName} placeholder="Nom" />
 
         <Label style={{ marginTop: 16 }}>Membres</Label>
@@ -79,12 +72,7 @@ const GroupForm = () => {
               onChangeText={(text) => changeMember(index, text)}
               right={
                 index > 0 && (
-                  <Ionicons
-                    name="trash-outline"
-                    size={20}
-                    color="hsl(0 0% 50%)"
-                    onPress={() => removeMember(index)}
-                  />
+                  <Ionicons name="trash-outline" size={20} color="hsl(0 0% 50%)" onPress={() => removeMember(index)} />
                 )
               }
             />

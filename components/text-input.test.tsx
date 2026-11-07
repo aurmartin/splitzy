@@ -16,9 +16,7 @@ describe("TextInput", () => {
   it("handles text changes correctly", async () => {
     const user = userEvent.setup();
     const mockOnChangeText = jest.fn();
-    await render(
-      <TextInput placeholder="Enter text" onChangeText={mockOnChangeText} />,
-    );
+    await render(<TextInput placeholder="Enter text" onChangeText={mockOnChangeText} />);
 
     const input = screen.getByPlaceholderText("Enter text");
     await user.type(input, "Hello World");

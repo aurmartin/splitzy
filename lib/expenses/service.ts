@@ -5,12 +5,7 @@ import { System } from "@/lib/system";
 import { generateId } from "@/lib/utils";
 import { ValidationError } from "@/lib/validation-error";
 import { Money } from "@/lib/money";
-import {
-  Expense,
-  ExpenseCreateParams,
-  ExpenseUpdateParams,
-  Split,
-} from "./types";
+import { Expense, ExpenseCreateParams, ExpenseUpdateParams, Split } from "./types";
 import { DisplayableError } from "../displayable-error";
 
 const insertExpense = async (system: System, params: ExpenseCreateParams) => {
@@ -19,11 +14,7 @@ const insertExpense = async (system: System, params: ExpenseCreateParams) => {
   await ExpensesRepository.insertExpense(system, expense);
 };
 
-const updateExpense = async (
-  system: System,
-  id: string,
-  params: ExpenseUpdateParams,
-) => {
+const updateExpense = async (system: System, id: string, params: ExpenseUpdateParams) => {
   const expense = ExpensesRepository.getExpenseOrThrow(system, id);
 
   const validParams = validateUpdateExpenseParams(params);
@@ -52,17 +43,11 @@ const createExpense = (validParams: ExpenseCreateParams): Expense => {
 
 const validateCreateExpenseParams = (params: ExpenseCreateParams) => {
   if (params.title.length === 0) {
-    throw new DisplayableError(
-      "Le titre est invalide",
-      "Veuillez entrer un titre",
-    );
+    throw new DisplayableError("Le titre est invalide", "Veuillez entrer un titre");
   }
 
   if (params.payerName.length === 0) {
-    throw new DisplayableError(
-      "Le membre est invalide",
-      "Veuillez sélectionner un membre",
-    );
+    throw new DisplayableError("Le membre est invalide", "Veuillez sélectionner un membre");
   }
 
   const splitError = validateSplit(params.splitExpense);

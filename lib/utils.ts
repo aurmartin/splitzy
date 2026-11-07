@@ -12,10 +12,7 @@ export const time = <T>(name: string, fn: () => T): T => {
   return result;
 };
 
-export const asyncTime = async <T>(
-  name: string,
-  fn: () => Promise<T>,
-): Promise<T> => {
+export const asyncTime = async <T>(name: string, fn: () => Promise<T>): Promise<T> => {
   const startTime = performance.now();
   const result = await fn();
   const endTime = performance.now();
@@ -39,5 +36,4 @@ export const createLogger = (module: string) => {
   };
 };
 
-export const delay = async (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+export const delay = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

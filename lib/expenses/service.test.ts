@@ -18,11 +18,7 @@ import { eq } from "drizzle-orm";
 const group = buildGroup();
 
 const getExpensesByGroupId = (system: System, groupId: string) => {
-  return system.db
-    .select()
-    .from(expensesTable)
-    .where(eq(expensesTable.groupId, groupId))
-    .all();
+  return system.db.select().from(expensesTable).where(eq(expensesTable.groupId, groupId)).all();
 };
 
 describe("insertExpense", () => {
@@ -94,12 +90,8 @@ describe("insertExpense", () => {
       receipt: null,
     };
 
-    await expect(
-      ExpenseService.insertExpense(system, invalidTitleParams),
-    ).rejects.toThrow(DisplayableError);
-    await expect(
-      ExpenseService.insertExpense(system, invalidTitleParams),
-    ).rejects.toThrow(/titre/);
+    await expect(ExpenseService.insertExpense(system, invalidTitleParams)).rejects.toThrow(DisplayableError);
+    await expect(ExpenseService.insertExpense(system, invalidTitleParams)).rejects.toThrow(/titre/);
 
     // Empty payer name
     const invalidPayerGroupId = generateId();
@@ -111,12 +103,8 @@ describe("insertExpense", () => {
       receipt: null,
     };
 
-    await expect(
-      ExpenseService.insertExpense(system, invalidPayerParams),
-    ).rejects.toThrow(DisplayableError);
-    await expect(
-      ExpenseService.insertExpense(system, invalidPayerParams),
-    ).rejects.toThrow(/membre/);
+    await expect(ExpenseService.insertExpense(system, invalidPayerParams)).rejects.toThrow(DisplayableError);
+    await expect(ExpenseService.insertExpense(system, invalidPayerParams)).rejects.toThrow(/membre/);
 
     // Verify no expenses were added with these groupIds
     const titleExpenses = getExpensesByGroupId(system, invalidTitleGroupId);
@@ -151,11 +139,7 @@ describe("getAmounts", () => {
   });
 
   it("should compute all amounts when given a percentage split", () => {
-    const splitExpense = buildPercentageSplit(
-      group,
-      { Alice: 50, Bob: 50 },
-      1000,
-    );
+    const splitExpense = buildPercentageSplit(group, { Alice: 50, Bob: 50 }, 1000);
 
     const expense = buildExpense(group, { splitExpense });
     const amounts = ExpenseService.getAmounts(expense);

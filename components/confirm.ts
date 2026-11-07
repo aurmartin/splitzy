@@ -9,12 +9,7 @@ type ConfirmOptions = {
 
 // Asks the user to confirm an action. Resolves to true only when the confirm
 // button is pressed.
-const confirm = ({
-  title,
-  message,
-  confirmText,
-  destructive = false,
-}: ConfirmOptions): Promise<boolean> =>
+const confirm = ({ title, message, confirmText, destructive = false }: ConfirmOptions): Promise<boolean> =>
   new Promise((resolve) => {
     Alert.alert(
       title,

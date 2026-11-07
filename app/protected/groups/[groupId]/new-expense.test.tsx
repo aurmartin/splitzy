@@ -86,9 +86,7 @@ describe("NewExpenseScreen", () => {
       initialUrl: newExpenseScreenUrl,
     });
 
-    await user.press(
-      screen.getByRole("button", { name: /Télécharger un reçu/ }),
-    );
+    await user.press(screen.getByRole("button", { name: /Télécharger un reçu/ }));
 
     await screen.findByDisplayValue("Test receipt");
   });

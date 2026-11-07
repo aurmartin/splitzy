@@ -36,11 +36,7 @@ export const TopBar = (props: TopBarProps) => {
         </Text>
       ) : null}
 
-      {rightActions ? (
-        <View style={{ marginLeft: "auto", flexDirection: "row", gap: 8 }}>
-          {rightActions}
-        </View>
-      ) : null}
+      {rightActions ? <View style={{ marginLeft: "auto", flexDirection: "row", gap: 8 }}>{rightActions}</View> : null}
     </View>
   );
 };

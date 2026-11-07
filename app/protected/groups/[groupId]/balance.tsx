@@ -7,23 +7,10 @@ import { useSnackBar } from "@/components/snack-bar";
 import { useSystem } from "@/components/system-provider";
 import { Text } from "@/components/text";
 import { TopBar } from "@/components/top-bar";
-import {
-  computeBalance,
-  computeOptimalReimbursements,
-  type Balance,
-  type Reimbursement,
-} from "@/lib/balance";
+import { computeBalance, computeOptimalReimbursements, type Balance, type Reimbursement } from "@/lib/balance";
 import { Colors, primaryHue } from "@/lib/constants";
-import {
-  getAbsoluteAmount,
-  getAmountColor,
-  getBalanceMessage,
-} from "@/lib/currency";
-import {
-  ReimbursementService,
-  useExpenses,
-  type Expense,
-} from "@/lib/expenses";
+import { getAbsoluteAmount, getAmountColor, getBalanceMessage } from "@/lib/currency";
+import { ReimbursementService, useExpenses, type Expense } from "@/lib/expenses";
 import { Group, useGroup, useMe } from "@/lib/groups";
 import { getLocale } from "@/lib/locale";
 import { Money } from "@/lib/money";
@@ -33,13 +20,7 @@ import { Pressable, ScrollView, View } from "react-native";
 
 const RECENT_REIMBURSEMENTS_COUNT = 5;
 
-const MyBalance = React.memo(function MyBalance({
-  group,
-  balance,
-}: {
-  group: Group;
-  balance: Balance;
-}) {
+const MyBalance = React.memo(function MyBalance({ group, balance }: { group: Group; balance: Balance }) {
   const me = useMe(group.id);
 
   if (!me) return null;
@@ -51,19 +32,13 @@ const MyBalance = React.memo(function MyBalance({
     <Card style={{ gap: 4, alignItems: "center", marginBottom: 24 }}>
       <Text>{getBalanceMessage(myBalance)}</Text>
       <Text type="headlineMedium" style={{ color: getAmountColor(myBalance) }}>
-        {myBalance.amount !== 0
-          ? Money.format(getAbsoluteAmount(myBalance), getLocale())
-          : ""}
+        {myBalance.amount !== 0 ? Money.format(getAbsoluteAmount(myBalance), getLocale()) : ""}
       </Text>
     </Card>
   );
 });
 
-const GroupBalance = React.memo(function GroupBalance({
-  balance,
-}: {
-  balance: Balance;
-}) {
+const GroupBalance = React.memo(function GroupBalance({ balance }: { balance: Balance }) {
   return (
     <>
       <Label>Balance</Label>
@@ -71,9 +46,7 @@ const GroupBalance = React.memo(function GroupBalance({
         {Object.entries(balance).map(([name, amount]) => (
           <View key={name} style={{ justifyContent: "space-between" }}>
             <Text>{name}</Text>
-            <Text style={{ color: getAmountColor(amount) }}>
-              {Money.format(amount, getLocale())}
-            </Text>
+            <Text style={{ color: getAmountColor(amount) }}>{Money.format(amount, getLocale())}</Text>
           </View>
         ))}
       </ListGroup>
@@ -91,9 +64,7 @@ const SettleButton = (props: { onPress: () => void; disabled: boolean }) => (
       paddingHorizontal: 12,
       paddingVertical: 8,
       borderRadius: 16,
-      backgroundColor: pressed
-        ? Colors.primaryLight
-        : `hsl(${primaryHue} 40% 92%)`,
+      backgroundColor: pressed ? Colors.primaryLight : `hsl(${primaryHue} 40% 92%)`,
       opacity: props.disabled ? 0.5 : 1,
     })}
   >
@@ -103,21 +74,12 @@ const SettleButton = (props: { onPress: () => void; disabled: boolean }) => (
   </Pressable>
 );
 
-const Reimbursements = React.memo(function Reimbursements({
-  group,
-  balance,
-}: {
-  group: Group;
-  balance: Balance;
-}) {
+const Reimbursements = React.memo(function Reimbursements({ group, balance }: { group: Group; balance: Balance }) {
   const system = useSystem();
   const snackBar = useSnackBar();
   const [pending, setPending] = React.useState(false);
 
-  const reimbursements = React.useMemo(
-    () => computeOptimalReimbursements(balance),
-    [balance],
-  );
+  const reimbursements = React.useMemo(() => computeOptimalReimbursements(balance), [balance]);
 
   const confirmSettle = async (reimbursement: Reimbursement) => {
     const amount = Money.format(reimbursement.amount, getLocale());
@@ -180,14 +142,9 @@ const Reimbursements = React.memo(function Reimbursements({
                 <Text style={{ color: "gray" }}> doit à </Text>
                 {reimbursement.to}
               </Text>
-              <Text type="titleMedium">
-                {Money.format(reimbursement.amount, getLocale())}
-              </Text>
+              <Text type="titleMedium">{Money.format(reimbursement.amount, getLocale())}</Text>
             </View>
-            <SettleButton
-              disabled={pending}
-              onPress={() => confirmSettle(reimbursement)}
-            />
+            <SettleButton disabled={pending} onPress={() => confirmSettle(reimbursement)} />
           </View>
         ))}
       </ListGroup>
@@ -202,9 +159,7 @@ const RecentReimbursements = React.memo(function RecentReimbursements({
   group: Group;
   expenses: Expense[];
 }) {
-  const recent = expenses
-    .filter(ReimbursementService.isReimbursement)
-    .slice(0, RECENT_REIMBURSEMENTS_COUNT);
+  const recent = expenses.filter(ReimbursementService.isReimbursement).slice(0, RECENT_REIMBURSEMENTS_COUNT);
 
   if (recent.length === 0) {
     return null;
@@ -218,11 +173,7 @@ const RecentReimbursements = React.memo(function RecentReimbursements({
           <Pressable
             key={reimbursement.id}
             style={{ justifyContent: "space-between", gap: 8 }}
-            onPress={() =>
-              router.navigate(
-                `/protected/groups/${group.id}/expenses/${reimbursement.id}`,
-              )
-            }
+            onPress={() => router.navigate(`/protected/groups/${group.id}/expenses/${reimbursement.id}`)}
           >
             <View style={{ flexShrink: 1, gap: 2 }}>
               <Text numberOfLines={1}>
@@ -244,25 +195,15 @@ const RecentReimbursements = React.memo(function RecentReimbursements({
   );
 });
 
-const BalanceScreenContent = React.memo(function BalanceScreenContent({
-  group,
-}: {
-  group: Group;
-}) {
+const BalanceScreenContent = React.memo(function BalanceScreenContent({ group }: { group: Group }) {
   const expenses = useExpenses(group.id);
-  const balance = React.useMemo(
-    () => computeBalance(group, expenses),
-    [group, expenses],
-  );
+  const balance = React.useMemo(() => computeBalance(group, expenses), [group, expenses]);
 
   return (
     <>
       <MyBalance group={group} balance={balance} />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        alwaysBounceVertical={false}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false}>
         <View style={{ flex: 1, paddingBottom: 24 }}>
           <GroupBalance balance={balance} />
           <Reimbursements group={group} balance={balance} />

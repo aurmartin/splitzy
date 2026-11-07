@@ -1,7 +1,4 @@
-import {
-  PercentageSplitInput,
-  createPercentageSplit,
-} from "@/components/split-input/percentage-split";
+import { PercentageSplitInput, createPercentageSplit } from "@/components/split-input/percentage-split";
 import { type PercentageSplit } from "@/lib/expenses";
 import { render, userEvent, screen } from "@testing-library/react-native";
 import { Money } from "@/lib/money";
@@ -17,9 +14,7 @@ describe("PercentageSplit", () => {
         members: ["user1"],
       } as PercentageSplit;
 
-      await render(
-        <PercentageSplitInput value={mockSplit} onChange={() => {}} />,
-      );
+      await render(<PercentageSplitInput value={mockSplit} onChange={() => {}} />);
       expect(screen.toJSON()).toMatchSnapshot();
     });
 
@@ -34,9 +29,7 @@ describe("PercentageSplit", () => {
       } as PercentageSplit;
 
       const mockOnChange = jest.fn();
-      await render(
-        <PercentageSplitInput value={mockSplit} onChange={mockOnChange} />,
-      );
+      await render(<PercentageSplitInput value={mockSplit} onChange={mockOnChange} />);
 
       const input = screen.getByDisplayValue("60");
       await user.clear(input);
@@ -78,9 +71,7 @@ describe("PercentageSplit", () => {
       // Last member should get the remainder to ensure 100% total
       expect(result.ratios["user3"]).toBe(34);
       // Verify total is 100%
-      expect(
-        Object.values(result.ratios).reduce((sum, ratio) => sum + ratio, 0),
-      ).toBe(100);
+      expect(Object.values(result.ratios).reduce((sum, ratio) => sum + ratio, 0)).toBe(100);
     });
 
     it("handles single member", () => {

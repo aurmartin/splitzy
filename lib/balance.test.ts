@@ -1,10 +1,6 @@
 import { computeBalance, computeOptimalReimbursements } from "./balance";
 import { Money } from "@/lib/money";
-import {
-  buildAmountSplit,
-  buildExpense,
-  buildGroup,
-} from "@/lib/test-factories";
+import { buildAmountSplit, buildExpense, buildGroup } from "@/lib/test-factories";
 
 describe("balance computation", () => {
   it("should handle empty expenses", () => {
@@ -96,10 +92,7 @@ describe("optimal reimbursements computation", () => {
     expect(reimbursements).toHaveLength(2);
 
     // Verify amounts
-    const totalReimbursed = reimbursements.reduce(
-      (sum, r) => sum + r.amount.amount,
-      0,
-    );
+    const totalReimbursed = reimbursements.reduce((sum, r) => sum + r.amount.amount, 0);
     expect(totalReimbursed).toBe(2000);
 
     // Verify that Alice receives all the money
@@ -119,10 +112,7 @@ describe("optimal reimbursements computation", () => {
     const reimbursements = computeOptimalReimbursements(balance);
 
     // Verify total amount matches
-    const totalReimbursed = reimbursements.reduce(
-      (sum, r) => sum + r.amount.amount,
-      0,
-    );
+    const totalReimbursed = reimbursements.reduce((sum, r) => sum + r.amount.amount, 0);
     expect(totalReimbursed).toBe(3000);
 
     // Verify Alice receives everything
@@ -131,19 +121,13 @@ describe("optimal reimbursements computation", () => {
     expect(aliceTotal).toBe(3000);
 
     // Verify each person pays what they owe
-    const fromBob = reimbursements
-      .filter((r) => r.from === "Bob")
-      .reduce((sum, r) => sum + r.amount.amount, 0);
+    const fromBob = reimbursements.filter((r) => r.from === "Bob").reduce((sum, r) => sum + r.amount.amount, 0);
     expect(fromBob).toBe(1000);
 
-    const fromCharlie = reimbursements
-      .filter((r) => r.from === "Charlie")
-      .reduce((sum, r) => sum + r.amount.amount, 0);
+    const fromCharlie = reimbursements.filter((r) => r.from === "Charlie").reduce((sum, r) => sum + r.amount.amount, 0);
     expect(fromCharlie).toBe(500);
 
-    const fromDavid = reimbursements
-      .filter((r) => r.from === "David")
-      .reduce((sum, r) => sum + r.amount.amount, 0);
+    const fromDavid = reimbursements.filter((r) => r.from === "David").reduce((sum, r) => sum + r.amount.amount, 0);
     expect(fromDavid).toBe(1500);
   });
 });

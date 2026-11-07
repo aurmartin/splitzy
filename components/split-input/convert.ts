@@ -1,9 +1,4 @@
-import {
-  type AmountSplit,
-  type PercentageSplit,
-  type ReceiptSplit,
-  type Split,
-} from "@/lib/expenses";
+import { type AmountSplit, type PercentageSplit, type ReceiptSplit, type Split } from "@/lib/expenses";
 import { Money } from "@/lib/money";
 
 const splitRatios = (split: Split): { [member: string]: number } => {
@@ -84,10 +79,7 @@ const convertReceiptSplit = (receiptSplit: ReceiptSplit): AmountSplit => {
     const allocateRatios = item.paid_for.map(() => ratio);
     const allocation = Money.allocate(item.price, allocateRatios);
     item.paid_for.forEach((member, index) => {
-      split.amounts[member] = Money.add(
-        split.amounts[member],
-        allocation[index],
-      );
+      split.amounts[member] = Money.add(split.amounts[member], allocation[index]);
     });
   });
 

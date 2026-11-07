@@ -2,13 +2,7 @@ import { type RunResult } from "better-sqlite3";
 import { type ExtractTablesWithRelations } from "drizzle-orm";
 import { type BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
 import { type ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
-import {
-  SQLiteColumnBuilderBase,
-  SQLiteTransaction,
-  integer,
-  sqliteTable,
-  text,
-} from "drizzle-orm/sqlite-core";
+import { SQLiteColumnBuilderBase, SQLiteTransaction, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { type SQLiteRunResult } from "expo-sqlite";
 
 export const schemaMigrationsTable = sqliteTable("schema_migrations", {
@@ -39,10 +33,7 @@ export const expensesTable = sqliteTable("expenses", {
   kind: text().notNull().default("expense"),
 });
 
-export const syncedTable = (
-  name: string,
-  columns: Record<string, SQLiteColumnBuilderBase>,
-) => {
+export const syncedTable = (name: string, columns: Record<string, SQLiteColumnBuilderBase>) => {
   return sqliteTable(name, {
     ...columns,
     id: text().primaryKey(),
@@ -77,5 +68,4 @@ export type Transaction = SQLiteTransaction<
   ExtractTablesWithRelations<Record<string, unknown>>
 >;
 
-export type Database =
-  ExpoSQLiteDatabase<typeof tables> | BetterSQLite3Database<typeof tables>;
+export type Database = ExpoSQLiteDatabase<typeof tables> | BetterSQLite3Database<typeof tables>;

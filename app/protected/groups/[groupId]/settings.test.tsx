@@ -87,10 +87,7 @@ describe("GroupSettingsScreen", () => {
     screen.getByText("Alice (moi)");
     await user.press(screen.getByLabelText("Retirer Alice"));
 
-    expect(alert).toHaveBeenCalledWith(
-      "Impossible de retirer ce membre",
-      expect.stringContaining("Quittez le groupe"),
-    );
+    expect(alert).toHaveBeenCalledWith("Impossible de retirer ce membre", expect.stringContaining("Quittez le groupe"));
     screen.getByText("Alice (moi)");
   });
 
@@ -102,10 +99,7 @@ describe("GroupSettingsScreen", () => {
     await user.type(screen.getByLabelText("Nouveau membre"), "alice");
     await user.press(screen.getByLabelText("Enregistrer"));
 
-    expect(alert).toHaveBeenCalledWith(
-      "Les membres sont invalides",
-      "alice fait déjà partie du groupe",
-    );
+    expect(alert).toHaveBeenCalledWith("Les membres sont invalides", "alice fait déjà partie du groupe");
     expect(getGroupRow(system, groupId)!.members).toEqual(["Alice", "Bob"]);
   });
 
@@ -153,9 +147,7 @@ describe("GroupSettingsScreen", () => {
 
     await user.press(screen.getByText("Quitter le groupe"));
 
-    await screen.findByText(
-      "Impossible de quitter le groupe. Vérifiez votre connexion.",
-    );
+    await screen.findByText("Impossible de quitter le groupe. Vérifiez votre connexion.");
     expect(getGroupRow(system, groupId)).toBeDefined();
     expect(getMe(system, groupId)).toBe("Alice");
   });

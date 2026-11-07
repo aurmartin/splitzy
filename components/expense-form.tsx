@@ -1,12 +1,6 @@
 import Button from "@/components/button";
 import { MoneyInput } from "@/components/money-input";
-import {
-  SplitInput,
-  changeTotal,
-  changeType,
-  createReceiptSplit,
-  createSplit,
-} from "@/components/split-input";
+import { SplitInput, changeTotal, changeType, createReceiptSplit, createSplit } from "@/components/split-input";
 import { useSystem } from "@/components/system-provider";
 import { Text } from "@/components/text";
 import { TextInput } from "@/components/text-input";
@@ -15,12 +9,7 @@ import { Group, useMe } from "@/lib/groups";
 import { Money } from "@/lib/money";
 import * as ImagePicker from "expo-image-picker";
 import React from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  View,
-  type TextInputInstance,
-} from "react-native";
+import { ActivityIndicator, ScrollView, View, type TextInputInstance } from "react-native";
 import { ChipList } from "./chip-list";
 import { useSnackBar } from "./snack-bar";
 import { TopBar } from "./top-bar";
@@ -40,11 +29,7 @@ const ReceiptLoader = () => {
       }}
     >
       <View>
-        <ActivityIndicator
-          size="large"
-          color="hsl(220, 10%, 50%)"
-          style={{ marginBottom: 16 }}
-        />
+        <ActivityIndicator size="large" color="hsl(220, 10%, 50%)" style={{ marginBottom: 16 }} />
         <Text>Traitement du reçu en cours...</Text>
       </View>
     </View>
@@ -77,12 +62,8 @@ const ExpenseForm = (props: {
 
   const [payerName, setPayerName] = React.useState(me);
 
-  const [total, setTotal] = React.useState(
-    Money.create({ amount: 0, currency: group.currency }),
-  );
-  const [split, setSplit] = React.useState<Split>(
-    createSplit("equal", total, group.members),
-  );
+  const [total, setTotal] = React.useState(Money.create({ amount: 0, currency: group.currency }));
+  const [split, setSplit] = React.useState<Split>(createSplit("equal", total, group.members));
 
   const [receipt, setReceipt] = React.useState<Receipt | null>(null);
   const [receiptLoading, setReceiptLoading] = React.useState(false);
@@ -149,46 +130,41 @@ const ExpenseForm = (props: {
     );
   };
 
-  const openCamera =
-    async (): Promise<ImagePicker.ImagePickerResult | null> => {
-      const permission = await ImagePicker.getCameraPermissionsAsync();
+  const openCamera = async (): Promise<ImagePicker.ImagePickerResult | null> => {
+    const permission = await ImagePicker.getCameraPermissionsAsync();
 
-      if (!permission.granted) {
-        const request = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      const request = await ImagePicker.requestCameraPermissionsAsync();
 
-        if (!request.granted) {
-          snackBar.show("Veuillez autoriser l'accès à la caméra", "error");
-          return null;
-        }
-      }
-
-      return await ImagePicker.launchCameraAsync({
-        allowsEditing: true,
-        base64: true,
-      });
-    };
-
-  const openMediaLibrary =
-    async (): Promise<ImagePicker.ImagePickerResult | null> => {
-      const permission = await ImagePicker.getMediaLibraryPermissionsAsync();
-
-      if (!permission.granted) {
-        const request = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-        if (!request.granted) {
-          snackBar.show(
-            "Veuillez autoriser l'accès à la bibliothèque de photos",
-            "error",
-          );
-        }
-
+      if (!request.granted) {
+        snackBar.show("Veuillez autoriser l'accès à la caméra", "error");
         return null;
       }
+    }
 
-      return await ImagePicker.launchImageLibraryAsync({
-        base64: true,
-      });
-    };
+    return await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      base64: true,
+    });
+  };
+
+  const openMediaLibrary = async (): Promise<ImagePicker.ImagePickerResult | null> => {
+    const permission = await ImagePicker.getMediaLibraryPermissionsAsync();
+
+    if (!permission.granted) {
+      const request = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (!request.granted) {
+        snackBar.show("Veuillez autoriser l'accès à la bibliothèque de photos", "error");
+      }
+
+      return null;
+    }
+
+    return await ImagePicker.launchImageLibraryAsync({
+      base64: true,
+    });
+  };
 
   const processReceiptImage = async (result: ImagePicker.ImagePickerResult) => {
     if (result.canceled) return;
@@ -200,10 +176,7 @@ const ExpenseForm = (props: {
     try {
       setReceiptLoading(true);
 
-      const receipt = await system.serverConnector.parseReceipt(
-        imageBase64,
-        group.currency,
-      );
+      const receipt = await system.serverConnector.parseReceipt(imageBase64, group.currency);
 
       setReceiptLoading(false);
       setReceipt(receipt);
@@ -216,10 +189,7 @@ const ExpenseForm = (props: {
         console.error(error);
       }
 
-      snackBar.show(
-        "Une erreur est survenue lors du téléchargement du reçu",
-        "error",
-      );
+      snackBar.show("Une erreur est survenue lors du téléchargement du reçu", "error");
 
       setReceiptLoading(false);
     }
@@ -241,10 +211,7 @@ const ExpenseForm = (props: {
         }
       />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        alwaysBounceVertical={false}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false}>
         <View style={{ flex: 1, gap: 16 }}>
           <Button type="secondary" onPress={showReceiptActionSheet}>
             Télécharger un reçu
@@ -282,11 +249,7 @@ const ExpenseForm = (props: {
           </View>
 
           <View>
-            <SplitInput
-              value={split}
-              onChange={setSplit}
-              onTypeChange={handleTypeChange}
-            />
+            <SplitInput value={split} onChange={setSplit} onTypeChange={handleTypeChange} />
           </View>
         </View>
       </ScrollView>

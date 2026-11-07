@@ -47,9 +47,7 @@ class ServerConnector {
     });
 
     if (!response.ok) {
-      throw new Error(
-        `Failed to post ${path}: ${response.status} - ${response.statusText}`,
-      );
+      throw new Error(`Failed to post ${path}: ${response.status} - ${response.statusText}`);
     }
 
     return response.json();
@@ -57,10 +55,7 @@ class ServerConnector {
 
   async parseReceipt(file: string, currency: Currency): Promise<Receipt> {
     const body = { file };
-    const response = (await this.post(
-      "/parse-receipt",
-      body,
-    )) as ReceiptResponse;
+    const response = (await this.post("/parse-receipt", body)) as ReceiptResponse;
 
     const items: Receipt["items"] = response.items.map((item) => ({
       description: item.description,

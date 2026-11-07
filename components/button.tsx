@@ -13,20 +13,8 @@ export default function Button(props: ButtonProps) {
   const { type = "primary", children, style, ...rest } = props;
 
   return (
-    <Pressable
-      {...rest}
-      style={[styles.button, styles[type], style]}
-      accessibilityRole="button"
-    >
-      <Text
-        style={
-          type === "destructive"
-            ? [styles.text, styles.destructiveText]
-            : styles.text
-        }
-      >
-        {children}
-      </Text>
+    <Pressable {...rest} style={[styles.button, styles[type], style]} accessibilityRole="button">
+      <Text style={type === "destructive" ? [styles.text, styles.destructiveText] : styles.text}>{children}</Text>
     </Pressable>
   );
 }

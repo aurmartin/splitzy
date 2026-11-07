@@ -9,9 +9,5 @@ module.exports = {
   ],
   coverageReporters: ["lcov", "cobertura", "text"],
   clearMocks: true,
-  collectCoverageFrom: [
-    "app/**/*.{js,jsx,ts,tsx}",
-    "components/**/*.{js,jsx,ts,tsx}",
-    "lib/**/*.{js,jsx,ts,tsx}",
-  ],
+  collectCoverageFrom: ["app/**/*.{js,jsx,ts,tsx}", "components/**/*.{js,jsx,ts,tsx}", "lib/**/*.{js,jsx,ts,tsx}"],
 };

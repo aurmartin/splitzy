@@ -38,9 +38,7 @@ const SnackBar = (props: { snack: SnackBarSpec }) => {
   }, [snack]);
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, position: "absolute", bottom: 0, left: 0, right: 0 }}
-    >
+    <SafeAreaView style={{ flex: 1, position: "absolute", bottom: 0, left: 0, right: 0 }}>
       <View
         style={{
           backgroundColor,
@@ -74,18 +72,15 @@ const SnackBarProvider = (props: { children: React.ReactNode }) => {
     };
   }, []);
 
-  const show = React.useCallback(
-    (message: string, type: "success" | "error") => {
-      setSnack({ message, type });
+  const show = React.useCallback((message: string, type: "success" | "error") => {
+    setSnack({ message, type });
 
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
 
-      timerRef.current = setTimeout(() => setSnack(null), 3000);
-    },
-    [],
-  );
+    timerRef.current = setTimeout(() => setSnack(null), 3000);
+  }, []);
 
   const value = React.useMemo(() => ({ show }), [show]);
 

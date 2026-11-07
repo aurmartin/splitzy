@@ -27,12 +27,7 @@ function Chip(props: ChipProps) {
   };
 
   return (
-    <Pressable
-      onPress={onPress}
-      style={style}
-      accessibilityLabel={label}
-      accessibilityRole="button"
-    >
+    <Pressable onPress={onPress} style={style} accessibilityLabel={label} accessibilityRole="button">
       <Text type="bodyMedium">{label}</Text>
     </Pressable>
   );
@@ -63,12 +58,7 @@ function ChipList(props: ChipListProps) {
   return (
     <View style={[{ flexDirection: "row", gap: 8 }, style]}>
       {items.map((item) => (
-        <Chip
-          key={item.value}
-          label={item.label}
-          isSelected={isSelected(item)}
-          onPress={() => onChange(item.value)}
-        />
+        <Chip key={item.value} label={item.label} isSelected={isSelected(item)} onPress={() => onChange(item.value)} />
       ))}
     </View>
   );

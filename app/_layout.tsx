@@ -77,11 +77,7 @@ const ErrorBoundary: FallbackRender = ({ resetError }) => {
         }}
       >
         <Text type="title">Oops, une erreur est survenue...</Text>
-        <Text
-          type="titleMedium"
-          style={{ color: Colors.primary }}
-          onPress={resetError}
-        >
+        <Text type="titleMedium" style={{ color: Colors.primary }} onPress={resetError}>
           Retour
         </Text>
       </View>

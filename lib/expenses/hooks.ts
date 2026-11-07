@@ -7,10 +7,7 @@ import { ExpenseService } from "./service";
 
 function useExpenses(groupId: string): Expense[] {
   const system = useSystem();
-  const initialExpenses = useMemo(
-    () => ExpensesRepository.getGroupExpenses(system, groupId),
-    [system, groupId],
-  );
+  const initialExpenses = useMemo(() => ExpensesRepository.getGroupExpenses(system, groupId), [system, groupId]);
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
 
   useEffect(() => {
@@ -22,10 +19,7 @@ function useExpenses(groupId: string): Expense[] {
 
 function useExpense(id: string): Expense | null {
   const system = useSystem();
-  const initialExpense = useMemo(
-    () => ExpensesRepository.getExpense(system, id),
-    [system, id],
-  );
+  const initialExpense = useMemo(() => ExpensesRepository.getExpense(system, id), [system, id]);
   const [expense, setExpense] = useState<Expense | null>(initialExpense);
 
   useEffect(() => {

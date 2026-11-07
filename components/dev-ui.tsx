@@ -112,11 +112,7 @@ export default function DevUi() {
       <View style={styles.container}>
         <Text>Dev UI</Text>
         <MemoryUsageInfo />
-        <Button
-          title="Generate expenses"
-          onPress={onGenerateExpenses}
-          disabled={!isGroup}
-        />
+        <Button title="Generate expenses" onPress={onGenerateExpenses} disabled={!isGroup} />
         <Button title="Generate group" onPress={onGenerateGroup} />
       </View>
     </View>

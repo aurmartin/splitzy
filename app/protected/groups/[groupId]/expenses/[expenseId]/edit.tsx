@@ -4,21 +4,12 @@ import { Screen } from "@/components/screen";
 import { useSnackBar } from "@/components/snack-bar";
 import { useSystem } from "@/components/system-provider";
 import { DisplayableError } from "@/lib/displayable-error";
-import {
-  type Expense,
-  ExpenseService,
-  ReimbursementService,
-  useExpense,
-} from "@/lib/expenses";
+import { type Expense, ExpenseService, ReimbursementService, useExpense } from "@/lib/expenses";
 import { Group, useGroup } from "@/lib/groups";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import React from "react";
 
-const EditExpenseForm = (props: {
-  group: Group;
-  expense: Expense;
-  onDelete?: () => void;
-}) => {
+const EditExpenseForm = (props: { group: Group; expense: Expense; onDelete?: () => void }) => {
   const { group, expense, onDelete } = props;
 
   const snackBar = useSnackBar();
@@ -46,19 +37,11 @@ const EditExpenseForm = (props: {
     }
   };
 
-  return (
-    <ExpenseForm
-      group={group}
-      expense={expense}
-      onSubmit={onSubmit}
-      onDelete={onDelete}
-    />
-  );
+  return <ExpenseForm group={group} expense={expense} onSubmit={onSubmit} onDelete={onDelete} />;
 };
 
 export default function EditExpenseScreen() {
-  const { groupId, expenseId }: { groupId: string; expenseId: string } =
-    useLocalSearchParams();
+  const { groupId, expenseId }: { groupId: string; expenseId: string } = useLocalSearchParams();
 
   const group = useGroup(groupId);
   const expense = useExpense(expenseId);
@@ -74,9 +57,7 @@ export default function EditExpenseScreen() {
 
   // Reimbursements cannot be edited.
   if (ReimbursementService.isReimbursement(expense)) {
-    return (
-      <Redirect href={`/protected/groups/${groupId}/expenses/${expenseId}`} />
-    );
+    return <Redirect href={`/protected/groups/${groupId}/expenses/${expenseId}`} />;
   }
 
   const handleDelete = async () => {
@@ -87,11 +68,7 @@ export default function EditExpenseScreen() {
 
   return (
     <Screen>
-      <EditExpenseForm
-        group={group}
-        expense={expense}
-        onDelete={handleDelete}
-      />
+      <EditExpenseForm group={group} expense={expense} onDelete={handleDelete} />
     </Screen>
   );
 }

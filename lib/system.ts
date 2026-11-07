@@ -92,9 +92,7 @@ export class System {
 
     for (const migration of migrations) {
       if (migration.version > currentVersion) {
-        console.log(
-          `Applying migration ${migration.version}: ${migration.name}`,
-        );
+        console.log(`Applying migration ${migration.version}: ${migration.name}`);
 
         try {
           // The transaction is rolled back automatically if the callback throws.

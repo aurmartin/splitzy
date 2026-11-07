@@ -5,36 +5,18 @@ import { System } from "@/lib/system";
 import { render, type RenderOptions } from "@testing-library/react-native";
 import BetterSqliteDatabase from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
-import {
-  RenderRouterOptions,
-  renderRouter,
-  type MockContextConfig,
-} from "expo-router/testing-library";
+import { RenderRouterOptions, renderRouter, type MockContextConfig } from "expo-router/testing-library";
 import React, { type ReactElement } from "react";
 
-const AllTheProviders = ({
-  children,
-  system,
-}: {
-  children: ReactElement;
-  system: System | null;
-}) => {
+const AllTheProviders = ({ children, system }: { children: ReactElement; system: System | null }) => {
   return (
     <SnackBarProvider>
-      {system !== null ? (
-        <SystemProvider system={system}>{children}</SystemProvider>
-      ) : (
-        children
-      )}
+      {system !== null ? <SystemProvider system={system}>{children}</SystemProvider> : children}
     </SnackBarProvider>
   );
 };
 
-const customRender = (
-  ui: ReactElement,
-  system: System | null,
-  options?: Omit<RenderOptions, "wrapper">,
-) => {
+const customRender = (ui: ReactElement, system: System | null, options?: Omit<RenderOptions, "wrapper">) => {
   const wrapper = ({ children }: { children: ReactElement }) => (
     <AllTheProviders system={system}>{children}</AllTheProviders>
   );
@@ -66,9 +48,4 @@ const clearDatabase = (db: Database) => {
 };
 
 export * from "@testing-library/react-native";
-export {
-  clearDatabase,
-  createDatabase,
-  customRender as render,
-  customRenderRouter as renderRouter,
-};
+export { clearDatabase, createDatabase, customRender as render, customRenderRouter as renderRouter };

@@ -60,8 +60,7 @@ const receiptSchema: Schema = {
     },
     title: {
       type: Type.STRING,
-      description:
-        "Title of the expense (e.g. 'Dinner at the restaurant', 'Achats sur Amazon', 'Courses Carrefour')",
+      description: "Title of the expense (e.g. 'Dinner at the restaurant', 'Achats sur Amazon', 'Courses Carrefour')",
       nullable: false,
     },
   },
@@ -74,10 +73,7 @@ const parseReceipt = async (receiptBase64: string) => {
 
   const response = await ai.models.generateContent({
     model: "gemini-3.5-flash-lite",
-    contents: [
-      prompt,
-      { inlineData: { data: receiptBase64, mimeType: "image/jpeg" } },
-    ],
+    contents: [prompt, { inlineData: { data: receiptBase64, mimeType: "image/jpeg" } }],
     config: {
       responseMimeType: "application/json",
       responseSchema: receiptSchema,
@@ -160,8 +156,7 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     return;
   }
 
-  const status =
-    err?.expose && typeof err.status === "number" ? err.status : 500;
+  const status = err?.expose && typeof err.status === "number" ? err.status : 500;
 
   if (status >= 500) {
     console.error(err);
@@ -177,8 +172,7 @@ app.use(errorHandler);
 // Supabase pauses free-tier projects after 7 days of inactivity.
 // Ping the database once a day to keep the project alive.
 const SUPABASE_KEEPALIVE_INTERVAL_MS =
-  parseInt(process.env.SUPABASE_KEEPALIVE_INTERVAL_MS || "") ||
-  24 * 60 * 60 * 1000;
+  parseInt(process.env.SUPABASE_KEEPALIVE_INTERVAL_MS || "") || 24 * 60 * 60 * 1000;
 
 const supabaseKeepAlive = async () => {
   try {
