@@ -200,7 +200,10 @@ const ExpenseForm = (props: {
     try {
       setReceiptLoading(true);
 
-      const receipt = await system.serverConnector.parseReceipt(imageBase64);
+      const receipt = await system.serverConnector.parseReceipt(
+        imageBase64,
+        group.currency,
+      );
 
       setReceiptLoading(false);
       setReceipt(receipt);

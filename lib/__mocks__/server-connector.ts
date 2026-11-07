@@ -9,7 +9,6 @@ jest.spyOn(ServerConnector.prototype, "parseReceipt").mockResolvedValue({
   total: Money.create({ amount: 0, currency: "EUR" }),
   date: new Date(),
   title: "Test receipt",
-  currency: "EUR",
 });
 
 export { ServerConnector };

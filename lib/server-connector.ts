@@ -9,7 +9,6 @@ type ReceiptResponse = {
     price: number;
     humanReadableDescription: string;
   }[];
-  currency: string;
   date: string;
   title: string;
 };
@@ -56,14 +55,12 @@ class ServerConnector {
     return response.json();
   }
 
-  async parseReceipt(file: string): Promise<Receipt> {
+  async parseReceipt(file: string, currency: Currency): Promise<Receipt> {
     const body = { file };
     const response = (await this.post(
       "/parse-receipt",
       body,
     )) as ReceiptResponse;
-
-    const currency = "EUR";
 
     const items: Receipt["items"] = response.items.map((item) => ({
       description: item.description,
@@ -84,8 +81,7 @@ class ServerConnector {
       total,
       date: this.parseDate(response.date) ?? new Date(),
       title: response.title,
-      currency: this.parseCurrency(response.currency) ?? "EUR",
-    } as Receipt;
+    };
   }
 
   private parseDate(date: string): Date | null {
@@ -103,10 +99,6 @@ class ServerConnector {
     }
 
     return new Date(year, month - 1, day);
-  }
-
-  private parseCurrency(currency: string): Currency | null {
-    return Money.isCurrency(currency) ? currency : null;
   }
 }
 

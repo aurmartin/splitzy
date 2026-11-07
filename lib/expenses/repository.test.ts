@@ -2,7 +2,7 @@ import { expensesTable } from "@/lib/db/schema";
 import { System } from "@/lib/system";
 import { system } from "@/lib/test-setup";
 import { generateId } from "@/lib/utils";
-import { Money, type Currency } from "@/lib/money";
+import { Money } from "@/lib/money";
 import { eq } from "drizzle-orm";
 
 import { ExpensesRepository } from "./repository";
@@ -36,7 +36,6 @@ const createReceipt = (): Receipt => ({
   date: new Date("2023-05-15"),
   total: Money.create({ amount: 3000, currency: "EUR" }),
   title: "Restaurant Bill",
-  currency: "EUR" as Currency,
   items: [
     {
       description: "Main course",
@@ -76,7 +75,6 @@ const getExpensesByGroupId = (system: System, groupId: string) => {
 
 const expectReceiptEqual = (left: Receipt, right: Receipt) => {
   expect(left.title).toEqual(right.title);
-  expect(left.currency).toEqual(right.currency);
   expect(left.total.amount).toEqual(right.total.amount);
   expect(left.items.length).toEqual(right.items.length);
   left.items.forEach((item, index) => {
@@ -189,7 +187,6 @@ describe("insertExpense", () => {
     // Check that the receipt was properly JSON encoded
     const parsedReceipt = JSON.parse(result.receipt as string);
     expect(parsedReceipt.title).toEqual(receipt.title);
-    expect(parsedReceipt.currency).toEqual(receipt.currency);
     expect(parsedReceipt.total.amount).toEqual(receipt.total.amount);
     expect(parsedReceipt.items).toHaveLength(receipt.items.length);
     expect(parsedReceipt.items[0].description).toEqual(

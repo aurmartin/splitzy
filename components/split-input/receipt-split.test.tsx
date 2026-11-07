@@ -23,7 +23,6 @@ describe("ReceiptSplit", () => {
     total: Money.create({ amount: 3000, currency: "USD" }),
     date: new Date(),
     title: "Receipt 1",
-    currency: "USD",
   };
 
   describe("ReceiptSplitInput", () => {

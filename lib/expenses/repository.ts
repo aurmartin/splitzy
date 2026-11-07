@@ -156,7 +156,6 @@ function decodeReceipt(decoded: any): Receipt | null {
 
   return {
     title: decoded.title,
-    currency: decoded.currency,
     date: new Date(decoded.date),
     total: Money.create({
       amount: decoded.total.amount,

@@ -12,7 +12,7 @@ import { System } from "@/lib/system";
 import { system } from "@/lib/test-setup";
 import { generateId } from "@/lib/utils";
 import { DisplayableError } from "@/lib/displayable-error";
-import { Money, type Currency } from "@/lib/money";
+import { Money } from "@/lib/money";
 import { eq } from "drizzle-orm";
 
 // Helper functions for creating test data
@@ -53,7 +53,6 @@ const createReceipt = (): Receipt => ({
   date: new Date("2023-05-15"),
   total: Money.create({ amount: 3000, currency: "EUR" }),
   title: "Restaurant Bill",
-  currency: "EUR" as Currency,
   items: [
     {
       description: "Main course",
@@ -131,7 +130,6 @@ describe("insertExpense", () => {
 
     // Verify receipt data
     expect(receipt.title).toEqual("Restaurant Bill");
-    expect(receipt.currency).toEqual("EUR");
     expect(receipt.total.amount).toEqual(3000);
     expect(receipt.items).toHaveLength(2);
     expect(receipt.items[0].description).toEqual("Main course");

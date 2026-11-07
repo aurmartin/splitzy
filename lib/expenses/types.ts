@@ -31,7 +31,6 @@ interface Receipt {
   date: Date;
   total: Money;
   title: string;
-  currency: Currency;
 
   items: {
     description: string;
