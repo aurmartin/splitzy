@@ -1,4 +1,3 @@
-import "dotenv/config";
 import express, { type ErrorRequestHandler } from "express";
 import { createClient } from "@supabase/supabase-js";
 import morgan from "morgan";

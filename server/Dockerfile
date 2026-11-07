@@ -14,4 +14,4 @@ RUN pnpm install
 
 COPY . .
 
-CMD ["pnpm", "start"]
+CMD ["node_modules/.bin/tsx", "index.ts"]
