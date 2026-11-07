@@ -1,5 +1,5 @@
 import "dotenv/config";
-import express from "express";
+import express, { type ErrorRequestHandler } from "express";
 import { createClient } from "@supabase/supabase-js";
 import morgan from "morgan";
 import {
@@ -146,12 +146,37 @@ app.post("/parse-receipt", async (req, res) => {
     return;
   }
 
-  const receipt = req.body.file;
+  const file = req.body?.file;
 
-  const result = await parseReceipt(receipt);
+  if (typeof file !== "string" || file.length === 0) {
+    res.status(400).json({ error: "Missing receipt image" });
+    return;
+  }
+
+  const result = await parseReceipt(file);
 
   res.json(result);
 });
+
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  if (res.headersSent) {
+    next(err);
+    return;
+  }
+
+  const status =
+    err?.expose && typeof err.status === "number" ? err.status : 500;
+
+  if (status >= 500) {
+    console.error(err);
+  }
+
+  res.status(status).json({
+    error: status >= 500 ? "Internal server error" : err.message,
+  });
+};
+
+app.use(errorHandler);
 
 // Supabase pauses free-tier projects after 7 days of inactivity.
 // Ping the database once a day to keep the project alive.

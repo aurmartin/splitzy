@@ -2,6 +2,8 @@ FROM node:26.13.0-slim
 
 WORKDIR /app
 
+ENV NODE_ENV=production
+
 RUN npm install -g corepack@latest
 RUN corepack enable
 
