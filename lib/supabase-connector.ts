@@ -1,10 +1,17 @@
-import { createClient, type SupabaseClient, type RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+import {
+  createClient,
+  type PostgrestError,
+  type SupabaseClient,
+  type RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
 import { tables } from "./db/schema";
 import { Env } from "./env";
 import type { OperationType, RemoteOperation } from "./operation";
 import { System } from "./system";
 
 const storageKey = "supabase.auth.token";
+
+const SELECT_PAGE_SIZE = 1000;
 
 type TableName = Exclude<keyof typeof tables, "syncQueue">;
 type RealtimeEventListener = (operation: RemoteOperation) => void;
@@ -120,8 +127,29 @@ export class SupabaseConnector {
     return this.client.from(table).select().eq("id", id).single();
   }
 
-  selectAll(table: string) {
-    return this.client.from(table).select();
+  async selectAll(table: string): Promise<{ data: any[]; error: null } | { data: null; error: PostgrestError }> {
+    const rows: any[] = [];
+    let lastId: string | undefined;
+
+    while (true) {
+      let query = this.client.from(table).select().order("id").limit(SELECT_PAGE_SIZE);
+      if (lastId !== undefined) {
+        query = query.gt("id", lastId);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        return { data: null, error };
+      }
+
+      if (data.length === 0) {
+        return { data: rows, error: null };
+      }
+
+      rows.push(...data);
+      lastId = data[data.length - 1].id;
+    }
   }
 
   insert(table: string, data: Record<string, any>) {

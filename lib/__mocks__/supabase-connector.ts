@@ -3,10 +3,6 @@ const { SupabaseConnector } = jest.requireActual<typeof import("@/lib/supabase-c
 jest.spyOn(SupabaseConnector.prototype, "selectAll").mockResolvedValue({
   data: [],
   error: null,
-  success: true,
-  count: 0,
-  status: 200,
-  statusText: "OK",
 });
 
 jest.spyOn(SupabaseConnector.prototype, "insert").mockResolvedValue({
