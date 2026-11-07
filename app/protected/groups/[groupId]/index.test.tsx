@@ -1,12 +1,14 @@
 import GroupScreen from "@/app/protected/groups/[groupId]/index";
 import { tables } from "@/lib/db/schema";
-import { removeMe, setMe } from "@/lib/groups";
+import { encodeGroup, removeMe, setMe } from "@/lib/groups";
 import { system } from "@/lib/test-setup";
 import {
   buildExpenseRecord,
-  buildGroupRecord,
-  renderRouter,
-} from "@/lib/test-utils";
+  buildGroup,
+  createExpense,
+  createGroup,
+} from "@/lib/test-factories";
+import { renderRouter } from "@/lib/test-utils";
 import {
   act,
   fireEvent,
@@ -21,11 +23,10 @@ const share = jest.spyOn(Share, "share").mockResolvedValue({
   activityType: undefined,
 });
 
-const group = buildGroupRecord({ id: "test-group-id" });
+const group = buildGroup({ id: "test-group-id" });
 
-beforeEach(async () => {
-  await system.db.insert(tables.groups).values(group);
-  setMe(system, group.id, "Alice");
+beforeEach(() => {
+  createGroup(system, group, { me: "Alice" });
 });
 
 const routerContext = {
@@ -48,7 +49,7 @@ describe("GroupScreen", () => {
       initialUrl: testGroupScreenUrl,
     });
     expect(screen.toJSON()).toMatchSnapshot();
-    screen.getByText("test group name");
+    screen.getByText(group.name);
   });
 
   it("should redirect to set-me if me is not set", async () => {
@@ -118,33 +119,21 @@ describe("GroupScreen", () => {
   });
 
   it("should render expenses", async () => {
-    await system.db
-      .insert(tables.expenses)
-      .values(buildExpenseRecord({ groupId: "test-group-id" }));
+    const expense = createExpense(system, group, { createdAt: new Date() });
 
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    await system.db.insert(tables.expenses).values(
-      buildExpenseRecord({
-        groupId: "test-group-id",
-        createdAt: yesterday.toISOString(),
-      }),
-    );
+    createExpense(system, group, { createdAt: yesterday });
 
     const twoDaysAgo = new Date();
     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
-    await system.db.insert(tables.expenses).values(
-      buildExpenseRecord({
-        groupId: "test-group-id",
-        createdAt: twoDaysAgo.toISOString(),
-      }),
-    );
+    createExpense(system, group, { createdAt: twoDaysAgo });
 
     await renderRouter(routerContext, system, {
       initialUrl: testGroupScreenUrl,
     });
 
-    screen.getAllByText("test expense title");
+    screen.getAllByText(expense.title);
     screen.getAllByText(/Alice/);
     screen.getByText("Aujourd'hui");
     screen.getByText("Hier");
@@ -169,14 +158,12 @@ describe("GroupScreen", () => {
 
   it("should navigate to expense", async () => {
     const user = userEvent.setup();
-    await system.db
-      .insert(tables.expenses)
-      .values(buildExpenseRecord({ groupId: "test-group-id" }));
+    const expense = createExpense(system, group);
     await renderRouter(routerContext, system, {
       initialUrl: testGroupScreenUrl,
     });
 
-    await user.press(screen.getByText("test expense title"));
+    await user.press(screen.getByText(expense.title));
 
     screen.getByText("Expense");
   });
@@ -198,16 +185,14 @@ describe("GroupScreen", () => {
     });
     screen.getByText("Aucune dépense");
 
+    const expense = buildExpenseRecord(group);
     // Groups are synced first, then expenses.
     (system.supabaseConnector.selectAll as jest.Mock)
-      .mockResolvedValueOnce({ data: [group], error: null })
-      .mockResolvedValueOnce({
-        data: [buildExpenseRecord({ groupId: "test-group-id" })],
-        error: null,
-      });
+      .mockResolvedValueOnce({ data: [encodeGroup(group)], error: null })
+      .mockResolvedValueOnce({ data: [expense], error: null });
 
     await fireEvent(screen.getByTestId("expenses-list"), "onRefresh");
 
-    await screen.findByText("test expense title");
+    await screen.findByText(expense.title);
   });
 });

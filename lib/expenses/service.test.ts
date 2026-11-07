@@ -1,75 +1,22 @@
 import { expensesTable } from "@/lib/db/schema";
 import { ExpenseService } from "@/lib/expenses";
-import type {
-  AmountSplit,
-  EqualSplit,
-  Expense,
-  PercentageSplit,
-  Receipt,
-} from "@/lib/expenses/types";
 import { ExpensesRepository } from "@/lib/expenses/repository";
 import { System } from "@/lib/system";
 import { system } from "@/lib/test-setup";
+import {
+  buildAmountSplit,
+  buildEqualSplit,
+  buildExpense,
+  buildGroup,
+  buildPercentageSplit,
+  buildReceipt,
+} from "@/lib/test-factories";
 import { generateId } from "@/lib/utils";
 import { DisplayableError } from "@/lib/displayable-error";
-import { Money } from "@/lib/money";
 import { eq } from "drizzle-orm";
 
-// Helper functions for creating test data
-const createBasicExpense = (overrides: Partial<Expense> = {}): Expense => {
-  const date = new Date();
+const group = buildGroup();
 
-  return {
-    id: generateId(),
-    groupId: generateId(),
-    title: "Test Expense",
-    payerName: "Test User",
-    splitExpense: {
-      type: "percentage",
-      total: Money.create({ amount: 0, currency: "USD" }),
-      members: [],
-      ratios: {},
-    },
-    createdAt: date,
-    updatedAt: date,
-    kind: "expense",
-    deletedAt: undefined,
-    receipt: null,
-    ...overrides,
-  };
-};
-
-const createSplitExpense = (): Expense["splitExpense"] => ({
-  type: "percentage",
-  total: Money.create({ amount: 0, currency: "USD" }),
-  members: ["Alice", "Bob"],
-  ratios: {
-    Alice: 50,
-    Bob: 50,
-  },
-});
-
-const createReceipt = (): Receipt => ({
-  date: new Date("2023-05-15"),
-  total: Money.create({ amount: 3000, currency: "EUR" }),
-  title: "Restaurant Bill",
-  items: [
-    {
-      description: "Main course",
-      humanReadableDescription: "Main course",
-      price: Money.create({ amount: 2000, currency: "EUR" }),
-      paid_for: ["Alice", "Bob"],
-    },
-    {
-      description: "Dessert",
-      humanReadableDescription: "Dessert",
-      price: Money.create({ amount: 1000, currency: "EUR" }),
-      paid_for: ["Alice"],
-    },
-  ],
-});
-
-// Helper function to get all expenses from a group
 const getExpensesByGroupId = (system: System, groupId: string) => {
   return system.db
     .select()
@@ -85,7 +32,7 @@ describe("insertExpense", () => {
       groupId: generateId(),
       title: "Test Expense",
       payerName: "Test User",
-      splitExpense: createSplitExpense(),
+      splitExpense: buildPercentageSplit(group, { Alice: 50, Bob: 50 }),
       receipt: null,
     };
 
@@ -114,8 +61,8 @@ describe("insertExpense", () => {
       groupId: generateId(),
       title: "Complex Expense",
       payerName: "Alice",
-      splitExpense: createSplitExpense(),
-      receipt: createReceipt(),
+      splitExpense: buildPercentageSplit(group, { Alice: 50, Bob: 50 }),
+      receipt: buildReceipt(group),
     };
 
     // Call the function
@@ -129,7 +76,7 @@ describe("insertExpense", () => {
     const receipt = JSON.parse(expenses[0].receipt as string);
 
     // Verify receipt data
-    expect(receipt.title).toEqual("Restaurant Bill");
+    expect(receipt.title).toEqual("Restaurant bill");
     expect(receipt.total.amount).toEqual(3000);
     expect(receipt.items).toHaveLength(2);
     expect(receipt.items[0].description).toEqual("Main course");
@@ -143,7 +90,7 @@ describe("insertExpense", () => {
       groupId: invalidTitleGroupId,
       title: "",
       payerName: "Test User",
-      splitExpense: createSplitExpense(),
+      splitExpense: buildPercentageSplit(group, { Alice: 50, Bob: 50 }),
       receipt: null,
     };
 
@@ -160,7 +107,7 @@ describe("insertExpense", () => {
       groupId: invalidPayerGroupId,
       title: "Test Expense",
       payerName: "",
-      splitExpense: createSplitExpense(),
+      splitExpense: buildPercentageSplit(group, { Alice: 50, Bob: 50 }),
       receipt: null,
     };
 
@@ -182,7 +129,7 @@ describe("insertExpense", () => {
 
 describe("deleteExpense", () => {
   it("should delete an expense", async () => {
-    const testExpense = createBasicExpense();
+    const testExpense = buildExpense(group);
     await ExpensesRepository.insertExpense(system, testExpense);
 
     await ExpenseService.deleteExpense(system, testExpense.id);
@@ -194,16 +141,9 @@ describe("deleteExpense", () => {
 
 describe("getAmounts", () => {
   it("should compute all amounts when given an amount split with missing amounts", () => {
-    const splitExpense: AmountSplit = {
-      type: "amount",
-      total: Money.create({ amount: 1000, currency: "USD" }),
-      members: ["Alice", "Bob"],
-      amounts: {
-        Alice: Money.create({ amount: 250, currency: "USD" }),
-      },
-    };
+    const splitExpense = buildAmountSplit(group, { Alice: 250 }, 1000);
 
-    const expense = createBasicExpense({ splitExpense });
+    const expense = buildExpense(group, { splitExpense });
     const amounts = ExpenseService.getAmounts(expense);
 
     expect(amounts.Alice.amount).toEqual(250);
@@ -211,17 +151,13 @@ describe("getAmounts", () => {
   });
 
   it("should compute all amounts when given a percentage split", () => {
-    const splitExpense: PercentageSplit = {
-      type: "percentage",
-      total: Money.create({ amount: 1000, currency: "USD" }),
-      members: ["Alice", "Bob"],
-      ratios: {
-        Alice: 50,
-        Bob: 50,
-      },
-    };
+    const splitExpense = buildPercentageSplit(
+      group,
+      { Alice: 50, Bob: 50 },
+      1000,
+    );
 
-    const expense = createBasicExpense({ splitExpense });
+    const expense = buildExpense(group, { splitExpense });
     const amounts = ExpenseService.getAmounts(expense);
 
     expect(amounts.Alice.amount).toEqual(500);
@@ -229,13 +165,9 @@ describe("getAmounts", () => {
   });
 
   it("should compute all amounts when given an equal split", () => {
-    const splitExpense: EqualSplit = {
-      type: "equal",
-      total: Money.create({ amount: 1000, currency: "USD" }),
-      members: ["Alice", "Bob"],
-    };
+    const splitExpense = buildEqualSplit(group, 1000);
 
-    const expense = createBasicExpense({ splitExpense });
+    const expense = buildExpense(group, { splitExpense });
     const amounts = ExpenseService.getAmounts(expense);
 
     expect(amounts.Alice.amount).toEqual(500);

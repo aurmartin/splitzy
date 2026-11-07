@@ -1,18 +1,19 @@
 import BalanceScreen from "@/app/protected/groups/[groupId]/balance";
-import { tables } from "@/lib/db/schema";
 import { ExpensesRepository, ReimbursementService } from "@/lib/expenses";
-import { setMe } from "@/lib/groups";
 import { Money } from "@/lib/money";
 import { system } from "@/lib/test-setup";
 import {
-  buildExpenseRecord,
-  buildGroupRecord,
-  renderRouter,
-} from "@/lib/test-utils";
+  buildEqualSplit,
+  buildGroup,
+  createExpense,
+  createGroup,
+} from "@/lib/test-factories";
+import { renderRouter } from "@/lib/test-utils";
 import { screen, userEvent } from "@testing-library/react-native";
 import { Alert, type AlertButton, Text } from "react-native";
 
-const groupId = "test-group-id";
+const group = buildGroup({ currency: "EUR", members: ["Alice", "Bob"] });
+const groupId = group.id;
 
 const alert = jest.spyOn(Alert, "alert");
 
@@ -33,23 +34,14 @@ afterEach(() => {
   alert.mockReset();
 });
 
-beforeEach(async () => {
-  await system.db
-    .insert(tables.groups)
-    .values(buildGroupRecord({ id: groupId, currency: "EUR" }));
-  setMe(system, groupId, "Alice");
+beforeEach(() => {
+  createGroup(system, group, { me: "Alice" });
 
   // Alice paid 20 € for Alice and Bob: Bob owes Alice 10 €.
-  await system.db.insert(tables.expenses).values(
-    buildExpenseRecord({
-      groupId,
-      splitExpense: JSON.stringify({
-        type: "equal",
-        total: Money.create({ amount: 2000, currency: "EUR" }),
-        members: ["Alice", "Bob"],
-      }),
-    }),
-  );
+  createExpense(system, group, {
+    payerName: "Alice",
+    splitExpense: buildEqualSplit(group, 2000),
+  });
 });
 
 const routerContext = {

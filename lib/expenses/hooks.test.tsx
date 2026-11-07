@@ -1,43 +1,19 @@
 import { system } from "@/lib/test-setup";
 import { act, render, screen } from "@/lib/test-utils";
-import { generateId } from "@/lib/utils";
-import { Money } from "@/lib/money";
+import { buildExpense, buildGroup } from "@/lib/test-factories";
 import { Text, View } from "react-native";
 
 import { useExpense, useExpenses } from "./hooks";
 import { ExpensesRepository } from "./repository";
-import type { Expense } from "./types";
 
 const didRender = jest.fn();
 
-// Helper functions for creating test data
-const createBasicExpense = (overrides: Partial<Expense> = {}): Expense => {
-  const date = new Date();
-
-  return {
-    id: generateId(),
-    groupId: generateId(),
-    title: "Test Expense",
-    payerName: "Test User",
-    splitExpense: {
-      type: "percentage",
-      total: Money.create({ amount: 0, currency: "USD" }),
-      members: [],
-      ratios: {},
-    },
-    createdAt: date,
-    updatedAt: date,
-    kind: "expense",
-    deletedAt: undefined,
-    receipt: null,
-    ...overrides,
-  };
-};
+const group = buildGroup();
 
 describe("useExpense", () => {
   it("should return an expense", async () => {
     // Arrange
-    const testExpense = createBasicExpense();
+    const testExpense = buildExpense(group);
     await ExpensesRepository.insertExpense(system, testExpense);
 
     const Test = () => {
@@ -57,7 +33,7 @@ describe("useExpense", () => {
 
   it("should re-render when the expense is updated", async () => {
     // Arrange
-    const testExpense = createBasicExpense();
+    const testExpense = buildExpense(group);
     await ExpensesRepository.insertExpense(system, testExpense);
 
     const Test = () => {
@@ -87,23 +63,14 @@ describe("useExpense", () => {
 
 describe("useExpenses", () => {
   beforeEach(async () => {
-    const groupId = "test-group-id";
-
-    const testExpense1 = createBasicExpense({
-      groupId,
-      title: "Test Expense 1",
-    });
-
-    const testExpense2 = createBasicExpense({
-      groupId,
-      title: "Test Expense 2",
-    });
+    const testExpense1 = buildExpense(group, { title: "Test Expense 1" });
+    const testExpense2 = buildExpense(group, { title: "Test Expense 2" });
 
     await ExpensesRepository.insertExpense(system, testExpense1);
     await ExpensesRepository.insertExpense(system, testExpense2);
 
     const Test = () => {
-      const expenses = useExpenses(groupId);
+      const expenses = useExpenses(group.id);
       didRender();
       return (
         <View>
@@ -124,10 +91,7 @@ describe("useExpenses", () => {
   });
 
   it("should re-render when the expense is inserted", async () => {
-    const testExpense3 = createBasicExpense({
-      groupId: "test-group-id",
-      title: "Test Expense 3",
-    });
+    const testExpense3 = buildExpense(group, { title: "Test Expense 3" });
     await act(async () => {
       await ExpensesRepository.insertExpense(system, testExpense3);
     });

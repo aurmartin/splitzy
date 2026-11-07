@@ -426,7 +426,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                       ]
                     }
                   >
-                    USD
+                    EUR
                   </Text>
                 </View>
               </View>
@@ -830,7 +830,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                         ]
                       }
                     >
-                      $0.00
+                      €0.00
                     </Text>
                   </View>
                   <View
@@ -874,7 +874,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                         ]
                       }
                     >
-                      $0.00
+                      €0.00
                     </Text>
                   </View>
                 </View>

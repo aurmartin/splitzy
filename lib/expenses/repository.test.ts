@@ -1,58 +1,15 @@
+import { createReceiptSplit } from "@/components/split-input/receipt-split";
 import { expensesTable } from "@/lib/db/schema";
 import { System } from "@/lib/system";
 import { system } from "@/lib/test-setup";
-import { generateId } from "@/lib/utils";
-import { Money } from "@/lib/money";
+import { buildExpense, buildGroup, buildReceipt } from "@/lib/test-factories";
 import { eq } from "drizzle-orm";
 
 import { ExpensesRepository } from "./repository";
-import type { Expense, Receipt, ReceiptSplit } from "./types";
+import type { Receipt, ReceiptSplit } from "./types";
 
-// Helper functions for creating test data
-const createBasicExpense = (overrides: Partial<Expense> = {}): Expense => {
-  const date = new Date();
+const group = buildGroup();
 
-  return {
-    id: generateId(),
-    groupId: generateId(),
-    title: "Test Expense",
-    payerName: "Test User",
-    splitExpense: {
-      type: "percentage",
-      total: Money.create({ amount: 0, currency: "USD" }),
-      members: [],
-      ratios: {},
-    },
-    createdAt: date,
-    updatedAt: date,
-    kind: "expense",
-    deletedAt: undefined,
-    receipt: null,
-    ...overrides,
-  };
-};
-
-const createReceipt = (): Receipt => ({
-  date: new Date("2023-05-15"),
-  total: Money.create({ amount: 3000, currency: "EUR" }),
-  title: "Restaurant Bill",
-  items: [
-    {
-      description: "Main course",
-      humanReadableDescription: "Main course",
-      price: Money.create({ amount: 2000, currency: "EUR" }),
-      paid_for: ["Alice", "Bob"],
-    },
-    {
-      description: "Dessert",
-      humanReadableDescription: "Dessert",
-      price: Money.create({ amount: 1000, currency: "EUR" }),
-      paid_for: ["Alice"],
-    },
-  ],
-});
-
-// Helper function to retrieve an expense from the database
 const getExpenseById = (system: System, id: string) => {
   const [result] = system.db
     .select()
@@ -64,7 +21,6 @@ const getExpenseById = (system: System, id: string) => {
   return result;
 };
 
-// Helper function to get all expenses from a group
 const getExpensesByGroupId = (system: System, groupId: string) => {
   return system.db
     .select()
@@ -89,7 +45,7 @@ const expectReceiptEqual = (left: Receipt, right: Receipt) => {
 
 describe("getExpense", () => {
   it("should return an expense", async () => {
-    const testExpense = createBasicExpense();
+    const testExpense = buildExpense(group);
     await ExpensesRepository.insertExpense(system, testExpense);
 
     const result = ExpensesRepository.getExpense(system, testExpense.id);
@@ -99,16 +55,10 @@ describe("getExpense", () => {
   });
 
   it("should return the receipt and the split expense", async () => {
-    const testReceipt = createReceipt();
-    const testSplitExpense: ReceiptSplit = {
-      type: "receipt",
+    const testReceipt = buildReceipt(group);
+    const testExpense = buildExpense(group, {
       receipt: testReceipt,
-      total: testReceipt.total,
-      members: testReceipt.items.flatMap((item) => item.paid_for),
-    };
-    const testExpense = createBasicExpense({
-      receipt: testReceipt,
-      splitExpense: testSplitExpense,
+      splitExpense: createReceiptSplit(testReceipt, group.members),
     });
     await ExpensesRepository.insertExpense(system, testExpense);
 
@@ -128,7 +78,7 @@ describe("getExpense", () => {
 
 describe("getExpenseOrThrow", () => {
   it("should return an expense", async () => {
-    const testExpense = createBasicExpense();
+    const testExpense = buildExpense(group);
     await ExpensesRepository.insertExpense(system, testExpense);
 
     const result = ExpensesRepository.getExpenseOrThrow(system, testExpense.id);
@@ -138,7 +88,7 @@ describe("getExpenseOrThrow", () => {
   });
 
   it("should throw an error if the expense does not exist", async () => {
-    const testExpense = createBasicExpense();
+    const testExpense = buildExpense(group);
     await ExpensesRepository.insertExpense(system, testExpense);
 
     expect(() =>
@@ -150,7 +100,7 @@ describe("getExpenseOrThrow", () => {
 describe("insertExpense", () => {
   it("should insert a basic expense and correctly encode fields", async () => {
     // Arrange
-    const testExpense = createBasicExpense();
+    const testExpense = buildExpense(group);
 
     // Act
     await ExpensesRepository.insertExpense(system, testExpense);
@@ -174,8 +124,8 @@ describe("insertExpense", () => {
 
   it("should correctly encode receipt data", async () => {
     // Arrange
-    const receipt = createReceipt();
-    const testExpense = createBasicExpense({ receipt });
+    const receipt = buildReceipt(group);
+    const testExpense = buildExpense(group, { receipt });
 
     // Act
     await ExpensesRepository.insertExpense(system, testExpense);
@@ -199,7 +149,7 @@ describe("insertExpense", () => {
   it("should handle deletedAt date", async () => {
     // Arrange
     const deletedDate = new Date("2023-01-03");
-    const expense = createBasicExpense({ deletedAt: deletedDate });
+    const expense = buildExpense(group, { deletedAt: deletedDate });
 
     // Act
     await ExpensesRepository.insertExpense(system, expense);
@@ -212,24 +162,15 @@ describe("insertExpense", () => {
 
   it("should handle multiple expenses with the same groupId", async () => {
     // Arrange
-    const groupId = generateId();
-
-    const expense1 = createBasicExpense({
-      groupId,
-      title: "Expense 1",
-    });
-
-    const expense2 = createBasicExpense({
-      groupId,
-      title: "Expense 2",
-    });
+    const expense1 = buildExpense(group, { title: "Expense 1" });
+    const expense2 = buildExpense(group, { title: "Expense 2" });
 
     // Act
     await ExpensesRepository.insertExpense(system, expense1);
     await ExpensesRepository.insertExpense(system, expense2);
 
     // Assert
-    const results = getExpensesByGroupId(system, groupId);
+    const results = getExpensesByGroupId(system, group.id);
 
     expect(results).toHaveLength(2);
     expect(results.map((r) => r.title)).toContain("Expense 1");
@@ -240,7 +181,7 @@ describe("insertExpense", () => {
 describe("updateExpense", () => {
   it("should update an expense", async () => {
     // Arrange
-    const testExpense = createBasicExpense();
+    const testExpense = buildExpense(group);
     await ExpensesRepository.insertExpense(system, testExpense);
 
     // Act
@@ -258,7 +199,7 @@ describe("updateExpense", () => {
 
 describe("deleteExpense", () => {
   it("should delete an expense", async () => {
-    const testExpense = createBasicExpense();
+    const testExpense = buildExpense(group);
     await ExpensesRepository.insertExpense(system, testExpense);
 
     await ExpensesRepository.deleteExpense(system, testExpense.id);

@@ -175,7 +175,7 @@ function decodeReceipt(decoded: any): Receipt | null {
   };
 }
 
-function encodeExpense(expense: Expense): ExpenseRecord {
+export function encodeExpense(expense: Expense): ExpenseRecord {
   return {
     ...expense,
     splitExpense: JSON.stringify(expense.splitExpense),

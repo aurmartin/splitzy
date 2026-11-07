@@ -1,7 +1,8 @@
 import { Text } from "@/components/text";
 import { groupsTable } from "@/lib/db/schema";
 import { system } from "@/lib/test-setup";
-import { buildGroupRecord, renderRouter } from "@/lib/test-utils";
+import { buildGroupRecord, createGroup } from "@/lib/test-factories";
+import { renderRouter } from "@/lib/test-utils";
 import { fireEvent, screen, userEvent } from "@testing-library/react-native";
 import GroupsScreen from ".";
 
@@ -24,11 +25,7 @@ describe("GroupsScreen", () => {
   });
 
   it("should render groups", async () => {
-    const group = buildGroupRecord({
-      name: "Group 1",
-      members: JSON.stringify(["Alice", "Bob"]),
-    });
-    await system.db.insert(groupsTable).values(group);
+    createGroup(system, { name: "Group 1", members: ["Alice", "Bob"] });
 
     await renderRouter(routerContext, system, { initialUrl: "/protected" });
 
@@ -37,8 +34,7 @@ describe("GroupsScreen", () => {
   });
 
   it("should render no members message", async () => {
-    const group = buildGroupRecord({ members: JSON.stringify([]) });
-    await system.db.insert(groupsTable).values(group);
+    createGroup(system, { members: [] });
 
     await renderRouter(routerContext, system, { initialUrl: "/protected" });
 
@@ -86,8 +82,7 @@ describe("GroupsScreen", () => {
 
   it("should navigate to the group details screen", async () => {
     const user = userEvent.setup();
-    const group = buildGroupRecord();
-    await system.db.insert(groupsTable).values(group);
+    const group = createGroup(system);
 
     await renderRouter(routerContext, system, { initialUrl: "/protected" });
     await user.press(screen.getByText(group.name));

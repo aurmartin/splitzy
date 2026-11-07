@@ -1,8 +1,8 @@
 import NewExpenseScreen from "@/app/protected/groups/[groupId]/new-expense";
 import { tables } from "@/lib/db/schema";
-import { setMe } from "@/lib/groups";
 import { system } from "@/lib/test-setup";
-import { buildGroupRecord, renderRouter } from "@/lib/test-utils";
+import { createGroup } from "@/lib/test-factories";
+import { renderRouter } from "@/lib/test-utils";
 import { screen, userEvent, waitFor } from "@testing-library/react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { eq } from "drizzle-orm";
@@ -12,10 +12,8 @@ jest.mocked(useActionSheet).mockReturnValue({
   showActionSheetWithOptions,
 });
 
-beforeEach(async () => {
-  const group = buildGroupRecord({ id: "test-group-id" });
-  await system.db.insert(tables.groups).values(group);
-  setMe(system, group.id, "Alice");
+beforeEach(() => {
+  createGroup(system, { id: "test-group-id" }, { me: "Alice" });
 });
 
 const routerContext = {

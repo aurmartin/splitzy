@@ -2,12 +2,15 @@ import { ExpenseRecord, GroupRecord, tables } from "@/lib/db/schema";
 import { system } from "@/lib/test-setup";
 import {
   buildExpenseRecord,
+  buildGroup,
   buildGroupRecord,
-  waitFor,
-} from "@/lib/test-utils";
+} from "@/lib/test-factories";
+import { waitFor } from "@/lib/test-utils";
 import { generateId } from "@/lib/utils";
 import { expect } from "@jest/globals";
 import { type RealtimePostgresChangesPayload } from "@/lib/supabase-connector";
+
+const group = buildGroup();
 
 const buildOperationRecordFromEntity = (
   type: "insert" | "update" | "delete",
@@ -234,7 +237,7 @@ describe("realtime updates", () => {
   it("should handle insert operations", async () => {
     await system.syncEngine.init();
 
-    const remoteExpense = buildExpenseRecord();
+    const remoteExpense = buildExpenseRecord(group);
     const message = buildRealtimeMessage("INSERT", "expenses", remoteExpense);
     system.supabaseConnector.handleRealtimeMessage("expenses", message);
 
@@ -248,7 +251,7 @@ describe("realtime updates", () => {
   it("should handle update operations", async () => {
     await system.syncEngine.init();
 
-    const initialExpense = buildExpenseRecord({
+    const initialExpense = buildExpenseRecord(group, {
       title: "initial expense title",
     });
     await system.db.insert(tables.expenses).values(initialExpense);
@@ -292,7 +295,7 @@ describe("realtime updates", () => {
   it("should handle delete operations", async () => {
     await system.syncEngine.init();
 
-    const initialExpense = buildExpenseRecord();
+    const initialExpense = buildExpenseRecord(group);
     await system.db.insert(tables.expenses).values(initialExpense);
 
     const message = buildRealtimeMessage("DELETE", "expenses", initialExpense);

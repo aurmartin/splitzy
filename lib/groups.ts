@@ -51,17 +51,18 @@ const _addGroup = async (system: System, params: GroupCreateParams) => {
   params = checkGroupCreateParams(params);
 
   const id = generateId();
+  const now = new Date();
 
   try {
-    const fields = {
+    const fields = encodeGroup({
       id,
       name: params.name,
       currency: params.currency,
-      members: JSON.stringify(params.members),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      deletedAt: null,
-    };
+      members: params.members,
+      createdAt: now,
+      updatedAt: now,
+      deletedAt: undefined,
+    });
 
     await system.syncEngine.insert(groupsTable, id, fields);
   } catch (error) {
@@ -192,6 +193,16 @@ export const getGroupRow = (
 
   return decodeGroup(group[0]);
 };
+
+export const encodeGroup = (group: Group): GroupRecord => ({
+  id: group.id,
+  name: group.name,
+  currency: group.currency,
+  members: JSON.stringify(group.members),
+  createdAt: group.createdAt.toISOString(),
+  updatedAt: group.updatedAt.toISOString(),
+  deletedAt: group.deletedAt?.toISOString() ?? null,
+});
 
 const decodeGroup = (groupRecord: GroupRecord): Group => {
   return {

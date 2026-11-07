@@ -1,63 +1,30 @@
 import { computeBalance, computeOptimalReimbursements } from "./balance";
-import type { Expense } from "@/lib/expenses";
-import { Group } from "./groups";
 import { Money } from "@/lib/money";
-
-const createExpense = (overrides: Partial<Expense> = {}): Expense => ({
-  id: "1",
-  groupId: "1",
-  title: "Test Expense",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  kind: "expense",
-  deletedAt: undefined,
-  receipt: null,
-  payerName: "Alice",
-  splitExpense: {
-    type: "percentage",
-    total: Money.create({ amount: 0, currency: "USD" }),
-    members: [],
-    ratios: {},
-  },
-  ...overrides,
-});
+import {
+  buildAmountSplit,
+  buildExpense,
+  buildGroup,
+} from "@/lib/test-factories";
 
 describe("balance computation", () => {
   it("should handle empty expenses", () => {
-    const group = {
-      id: "1",
-      name: "Test Group",
-      currency: "USD",
-      members: ["Alice", "Bob"],
-    } as Group;
-    const expenses: Expense[] = [];
+    const group = buildGroup({ members: ["Alice", "Bob"] });
 
-    const balance = computeBalance(group, expenses);
+    const balance = computeBalance(group, []);
 
     expect(balance.Alice.amount).toEqual(0);
     expect(balance.Bob.amount).toEqual(0);
   });
 
   it("should compute balance for single expense", () => {
-    const group = {
-      currency: "USD",
-      members: ["Alice", "Bob"],
-    } as Group;
+    const group = buildGroup({ members: ["Alice", "Bob"] });
 
     const expenses = [
-      createExpense({
+      buildExpense(group, {
         payerName: "Alice",
-        splitExpense: {
-          type: "amount",
-          total: Money.create({ amount: 10, currency: "USD" }),
-          members: ["Alice", "Bob"],
-          amounts: {
-            Alice: Money.create({ amount: 5, currency: "USD" }),
-            Bob: Money.create({ amount: 5, currency: "USD" }),
-          },
-        },
+        splitExpense: buildAmountSplit(group, { Alice: 5, Bob: 5 }),
       }),
-    ] as Expense[];
+    ];
 
     const balance = computeBalance(group, expenses);
 
@@ -66,38 +33,22 @@ describe("balance computation", () => {
   });
 
   it("should compute balance for multiple expenses", () => {
-    const group = {
-      currency: "USD",
-      members: ["Alice", "Bob", "Charlie"],
-    } as Group;
+    const group = buildGroup({ members: ["Alice", "Bob", "Charlie"] });
 
     const expenses = [
-      createExpense({
+      buildExpense(group, {
         payerName: "Alice",
-        splitExpense: {
-          type: "amount",
-          total: Money.create({ amount: 30, currency: "USD" }),
-          members: ["Alice", "Bob", "Charlie"],
-          amounts: {
-            Alice: Money.create({ amount: 10, currency: "USD" }),
-            Bob: Money.create({ amount: 10, currency: "USD" }),
-            Charlie: Money.create({ amount: 10, currency: "USD" }),
-          },
-        },
+        splitExpense: buildAmountSplit(group, {
+          Alice: 10,
+          Bob: 10,
+          Charlie: 10,
+        }),
       }),
-      createExpense({
+      buildExpense(group, {
         payerName: "Bob",
-        splitExpense: {
-          type: "amount",
-          total: Money.create({ amount: 30, currency: "USD" }),
-          members: ["Alice", "Bob", "Charlie"],
-          amounts: {
-            Alice: Money.create({ amount: 15, currency: "USD" }),
-            Bob: Money.create({ amount: 15, currency: "USD" }),
-          },
-        },
+        splitExpense: buildAmountSplit(group, { Alice: 15, Bob: 15 }),
       }),
-    ] as Expense[];
+    ];
 
     const balance = computeBalance(group, expenses);
 

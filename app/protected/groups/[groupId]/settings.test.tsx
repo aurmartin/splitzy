@@ -1,16 +1,13 @@
 import GroupSettingsScreen from "@/app/protected/groups/[groupId]/settings";
-import { tables } from "@/lib/db/schema";
-import { getGroupRow, getMe, setMe } from "@/lib/groups";
+import { getGroupRow, getMe } from "@/lib/groups";
 import { system } from "@/lib/test-setup";
-import {
-  buildExpenseRecord,
-  buildGroupRecord,
-  renderRouter,
-} from "@/lib/test-utils";
+import { buildGroup, createExpense, createGroup } from "@/lib/test-factories";
+import { renderRouter } from "@/lib/test-utils";
 import { screen, userEvent } from "@testing-library/react-native";
 import { Alert, type AlertButton, Text } from "react-native";
 
-const groupId = "test-group-id";
+const group = buildGroup({ name: "Trip", members: ["Alice", "Bob"] });
+const groupId = group.id;
 
 const alert = jest.spyOn(Alert, "alert");
 
@@ -26,11 +23,8 @@ afterEach(() => {
   alert.mockReset();
 });
 
-beforeEach(async () => {
-  await system.db
-    .insert(tables.groups)
-    .values(buildGroupRecord({ id: groupId, name: "Trip" }));
-  setMe(system, groupId, "Alice");
+beforeEach(() => {
+  createGroup(system, group, { me: "Alice" });
 });
 
 const routerContext = {
@@ -73,9 +67,7 @@ describe("GroupSettingsScreen", () => {
   });
 
   it("explains why a member of an expense can't be removed", async () => {
-    await system.db
-      .insert(tables.expenses)
-      .values(buildExpenseRecord({ groupId, payerName: "Bob" }));
+    createExpense(system, group, { payerName: "Bob" });
     const user = userEvent.setup();
     await renderSettings();
 

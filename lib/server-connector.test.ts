@@ -1,8 +1,7 @@
-import { computeBalance } from "@/lib/balance";
 import { createReceiptSplit } from "@/components/split-input/receipt-split";
-import type { Expense } from "@/lib/expenses";
-import type { Group } from "@/lib/groups";
+import { computeBalance } from "@/lib/balance";
 import { Money, type Currency } from "@/lib/money";
+import { buildExpense, buildGroup } from "@/lib/test-factories";
 import { system } from "@/lib/test-setup";
 
 const { ServerConnector } = jest.requireActual<
@@ -54,31 +53,16 @@ describe("ServerConnector.parseReceipt", () => {
   });
 
   it("gives a split that a balance in the group's currency accepts", async () => {
-    const group: Group = {
-      id: "group",
-      name: "Voyage",
-      currency: "USD",
-      members: ["Alice", "Bob"],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: undefined,
-    };
+    const group = buildGroup({ currency: "USD", members: ["Alice", "Bob"] });
     const receipt = await parseReceipt(receiptResponse("USD"), group.currency);
     receipt.items[0].paid_for = ["Alice"];
     receipt.items[1].paid_for = ["Bob"];
 
-    const expense: Expense = {
-      id: "expense",
-      groupId: group.id,
-      kind: "expense",
-      title: receipt.title,
+    const expense = buildExpense(group, {
       payerName: "Alice",
       splitExpense: createReceiptSplit(receipt, group.members),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: undefined,
       receipt,
-    };
+    });
 
     expect(computeBalance(group, [expense])).toEqual({
       Alice: Money.create({ amount: 430, currency: "USD" }),

@@ -133,7 +133,7 @@ exports[`GroupScreen should render correctly 1`] = `
             ]
           }
         >
-          test group name
+          Test group
         </Text>
         <View
           style={

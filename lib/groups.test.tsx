@@ -5,22 +5,22 @@ import {
   getGroupRow,
   getMe,
   leaveGroup,
-  setMe,
   updateGroup,
   useGroups,
 } from "@/lib/groups";
-import { Money } from "@/lib/money";
 import { system } from "@/lib/test-setup";
 import {
-  buildExpenseRecord,
-  buildGroupRecord,
-  render,
-  screen,
-} from "@/lib/test-utils";
+  buildEqualSplit,
+  buildGroup,
+  createExpense,
+  createGroup,
+} from "@/lib/test-factories";
+import { render, screen } from "@/lib/test-utils";
 import { eq } from "drizzle-orm";
 import { Text } from "react-native";
 
-const groupId = "test-group-id";
+const group = buildGroup({ name: "Trip", members: ["Alice", "Bob"] });
+const groupId = group.id;
 
 const queuedOperations = () =>
   system.db
@@ -29,11 +29,8 @@ const queuedOperations = () =>
     .where(eq(tables.syncQueue.entityId, groupId))
     .all();
 
-beforeEach(async () => {
-  await system.db
-    .insert(tables.groups)
-    .values(buildGroupRecord({ id: groupId, name: "Trip" }));
-  setMe(system, groupId, "Alice");
+beforeEach(() => {
+  createGroup(system, group, { me: "Alice" });
 });
 
 describe("updateGroup", () => {
@@ -87,17 +84,10 @@ describe("updateGroup", () => {
   ])(
     "refuses to remove %s of an expense",
     async (_role, payerName, splitMembers) => {
-      await system.db.insert(tables.expenses).values(
-        buildExpenseRecord({
-          groupId,
-          payerName,
-          splitExpense: JSON.stringify({
-            type: "equal",
-            total: Money.create({ amount: 1000, currency: "USD" }),
-            members: splitMembers,
-          }),
-        }),
-      );
+      createExpense(system, group, {
+        payerName,
+        splitExpense: buildEqualSplit(group, 1000, splitMembers),
+      });
 
       await expect(
         updateGroup(system, groupId, { name: "Trip", members: ["Alice"] }),
@@ -115,8 +105,7 @@ describe("updateGroup", () => {
 
 describe("deleteGroup", () => {
   it("soft deletes the group and hides it from the group list", async () => {
-    const otherGroup = buildGroupRecord({ name: "Other group" });
-    await system.db.insert(tables.groups).values(otherGroup);
+    createGroup(system, { name: "Other group" });
 
     await deleteGroup(system, groupId);
 
@@ -143,9 +132,7 @@ describe("deleteGroup", () => {
 
 describe("leaveGroup", () => {
   it("removes the membership, then the local group and its expenses", async () => {
-    await system.db
-      .insert(tables.expenses)
-      .values(buildExpenseRecord({ groupId }));
+    createExpense(system, group);
 
     await leaveGroup(system, groupId);
 
