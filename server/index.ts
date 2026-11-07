@@ -118,20 +118,21 @@ app.get("/groups/:groupId/import", (req, res) => {
   res.redirect(link);
 });
 
-app.post("/parse-receipt", async (req, res) => {
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const accessToken = req.headers.authorization;
-  const refreshToken = req.headers["x-refresh-token"];
+const authClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: false, autoRefreshToken: false },
+});
 
-  if (!accessToken || !refreshToken) {
+const accessTokenFrom = (authorization: string | undefined) => authorization?.match(/^Bearer (\S+)$/i)?.[1];
+
+app.post("/parse-receipt", async (req, res) => {
+  const accessToken = accessTokenFrom(req.headers.authorization);
+
+  if (!accessToken) {
     res.status(401).send("Unauthorized");
     return;
   }
 
-  const { error } = await supabase.auth.setSession({
-    access_token: accessToken as string,
-    refresh_token: refreshToken as string,
-  });
+  const { error } = await authClient.auth.getUser(accessToken);
 
   if (error) {
     res.status(401).send("Unauthorized");

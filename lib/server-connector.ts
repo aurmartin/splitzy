@@ -19,16 +19,12 @@ class ServerConnector {
   private async authHeaders() {
     const session = await this.system.supabaseConnector.getSession();
     const accessToken = session.data.session?.access_token;
-    const refreshToken = session.data.session?.refresh_token;
 
-    if (!accessToken || !refreshToken) {
-      throw new Error("No access token or refresh token");
+    if (!accessToken) {
+      throw new Error("No access token");
     }
 
-    return {
-      Authorization: accessToken,
-      "x-refresh-token": refreshToken,
-    };
+    return { Authorization: `Bearer ${accessToken}` };
   }
 
   async post(path: string, body: any) {
