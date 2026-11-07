@@ -1,11 +1,7 @@
 import express, { type ErrorRequestHandler } from "express";
 import { createClient } from "@supabase/supabase-js";
 import morgan from "morgan";
-import {
-  GoogleGenerativeAI,
-  SchemaType,
-  InlineDataPart,
-} from "@google/generative-ai";
+import { GoogleGenAI, Type, type Schema } from "@google/genai";
 
 const bind_ip = process.env.SERVER_BIND_IP;
 if (!bind_ip) throw new Error("SERVER_BIND_IP is not set");
@@ -22,76 +18,77 @@ if (!SUPABASE_ANON_KEY) throw new Error("SUPABASE_ANON_KEY is not set");
 const GOOGLE_GEN_AI_API_KEY = process.env.GOOGLE_GEN_AI_API_KEY;
 if (!GOOGLE_GEN_AI_API_KEY) throw new Error("GOOGLE_GEN_AI_API_KEY is not set");
 
-const googleGenerativeAI = new GoogleGenerativeAI(GOOGLE_GEN_AI_API_KEY);
+const ai = new GoogleGenAI({ apiKey: GOOGLE_GEN_AI_API_KEY });
 
-const model = googleGenerativeAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
-  generationConfig: {
-    responseMimeType: "application/json",
-    responseSchema: {
-      description: "List of items on the receipt.",
-      type: SchemaType.OBJECT,
-      properties: {
-        items: {
-          type: SchemaType.ARRAY,
-          items: {
-            type: SchemaType.OBJECT,
-            properties: {
-              description: {
-                type: SchemaType.STRING,
-                description: "Description of the item",
-                nullable: false,
-              },
-              humanReadableDescription: {
-                type: SchemaType.STRING,
-                description: "Human readable description of the item",
-                nullable: false,
-              },
-              price: {
-                type: SchemaType.NUMBER,
-                description: "Price of the item",
-                nullable: false,
-              },
-            },
-            required: ["description", "price", "humanReadableDescription"],
+const receiptSchema: Schema = {
+  description: "List of items on the receipt.",
+  type: Type.OBJECT,
+  properties: {
+    items: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          description: {
+            type: Type.STRING,
+            description: "Description of the item",
+            nullable: false,
+          },
+          humanReadableDescription: {
+            type: Type.STRING,
+            description: "Human readable description of the item",
+            nullable: false,
+          },
+          price: {
+            type: Type.NUMBER,
+            description: "Price of the item",
+            nullable: false,
           },
         },
-        currency: {
-          type: SchemaType.STRING,
-          description: "Currency of the receipt (e.g. EUR, USD, GBP, etc.)",
-          nullable: false,
-        },
-        date: {
-          type: SchemaType.STRING,
-          description: "Date of the receipt, in the format YYYY-MM-DD.",
-          nullable: false,
-        },
-        title: {
-          type: SchemaType.STRING,
-          description:
-            "Title of the expense (e.g. 'Dinner at the restaurant', 'Achats sur Amazon', 'Courses Carrefour')",
-          nullable: false,
-        },
+        required: ["description", "price", "humanReadableDescription"],
       },
-      required: ["items", "currency", "date", "title"],
+    },
+    currency: {
+      type: Type.STRING,
+      description: "Currency of the receipt (e.g. EUR, USD, GBP, etc.)",
+      nullable: false,
+    },
+    date: {
+      type: Type.STRING,
+      description: "Date of the receipt, in the format YYYY-MM-DD.",
+      nullable: false,
+    },
+    title: {
+      type: Type.STRING,
+      description:
+        "Title of the expense (e.g. 'Dinner at the restaurant', 'Achats sur Amazon', 'Courses Carrefour')",
+      nullable: false,
     },
   },
-});
+  required: ["items", "currency", "date", "title"],
+};
 
 const parseReceipt = async (receiptBase64: string) => {
   const prompt =
     "Parse this receipt. Returns the list of items with its price and description. Also add a human readable description of the item, the title of the expense, the date of the expense and the currency of the receipt. The output should be in French.";
 
-  const image: InlineDataPart = {
-    inlineData: {
-      data: receiptBase64,
-      mimeType: "image/jpg",
+  const response = await ai.models.generateContent({
+    model: "gemini-3.5-flash-lite",
+    contents: [
+      prompt,
+      { inlineData: { data: receiptBase64, mimeType: "image/jpeg" } },
+    ],
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: receiptSchema,
     },
-  };
+  });
 
-  const result = await model.generateContent([prompt, image]);
+  if (!response.text) {
+    throw new Error("Gemini returned no text");
+  }
 
-  return JSON.parse(result.response.text());
+  return JSON.parse(response.text);
 };
 
 const app = express();
