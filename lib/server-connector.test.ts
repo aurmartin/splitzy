@@ -38,6 +38,16 @@ describe("ServerConnector.parseReceipt", () => {
     expect(receipt.total).toEqual(Money.create({ amount: 1680, currency: "USD" }));
   });
 
+  it("prices the items in the currency's minor units", async () => {
+    const response = {
+      ...receiptResponse("JPY"),
+      items: [{ description: "RAMEN", humanReadableDescription: "Ramen", price: 1500 }],
+    };
+    const receipt = await parseReceipt(response, "JPY");
+
+    expect(receipt.total).toEqual({ amount: 1500, currency: "JPY", precision: 0 });
+  });
+
   it("ignores the currency read on the receipt", async () => {
     const receipt = await parseReceipt(receiptResponse("GBP"), "EUR");
 

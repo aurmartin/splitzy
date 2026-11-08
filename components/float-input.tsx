@@ -4,10 +4,23 @@ import { TextInput, type TextInputProps } from "./text-input";
 interface FloatInputProps extends Omit<TextInputProps, "onChange" | "value"> {
   value: number;
   onChange: (value: number) => void;
+  // Digits allowed after the decimal point; any number when omitted.
+  decimals?: number;
 }
 
+const getPattern = (decimals: number | undefined): RegExp => {
+  if (decimals === undefined) return /^[0-9]*(\.[0-9]*)?$/;
+  if (decimals === 0) return /^[0-9]*$/;
+  return new RegExp(`^[0-9]*(\\.[0-9]{0,${decimals}})?$`);
+};
+
+const getPlaceholder = (decimals: number | undefined): string => {
+  if (decimals === undefined) return "0.00";
+  return decimals === 0 ? "0" : `0.${"0".repeat(decimals)}`;
+};
+
 const FloatInput = (props: FloatInputProps) => {
-  const { value, onChange, ...rest } = props;
+  const { value, onChange, decimals, ...rest } = props;
   const [text, setText] = React.useState(value.toString());
   const [prevValue, setPrevValue] = React.useState(value);
 
@@ -20,7 +33,7 @@ const FloatInput = (props: FloatInputProps) => {
   }
 
   const handleChange = (textValue: string) => {
-    if (!textValue.match(/^([0-9]{1,})?(\.)?([0-9]{1,})?$/)) {
+    if (!getPattern(decimals).test(textValue)) {
       return;
     }
 
@@ -44,7 +57,7 @@ const FloatInput = (props: FloatInputProps) => {
       value={text}
       onChangeText={handleChange}
       keyboardType="numeric"
-      placeholder="0.00"
+      placeholder={getPlaceholder(decimals)}
       {...rest}
     />
   );

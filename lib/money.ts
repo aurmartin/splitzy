@@ -1,4 +1,4 @@
-import { CURRENCIES, type Currency } from "@/lib/currency-codes";
+import { CURRENCY_MINOR_UNITS, getPrecision, type Currency } from "@/lib/currency-codes";
 
 // An amount of money in minor units (e.g. cents). Its JSON form is what is
 // stored in the database, so its shape must not change.
@@ -8,10 +8,8 @@ type Money = {
   precision: number;
 };
 
-const DEFAULT_PRECISION = 2;
-
 function create(params: { amount: number; currency: Currency; precision?: number }): Money {
-  const { amount, currency, precision = DEFAULT_PRECISION } = params;
+  const { amount, currency, precision = getPrecision(currency) } = params;
 
   if (!Number.isInteger(amount)) {
     throw new TypeError(`Amount must be an integer, got ${amount}`);
@@ -91,12 +89,13 @@ function format(money: Money, locale: string): string {
     style: "currency",
     currency: money.currency,
     currencyDisplay: "symbol",
-    minimumFractionDigits: 2,
+    minimumFractionDigits: money.precision,
+    maximumFractionDigits: money.precision,
   });
 }
 
 function isCurrency(value: string): value is Currency {
-  return (CURRENCIES as readonly string[]).includes(value);
+  return Object.hasOwn(CURRENCY_MINOR_UNITS, value);
 }
 
 const Money = {

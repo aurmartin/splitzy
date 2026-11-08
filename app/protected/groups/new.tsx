@@ -1,10 +1,14 @@
 import Button from "@/components/button";
+import { CurrencyPicker } from "@/components/currency-picker";
 import Label from "@/components/label";
 import { ListGroup } from "@/components/list-group";
 import { Screen } from "@/components/screen";
+import { Text } from "@/components/text";
 import { TextInput } from "@/components/text-input";
 import { TopBar } from "@/components/top-bar";
 import { TopBarSaveAction } from "@/components/top-bar-action";
+import { getDeviceCurrency } from "@/lib/currency";
+import { type Currency } from "@/lib/currency-codes";
 import { useAddGroup } from "@/lib/groups";
 import { ValidationError } from "@/lib/validation-error";
 import { Ionicons } from "@expo/vector-icons";
@@ -12,18 +16,17 @@ import { Stack, useRouter } from "expo-router";
 import React from "react";
 import { Alert, ScrollView, View } from "react-native";
 
-const DEFAULT_CURRENCY = "EUR";
-
 const GroupForm = () => {
   const router = useRouter();
   const addGroup = useAddGroup();
 
   const [name, setName] = React.useState("");
+  const [currency, setCurrency] = React.useState<Currency>(getDeviceCurrency);
   const [members, setMembers] = React.useState<string[]>([""]);
 
   const handleSubmit = async () => {
     try {
-      await addGroup({ name, currency: DEFAULT_CURRENCY, members });
+      await addGroup({ name, currency, members });
 
       router.navigate("/");
     } catch (error) {
@@ -61,6 +64,13 @@ const GroupForm = () => {
       <TopBar title="Créer un groupe" rightActions={<TopBarSaveAction key="create" onPress={handleSubmit} />} />
       <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false}>
         <TextInput value={name} onChangeText={setName} placeholder="Nom" />
+
+        <View style={{ marginTop: 8 }}>
+          <CurrencyPicker value={currency} onChange={setCurrency} />
+          <Text type="bodySmall" style={{ marginTop: 4, marginHorizontal: 16, color: "hsl(0 0% 40%)" }}>
+            Elle ne pourra plus être changée.
+          </Text>
+        </View>
 
         <Label style={{ marginTop: 16 }}>Membres</Label>
         <ListGroup>

@@ -1,9 +1,8 @@
+import { getPrecision } from "@/lib/currency-codes";
 import { Money, type Currency } from "@/lib/money";
+import { getLocales } from "expo-localization";
 
-const MINOR_UNIT_FACTOR: Partial<Record<Currency, number>> = {
-  EUR: 100,
-  USD: 100,
-};
+const DEFAULT_CURRENCY: Currency = "EUR";
 
 const getAmountColor = (amount: Money): string => {
   if (amount.amount > 0) return "hsl(120 70% 30%)";
@@ -22,20 +21,13 @@ const getBalanceMessage = (amount: Money): string => {
 };
 
 const getMinorUnitAmount = (amount: number, currency: Currency): number => {
-  const factor = MINOR_UNIT_FACTOR[currency];
-  if (!factor) {
-    throw new Error(`Unsupported currency: ${currency}`);
-  }
   // Floats like 1.1 * 100 are not exact (110.00000000000001)
-  return Math.round(amount * factor);
+  return Math.round(amount * 10 ** getPrecision(currency));
 };
 
-const getMajorUnitAmount = (amount: number, currency: Currency): number => {
-  const factor = MINOR_UNIT_FACTOR[currency];
-  if (!factor) {
-    throw new Error(`Unsupported currency: ${currency}`);
-  }
-  return amount / factor;
+const getDeviceCurrency = (): Currency => {
+  const code = getLocales()[0]?.currencyCode;
+  return code && Money.isCurrency(code) ? code : DEFAULT_CURRENCY;
 };
 
-export { getAmountColor, getAbsoluteAmount, getBalanceMessage, getMinorUnitAmount, getMajorUnitAmount };
+export { getAmountColor, getAbsoluteAmount, getBalanceMessage, getMinorUnitAmount, getDeviceCurrency };

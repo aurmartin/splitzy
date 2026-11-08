@@ -1,5 +1,12 @@
 import { Money } from "@/lib/money";
-import { getAmountColor, getAbsoluteAmount, getBalanceMessage, getMinorUnitAmount } from "./currency";
+import * as Localization from "expo-localization";
+import {
+  getAbsoluteAmount,
+  getAmountColor,
+  getBalanceMessage,
+  getDeviceCurrency,
+  getMinorUnitAmount,
+} from "./currency";
 
 describe("getAmountColor", () => {
   it("should return green for positive amounts", () => {
@@ -60,5 +67,29 @@ describe("getMinorUnitAmount", () => {
   it("should round float imprecision to an integer", () => {
     expect(getMinorUnitAmount(1.1, "EUR")).toBe(110);
     expect(getMinorUnitAmount(0.29, "EUR")).toBe(29);
+  });
+
+  it("should follow the number of decimals of the currency", () => {
+    expect(getMinorUnitAmount(1500, "JPY")).toBe(1500);
+    expect(getMinorUnitAmount(1500.4, "JPY")).toBe(1500);
+    expect(getMinorUnitAmount(1.234, "KWD")).toBe(1234);
+  });
+});
+
+describe("getDeviceCurrency", () => {
+  it("should use the currency of the device's region", () => {
+    expect(getDeviceCurrency()).toBe("USD");
+  });
+
+  it("should fall back to EUR when the device has no known currency", () => {
+    const [locale] = Localization.getLocales();
+    const getLocales = jest.spyOn(Localization, "getLocales");
+    getLocales.mockReturnValue([{ ...locale, currencyCode: null }]);
+    expect(getDeviceCurrency()).toBe("EUR");
+
+    getLocales.mockReturnValue([{ ...locale, currencyCode: "XAU" }]);
+    expect(getDeviceCurrency()).toBe("EUR");
+
+    getLocales.mockRestore();
   });
 });

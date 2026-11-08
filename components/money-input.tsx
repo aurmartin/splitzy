@@ -2,6 +2,7 @@ import { Money } from "@/lib/money";
 import React from "react";
 import { FloatInput, type FloatInputProps } from "./float-input";
 import { getMinorUnitAmount } from "@/lib/currency";
+import { getPrecision } from "@/lib/currency-codes";
 
 interface MoneyInputProps extends Omit<FloatInputProps, "value" | "onChange"> {
   value: Money;
@@ -25,7 +26,9 @@ const MoneyInput = (props: MoneyInputProps) => {
     [onChangeProp, value],
   );
 
-  return <FloatInput value={Money.toUnit(value)} onChange={onChange} {...rest} />;
+  return (
+    <FloatInput value={Money.toUnit(value)} onChange={onChange} decimals={getPrecision(value.currency)} {...rest} />
+  );
 };
 
 export { MoneyInput, type MoneyInputProps };

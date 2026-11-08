@@ -44,4 +44,21 @@ describe("MoneyInput", () => {
 
     expect(mockOnChange).toHaveLastReturnedWith(110);
   });
+
+  it("refuses decimals in a currency that has none", async () => {
+    const user = userEvent.setup();
+
+    const mockOnChange = jest.fn((value: Money) => value);
+    const value = Money.create({ amount: 0, currency: "JPY" });
+
+    await render(<MoneyInput label="test-input" value={value} onChange={mockOnChange} />);
+
+    const input = screen.getByLabelText("test-input");
+
+    await user.clear(input);
+    await user.type(input, "1500.");
+
+    expect(mockOnChange).toHaveLastReturnedWith({ amount: 1500, currency: "JPY", precision: 0 });
+    expect(input.props.value).toBe("1500");
+  });
 });

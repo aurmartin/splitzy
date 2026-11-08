@@ -3,8 +3,10 @@ import { Money } from "./money";
 const eur = (amount: number) => Money.create({ amount, currency: "EUR" });
 
 describe("Money.create", () => {
-  it("should default to a precision of 2", () => {
+  it("should default to the precision of the currency", () => {
     expect(eur(1000)).toEqual({ amount: 1000, currency: "EUR", precision: 2 });
+    expect(Money.create({ amount: 1500, currency: "JPY" }).precision).toBe(0);
+    expect(Money.create({ amount: 1234, currency: "KWD" }).precision).toBe(3);
   });
 
   it("should serialize to the stored JSON shape", () => {
@@ -79,11 +81,22 @@ describe("Money.format", () => {
     expect(Money.format(eur(-1000), "en")).toBe("-€10.00");
     expect(Money.format(eur(5), "en")).toBe("€0.05");
   });
+
+  it("should show as many decimals as the currency has", () => {
+    expect(Money.format(Money.create({ amount: 1500, currency: "JPY" }), "en")).toBe("¥1,500");
+    expect(Money.format(Money.create({ amount: 1234, currency: "KWD" }), "en")).toBe("KWD\u00a01.234");
+  });
 });
 
 describe("Money.isCurrency", () => {
   it("should only accept known currency codes", () => {
     expect(Money.isCurrency("EUR")).toBe(true);
     expect(Money.isCurrency("NOPE")).toBe(false);
+    expect(Money.isCurrency("XAU")).toBe(false);
+  });
+
+  it("should only accept codes that ISO still lists", () => {
+    expect(["HRK", "SLL", "ZWL", "ANG"].filter(Money.isCurrency)).toEqual([]);
+    expect(["SLE", "ZWG", "XCG"].every(Money.isCurrency)).toBe(true);
   });
 });

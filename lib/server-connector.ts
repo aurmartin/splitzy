@@ -1,3 +1,4 @@
+import { getMinorUnitAmount } from "@/lib/currency";
 import { Env } from "@/lib/env";
 import type { Receipt } from "@/lib/expenses";
 import type { System } from "@/lib/system";
@@ -56,7 +57,7 @@ class ServerConnector {
     const items: Receipt["items"] = response.items.map((item) => ({
       description: item.description,
       humanReadableDescription: item.humanReadableDescription,
-      price: Money.create({ amount: Math.round(item.price * 100), currency }),
+      price: Money.create({ amount: getMinorUnitAmount(item.price, currency), currency }),
       paid_for: [],
     }));
 
