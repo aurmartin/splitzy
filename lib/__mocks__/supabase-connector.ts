@@ -56,4 +56,8 @@ jest.spyOn(SupabaseConnector.prototype, "setSession").mockResolvedValue({
   error: null,
 });
 
+jest.spyOn(SupabaseConnector.prototype, "startRealtime").mockImplementation(() => {});
+
+jest.spyOn(SupabaseConnector.prototype, "stopRealtime").mockResolvedValue();
+
 export { SupabaseConnector };

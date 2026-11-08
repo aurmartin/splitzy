@@ -292,3 +292,32 @@ describe("realtime updates", () => {
     });
   });
 });
+
+describe("realtime deletes", () => {
+  it("ignores deletes of rows that aren't stored locally", async () => {
+    await system.syncEngine.init();
+
+    const localExpense = buildExpenseRecord(group);
+    await system.db.insert(tables.expenses).values(localExpense);
+
+    const listener = jest.fn();
+    const unwatch = system.syncEngine.watchTable(tables.expenses, listener);
+
+    const unknownExpense = buildExpenseRecord(group);
+    system.supabaseConnector.handleRealtimeMessage(
+      "expenses",
+      buildRealtimeMessage("DELETE", "expenses", unknownExpense),
+    );
+    system.supabaseConnector.handleRealtimeMessage(
+      "expenses",
+      buildRealtimeMessage("DELETE", "expenses", localExpense),
+    );
+
+    await waitFor(() => {
+      expect(system.db.select().from(tables.expenses).all()).toEqual([]);
+    });
+    expect(listener).toHaveBeenCalledTimes(1);
+
+    unwatch();
+  });
+});

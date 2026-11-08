@@ -115,8 +115,8 @@ export class System {
     }
   }
 
-  dispose() {
-    this.syncEngine.dispose();
+  async dispose() {
+    await this.syncEngine.dispose();
   }
 
   async init() {

@@ -8,6 +8,7 @@ import { tables } from "./db/schema";
 import { Env } from "./env";
 import type { OperationType, RemoteOperation } from "./operation";
 import { System } from "./system";
+import { createLogger } from "./utils";
 
 const storageKey = "supabase.auth.token";
 
@@ -16,9 +17,14 @@ const SELECT_PAGE_SIZE = 1000;
 type TableName = Exclude<keyof typeof tables, "syncQueue">;
 type RealtimeEventListener = (operation: RemoteOperation) => void;
 
+const logger = createLogger("SupabaseConnector");
+
 export class SupabaseConnector {
   private client: SupabaseClient;
   private realtimeEventListeners: Record<TableName, RealtimeEventListener[]>;
+  private authSubscription: { unsubscribe: () => void } | undefined;
+  private realtimeAccessToken: string | undefined;
+  private realtimeUpdate: Promise<void> = Promise.resolve();
 
   constructor(protected system: System) {
     this.client = createClient(Env.SUPABASE_URL, Env.SUPABASE_ANON_KEY, {
@@ -33,8 +39,56 @@ export class SupabaseConnector {
       groups: [],
       expenses: [],
     };
+  }
 
-    this.realtimeSubscribe();
+  // Channels joined while the stored session loads stay anon: https://github.com/supabase/supabase-js/issues/1730
+  startRealtime() {
+    if (this.authSubscription) {
+      return;
+    }
+
+    const { data } = this.client.auth.onAuthStateChange((_event, session) => {
+      this.followAccessToken(session?.access_token);
+    });
+    this.authSubscription = data.subscription;
+  }
+
+  async stopRealtime() {
+    this.authSubscription?.unsubscribe();
+    this.authSubscription = undefined;
+    this.followAccessToken(undefined);
+    await this.realtimeUpdate;
+  }
+
+  private followAccessToken(accessToken: string | undefined) {
+    if (accessToken === this.realtimeAccessToken) {
+      return;
+    }
+
+    this.realtimeAccessToken = accessToken;
+    this.realtimeUpdate = this.realtimeUpdate
+      .then(async () => {
+        if (accessToken !== this.realtimeAccessToken) {
+          return;
+        }
+
+        if (!accessToken) {
+          await this.client.removeAllChannels();
+          return;
+        }
+
+        await this.client.realtime.setAuth(accessToken);
+
+        if (this.client.getChannels().length === 0) {
+          this.realtimeSubscribe();
+        }
+      })
+      .catch((error) => {
+        if (accessToken === this.realtimeAccessToken) {
+          this.realtimeAccessToken = undefined;
+        }
+        logger.error("Error updating realtime channels", error);
+      });
   }
 
   private realtimeSubscribe() {
@@ -87,10 +141,6 @@ export class SupabaseConnector {
     this.realtimeEventListeners[table].push(listener);
   }
 
-  removeAllChannels() {
-    return this.client.removeAllChannels();
-  }
-
   hasLocalSession() {
     const maybeSession = this.system.kvStorage.getItem(storageKey);
 
@@ -127,12 +177,15 @@ export class SupabaseConnector {
     return this.client.from(table).select().eq("id", id).single();
   }
 
-  async selectAll(table: string): Promise<{ data: any[]; error: null } | { data: null; error: PostgrestError }> {
+  async selectAll(
+    table: string,
+    pageSize = SELECT_PAGE_SIZE,
+  ): Promise<{ data: any[]; error: null } | { data: null; error: PostgrestError }> {
     const rows: any[] = [];
     let lastId: string | undefined;
 
     while (true) {
-      let query = this.client.from(table).select().order("id").limit(SELECT_PAGE_SIZE);
+      let query = this.client.from(table).select().order("id").limit(pageSize);
       if (lastId !== undefined) {
         query = query.gt("id", lastId);
       }

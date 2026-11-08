@@ -33,6 +33,17 @@ class SyncEngine {
   constructor(supabaseConnector: SupabaseConnector, db: Database) {
     this.supabaseConnector = supabaseConnector;
     this.db = db;
+
+    for (const table of ["groups", "expenses"] as const) {
+      this.supabaseConnector.addRealtimeEventListener(table, async (remoteOperation) => {
+        try {
+          await this.handleRemoteOperation(remoteOperation);
+        } catch (error) {
+          Sentry.captureException(error, { level: "error" });
+          logger.error("Error handling remote operation", remoteOperation, error);
+        }
+      });
+    }
   }
 
   async init() {
@@ -46,28 +57,19 @@ class SyncEngine {
 
     await this.syncAllTablesFromRemote();
 
-    for (const table of ["groups", "expenses"] as const) {
-      this.supabaseConnector.addRealtimeEventListener(table, async (remoteOperation) => {
-        try {
-          await this.handleRemoteOperation(remoteOperation);
-        } catch (error) {
-          Sentry.captureException(error, { level: "error" });
-          logger.error("Error handling remote operation", remoteOperation, error);
-        }
-      });
-    }
+    this.supabaseConnector.startRealtime();
 
     logger.info("Sync engine initialized");
   }
 
-  dispose() {
+  async dispose() {
     if (this.processQueueInterval) {
       logger.info("Clearing process queue interval");
       clearInterval(this.processQueueInterval);
       this.processQueueInterval = undefined;
     }
 
-    this.supabaseConnector.removeAllChannels();
+    await this.supabaseConnector.stopRealtime();
   }
 
   async syncAllTablesFromRemote() {
@@ -114,7 +116,11 @@ class SyncEngine {
         break;
 
       case "delete":
-        await this.db.delete(table).where(eq(table.id, remoteOperation.entityId));
+        const deleted = await this.db.delete(table).where(eq(table.id, remoteOperation.entityId)).returning();
+
+        if (deleted.length === 0) {
+          return;
+        }
         break;
     }
 

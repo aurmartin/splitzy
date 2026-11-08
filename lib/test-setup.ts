@@ -12,8 +12,8 @@ beforeAll(async () => {
   await system.initializeMigrations();
 });
 
-afterAll(() => {
-  system.dispose();
+afterAll(async () => {
+  await system.dispose();
 });
 
 export { system };
