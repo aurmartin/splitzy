@@ -44,11 +44,11 @@ describe("GroupSettingsScreen", () => {
     const user = userEvent.setup();
     await renderSettings();
 
-    await user.clear(screen.getByLabelText("Nom du groupe"));
-    await user.type(screen.getByLabelText("Nom du groupe"), "Road trip");
-    await user.press(screen.getByText("Ajouter un membre"));
-    await user.type(screen.getByLabelText("Nouveau membre"), "Charlie");
-    await user.press(screen.getByLabelText("Enregistrer"));
+    await user.clear(screen.getByLabelText("Group name"));
+    await user.type(screen.getByLabelText("Group name"), "Road trip");
+    await user.press(screen.getByText("Add a member"));
+    await user.type(screen.getByLabelText("New member"), "Charlie");
+    await user.press(screen.getByLabelText("Save"));
 
     const group = getGroupRow(system, groupId)!;
     expect(group.name).toBe("Road trip");
@@ -59,9 +59,9 @@ describe("GroupSettingsScreen", () => {
     const user = userEvent.setup();
     await renderSettings();
 
-    await user.press(screen.getByLabelText("Retirer Bob"));
+    await user.press(screen.getByLabelText("Remove Bob"));
     expect(screen.queryByText("Bob")).toBeNull();
-    await user.press(screen.getByLabelText("Enregistrer"));
+    await user.press(screen.getByLabelText("Save"));
 
     expect(getGroupRow(system, groupId)!.members).toEqual(["Alice"]);
   });
@@ -71,11 +71,11 @@ describe("GroupSettingsScreen", () => {
     const user = userEvent.setup();
     await renderSettings();
 
-    await user.press(screen.getByLabelText("Retirer Bob"));
+    await user.press(screen.getByLabelText("Remove Bob"));
 
     expect(alert).toHaveBeenCalledWith(
-      "Impossible de retirer ce membre",
-      "Bob apparaît dans des dépenses du groupe. Supprimez-les d'abord.",
+      "Can't remove this member",
+      "Bob appears in the group's expenses. Delete them first.",
     );
     screen.getByText("Bob");
   });
@@ -84,53 +84,53 @@ describe("GroupSettingsScreen", () => {
     const user = userEvent.setup();
     await renderSettings();
 
-    screen.getByText("Alice (moi)");
-    await user.press(screen.getByLabelText("Retirer Alice"));
+    screen.getByText("Alice (me)");
+    await user.press(screen.getByLabelText("Remove Alice"));
 
-    expect(alert).toHaveBeenCalledWith("Impossible de retirer ce membre", expect.stringContaining("Quittez le groupe"));
-    screen.getByText("Alice (moi)");
+    expect(alert).toHaveBeenCalledWith("Can't remove this member", expect.stringContaining("Leave the group"));
+    screen.getByText("Alice (me)");
   });
 
   it("shows why a save is refused", async () => {
     const user = userEvent.setup();
     await renderSettings();
 
-    await user.press(screen.getByText("Ajouter un membre"));
-    await user.type(screen.getByLabelText("Nouveau membre"), "alice");
-    await user.press(screen.getByLabelText("Enregistrer"));
+    await user.press(screen.getByText("Add a member"));
+    await user.type(screen.getByLabelText("New member"), "alice");
+    await user.press(screen.getByLabelText("Save"));
 
-    expect(alert).toHaveBeenCalledWith("Les membres sont invalides", "alice fait déjà partie du groupe");
+    expect(alert).toHaveBeenCalledWith("Invalid members", "alice is already in the group");
     expect(getGroupRow(system, groupId)!.members).toEqual(["Alice", "Bob"]);
   });
 
   it("deletes the group once confirmed", async () => {
-    answerAlert("Supprimer");
+    answerAlert("Delete");
     const user = userEvent.setup();
     await renderSettings();
 
-    await user.press(screen.getByText("Supprimer le groupe"));
+    await user.press(screen.getByText("Delete the group"));
 
     await screen.findByText("Group list");
     expect(getGroupRow(system, groupId)!.deletedAt).toBeInstanceOf(Date);
   });
 
   it("keeps the group when the deletion is cancelled", async () => {
-    answerAlert("Annuler");
+    answerAlert("Cancel");
     const user = userEvent.setup();
     await renderSettings();
 
-    await user.press(screen.getByText("Supprimer le groupe"));
+    await user.press(screen.getByText("Delete the group"));
 
-    screen.getByText("Supprimer le groupe");
+    screen.getByText("Delete the group");
     expect(getGroupRow(system, groupId)!.deletedAt).toBeUndefined();
   });
 
   it("leaves the group once confirmed", async () => {
-    answerAlert("Quitter");
+    answerAlert("Leave");
     const user = userEvent.setup();
     await renderSettings();
 
-    await user.press(screen.getByText("Quitter le groupe"));
+    await user.press(screen.getByText("Leave the group"));
 
     await screen.findByText("Group list");
     expect(system.supabaseConnector.leaveGroup).toHaveBeenCalledWith(groupId);
@@ -138,16 +138,16 @@ describe("GroupSettingsScreen", () => {
   });
 
   it("stays on the screen when leaving fails", async () => {
-    answerAlert("Quitter");
+    answerAlert("Leave");
     (system.supabaseConnector.leaveGroup as jest.Mock).mockResolvedValueOnce({
       error: { message: "Network request failed" },
     });
     const user = userEvent.setup();
     await renderSettings();
 
-    await user.press(screen.getByText("Quitter le groupe"));
+    await user.press(screen.getByText("Leave the group"));
 
-    await screen.findByText("Impossible de quitter le groupe. Vérifiez votre connexion.");
+    await screen.findByText("Couldn't leave the group. Check your connection.");
     expect(getGroupRow(system, groupId)).toBeDefined();
     expect(getMe(system, groupId)).toBe("Alice");
   });

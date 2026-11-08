@@ -7,6 +7,7 @@ import { useSystem } from "@/components/system-provider";
 import { Colors } from "@/lib/constants";
 import { useRouter } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
 type PromiseState = {
@@ -31,6 +32,7 @@ function promiseStateReducer(_state: PromiseState, action: Action) {
 export default function LoginScreen() {
   const router = useRouter();
   const system = useSystem();
+  const { t } = useTranslation();
 
   const [email, setEmail] = React.useState("");
   const [state, dispatch] = React.useReducer(promiseStateReducer, {
@@ -57,52 +59,49 @@ export default function LoginScreen() {
 
       dispatch({
         type: "success",
-        payload: "Vérifiez votre e-mail pour un lien magique de connexion.",
+        payload: t("login.checkEmail"),
       });
     } catch (error: any) {
       console.error("Error in signInWithEmail", error);
 
       dispatch({
         type: "error",
-        payload: error?.message || "Une erreur est survenue",
+        payload: error?.message || t("common.error"),
       });
     }
-  }, [dispatch, system.supabaseConnector, email]);
+  }, [dispatch, system.supabaseConnector, email, t]);
 
   if (state.loading) {
-    return <LoadingScreen message="Connexion en cours..." />;
+    return <LoadingScreen message={t("login.loading")} />;
   }
 
   return (
     <Screen>
       <View style={styles.container}>
         <Text type="displayLarge" style={{ textAlign: "center", marginBottom: 32, marginTop: 32 }}>
-          Bienvenue !
+          {t("login.welcome")}
         </Text>
 
-        <Text type="headlineMedium">Connectez-vous ou créez un compte</Text>
+        <Text type="headlineMedium">{t("login.title")}</Text>
 
         {state.error && <Text style={{ color: Colors.red }}>{state.error}</Text>}
 
         {state.success && <Text style={{ color: Colors.green }}>{state.success}</Text>}
 
-        <Text>
-          Saisissez votre adresse e-mail ci-dessous. Si vous n&apos;avez pas encore de compte, nous en créerons
-          automatiquement un pour vous lors de votre première connexion !
-        </Text>
+        <Text>{t("login.description")}</Text>
 
         <TextInput
           autoComplete="email"
           keyboardType="email-address"
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="E-mail"
+          placeholder={t("login.email")}
           value={email}
           onChangeText={setEmail}
         />
 
-        <Button onPress={signInWithEmail} accessibilityLabel="Connexion">
-          Se connecter ou créer un compte
+        <Button onPress={signInWithEmail} accessibilityLabel={t("login.submitLabel")}>
+          {t("login.submit")}
         </Button>
       </View>
     </Screen>

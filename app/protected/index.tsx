@@ -10,10 +10,12 @@ import { Group, useGroups } from "@/lib/groups";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { FlatList } from "react-native";
 
 const GroupListItem = ({ group }: { group: Group }) => {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const handlePress = React.useCallback(() => {
     router.push(`/protected/groups/${group.id}`);
@@ -22,7 +24,7 @@ const GroupListItem = ({ group }: { group: Group }) => {
   return (
     <Card key={group.id} onPress={handlePress}>
       <Text type="title">{group.name}</Text>
-      <Text style={{ color: "#888" }}>{group.members.join(", ") || "(no members)"}</Text>
+      <Text style={{ color: "#888" }}>{group.members.join(", ") || t("groups.noMembers")}</Text>
     </Card>
   );
 };
@@ -32,6 +34,7 @@ const Groups = React.memo(function Groups() {
   const system = useSystem();
   const [refreshing, setRefreshing] = React.useState(false);
   const snackBar = useSnackBar();
+  const { t } = useTranslation();
 
   const renderItem = React.useCallback(({ item }: { item: Group }) => <GroupListItem group={item} />, []);
 
@@ -41,11 +44,11 @@ const Groups = React.memo(function Groups() {
     try {
       await system.syncEngine.syncTableFromRemote(tables.groups);
     } catch {
-      snackBar.show("Une erreur est survenue lors de la synchronisation des groupes.", "error");
+      snackBar.show(t("groups.syncError"), "error");
     } finally {
       setRefreshing(false);
     }
-  }, [system, snackBar]);
+  }, [system, snackBar, t]);
 
   return (
     <FlatList
@@ -55,11 +58,7 @@ const Groups = React.memo(function Groups() {
       refreshing={refreshing}
       contentContainerStyle={{ gap: 8 }}
       renderItem={renderItem}
-      ListEmptyComponent={
-        <Text style={{ textAlign: "center", marginVertical: 64 }}>
-          Aucun groupe trouvé. Créez-en un en utilisant le bouton &apos;+&apos; !
-        </Text>
-      }
+      ListEmptyComponent={<Text style={{ textAlign: "center", marginVertical: 64 }}>{t("groups.empty")}</Text>}
       showsVerticalScrollIndicator={false}
     />
   );

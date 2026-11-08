@@ -8,12 +8,14 @@ import { type Expense, ExpenseService, ReimbursementService, useExpense } from "
 import { Group, useGroup } from "@/lib/groups";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const EditExpenseForm = (props: { group: Group; expense: Expense; onDelete?: () => void }) => {
   const { group, expense, onDelete } = props;
 
   const snackBar = useSnackBar();
   const system = useSystem();
+  const { t } = useTranslation();
 
   const onSubmit = async (fields: ExpenseFormFields) => {
     try {
@@ -24,7 +26,7 @@ const EditExpenseForm = (props: { group: Group; expense: Expense; onDelete?: () 
 
       await ExpenseService.updateExpense(system, expense.id, params);
 
-      snackBar.show("Dépense modifiée avec succès", "success");
+      snackBar.show(t("expense.updated"), "success");
 
       router.back();
     } catch (error) {
@@ -32,7 +34,7 @@ const EditExpenseForm = (props: { group: Group; expense: Expense; onDelete?: () 
       if (error instanceof DisplayableError) {
         snackBar.show(error.message, "error");
       } else {
-        snackBar.show("Une erreur est survenue", "error");
+        snackBar.show(t("common.error"), "error");
       }
     }
   };
@@ -46,13 +48,14 @@ export default function EditExpenseScreen() {
   const group = useGroup(groupId);
   const expense = useExpense(expenseId);
   const system = useSystem();
+  const { t } = useTranslation();
 
   if (!group) {
     throw new Error("Group not found");
   }
 
   if (!expense) {
-    return <LoadingScreen message="Chargement en cours..." />;
+    return <LoadingScreen message={t("common.loading")} />;
   }
 
   // Reimbursements cannot be edited.

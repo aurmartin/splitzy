@@ -1,0 +1,150 @@
+{
+  "common": {
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "error": "Une erreur est survenue",
+    "loading": "Chargement en cours...",
+    "name": "Nom",
+    "members": "Membres",
+    "newMember": "Nouveau membre",
+    "addMember": "Ajouter un membre",
+    "currency": "Devise"
+  },
+  "errorBoundary": {
+    "title": "Oops, une erreur est survenue...",
+    "back": "Retour"
+  },
+  "notFound": {
+    "title": "Oups !",
+    "message": "Cet écran n'existe pas.",
+    "home": "Retour à l'accueil !"
+  },
+  "login": {
+    "welcome": "Bienvenue !",
+    "title": "Connectez-vous ou créez un compte",
+    "description": "Saisissez votre adresse e-mail ci-dessous. Si vous n'avez pas encore de compte, nous en créerons automatiquement un pour vous lors de votre première connexion !",
+    "email": "E-mail",
+    "submit": "Se connecter ou créer un compte",
+    "submitLabel": "Connexion",
+    "checkEmail": "Vérifiez votre e-mail pour un lien magique de connexion.",
+    "loading": "Connexion en cours..."
+  },
+  "groups": {
+    "empty": "Aucun groupe trouvé. Créez-en un en utilisant le bouton '+' !",
+    "noMembers": "(aucun membre)",
+    "syncError": "Une erreur est survenue lors de la synchronisation des groupes.",
+    "importing": "Importation du groupe..."
+  },
+  "newGroup": {
+    "title": "Créer un groupe",
+    "screenTitle": "Nouveau groupe",
+    "currencyHint": "Elle ne pourra plus être changée."
+  },
+  "group": {
+    "share": "Partager",
+    "settings": "Paramètres du groupe",
+    "reimbursements": "Remboursements",
+    "noExpenses": "Aucune dépense",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "syncError": "Une erreur est survenue lors de la synchronisation des dépenses.",
+    "inviteTitle": "Rejoins le groupe \"{{name}}\" sur Splitzy !",
+    "inviteMessage": "Hey ! Je t'invite à rejoindre mon groupe \"{{name}}\" sur Splitzy pour gérer nos dépenses partagées. Clique sur ce lien pour nous rejoindre !\n\n{{link}}",
+    "owed": "On vous doit",
+    "owe": "Vous devez",
+    "settled": "Vous êtes à jour"
+  },
+  "setMe": {
+    "welcome": "Bienvenue dans le groupe {{name}} ! 👋",
+    "prompt": "Dites-nous qui vous êtes dans ce groupe :"
+  },
+  "groupSettings": {
+    "title": "Paramètres du groupe",
+    "nameLabel": "Nom du groupe",
+    "memberMe": "{{member}} (moi)",
+    "removeMember": "Retirer {{member}}",
+    "cancelAdd": "Annuler l'ajout",
+    "updated": "Groupe modifié",
+    "leave": "Quitter le groupe",
+    "leaveTitle": "Quitter le groupe ?",
+    "leaveMessage": "Le groupe et ses dépenses seront retirés de cet appareil. Les autres membres les gardent, et un lien d'invitation permet de revenir.",
+    "leaveConfirm": "Quitter",
+    "left": "Vous avez quitté le groupe",
+    "leaveError": "Impossible de quitter le groupe. Vérifiez votre connexion.",
+    "delete": "Supprimer le groupe",
+    "deleteTitle": "Supprimer le groupe ?",
+    "deleteMessage": "Le groupe et toutes ses dépenses seront supprimés pour tous les membres.",
+    "deleted": "Groupe supprimé"
+  },
+  "balance": {
+    "owed": "On vous doit",
+    "owe": "Vous devez",
+    "settled": "Vous êtes à jour",
+    "title": "Balance",
+    "reimbursements": "Remboursements",
+    "allSettled": "Tout le monde est à jour !",
+    "owes": "{{from}} <muted>doit à</muted> {{to}}",
+    "paidBack": "{{payer}} <muted>a remboursé</muted> {{recipient}}",
+    "recent": "Derniers remboursements",
+    "markSettled": "Marquer comme réglé",
+    "confirmTitle": "Marquer comme réglé ?",
+    "confirmMessage": "{{from}} a remboursé {{amount}} à {{to}}.",
+    "saved": "Remboursement enregistré"
+  },
+  "expense": {
+    "createTitle": "Créer une dépense",
+    "editTitle": "Modifier la dépense",
+    "created": "Dépense créée avec succès",
+    "updated": "Dépense modifiée avec succès",
+    "deleted": "Dépense supprimée",
+    "paidByOn": "Payé par {{payer}} le {{date}}",
+    "split": "Répartition",
+    "receipt": "Ticket de caisse",
+    "uploadReceipt": "Télécharger un reçu",
+    "processingReceipt": "Traitement du reçu en cours...",
+    "receiptError": "Une erreur est survenue lors du téléchargement du reçu",
+    "takePhoto": "Prendre une photo",
+    "choosePhoto": "Choisir une photo",
+    "cameraDenied": "Veuillez autoriser l'accès à la caméra",
+    "photosDenied": "Veuillez autoriser l'accès à la bibliothèque de photos",
+    "titleLabel": "Titre",
+    "amountLabel": "Montant",
+    "paidBy": "Payé par"
+  },
+  "split": {
+    "label": "Partager la dépense",
+    "equal": "Également",
+    "percentage": "Pourcentage",
+    "amount": "Montant"
+  },
+  "reimbursement": {
+    "title": "Remboursement {{amount}}",
+    "summary": "{{payer}} a remboursé {{recipient}}",
+    "summaryOn": "{{payer}} a remboursé {{recipient}} le {{date}}",
+    "deleteTitle": "Supprimer ce remboursement ?",
+    "deleteMessage": "La balance sera recalculée.",
+    "deleted": "Remboursement supprimé"
+  },
+  "validation": {
+    "invalidName": "Le nom est invalide",
+    "enterName": "Veuillez entrer un nom",
+    "invalidMembers": "Les membres sont invalides",
+    "enterMember": "Veuillez entrer au moins un membre",
+    "duplicateMember": "{{member}} fait déjà partie du groupe",
+    "cannotRemoveMember": "Impossible de retirer ce membre",
+    "cannotRemoveSelf": "Vous ne pouvez pas vous retirer vous-même. Quittez le groupe à la place.",
+    "memberInExpenses": "{{member}} apparaît dans des dépenses du groupe. Supprimez-les d'abord.",
+    "invalidTitle": "Le titre est invalide",
+    "enterTitle": "Veuillez entrer un titre",
+    "invalidMember": "Le membre est invalide",
+    "selectMember": "Veuillez sélectionner un membre",
+    "selectTwoMembers": "Veuillez sélectionner deux membres",
+    "chooseDifferentMembers": "Choisissez deux membres différents",
+    "invalidAmount": "Le montant est invalide",
+    "enterAmount": "Veuillez entrer un montant",
+    "invalidSplit": "Le partage est invalide",
+    "splitMismatch": "La somme des montants ne correspond pas au total"
+  }
+}

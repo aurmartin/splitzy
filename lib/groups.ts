@@ -1,5 +1,6 @@
 import { useSystem } from "@/components/system-provider";
 import { DisplayableError } from "@/lib/displayable-error";
+import { i18n } from "@/lib/i18n";
 import { ValidationError } from "@/lib/validation-error";
 import { GroupRecord, groupsTable } from "@/lib/db/schema";
 import { ExpenseService, ExpensesRepository, type Expense } from "@/lib/expenses";
@@ -87,11 +88,11 @@ const checkGroupCreateParams = (params: GroupCreateParams) => {
   params.members = params.members.filter((member) => member.length > 0);
 
   if (params.name.length === 0) {
-    errors.name = "Veuillez entrer un nom";
+    errors.name = i18n.t("validation.enterName");
   }
 
   if (params.members.length === 0) {
-    errors.members = "Veuillez entrer au moins un membre";
+    errors.members = i18n.t("validation.enterMember");
   }
 
   if (Object.keys(errors).length > 0) {
@@ -211,34 +212,34 @@ const validateGroupUpdateParams = (system: System, group: Group, params: GroupUp
   const members = params.members.map((member) => member.trim()).filter((member) => member.length > 0);
 
   if (name.length === 0) {
-    throw new DisplayableError("Le nom est invalide", "Veuillez entrer un nom");
+    throw new DisplayableError(i18n.t("validation.invalidName"), i18n.t("validation.enterName"));
   }
 
   if (members.length === 0) {
-    throw new DisplayableError("Les membres sont invalides", "Veuillez entrer au moins un membre");
+    throw new DisplayableError(i18n.t("validation.invalidMembers"), i18n.t("validation.enterMember"));
   }
 
   const duplicate = members.find((member, index) => members.slice(0, index).some((other) => sameName(member, other)));
   if (duplicate) {
-    throw new DisplayableError("Les membres sont invalides", `${duplicate} fait déjà partie du groupe`);
+    throw new DisplayableError(
+      i18n.t("validation.invalidMembers"),
+      i18n.t("validation.duplicateMember", { member: duplicate }),
+    );
   }
 
   const removed = group.members.filter((member) => !members.includes(member));
   const me = getMe(system, group.id);
 
   if (me && removed.includes(me)) {
-    throw new DisplayableError(
-      "Impossible de retirer ce membre",
-      "Vous ne pouvez pas vous retirer vous-même. Quittez le groupe à la place.",
-    );
+    throw new DisplayableError(i18n.t("validation.cannotRemoveMember"), i18n.t("validation.cannotRemoveSelf"));
   }
 
   const membersInExpenses = getMembersInExpenses(ExpensesRepository.getGroupExpenses(system, group.id));
   const used = removed.find((member) => membersInExpenses.has(member));
   if (used) {
     throw new DisplayableError(
-      "Impossible de retirer ce membre",
-      `${used} apparaît dans des dépenses du groupe. Supprimez-les d'abord.`,
+      i18n.t("validation.cannotRemoveMember"),
+      i18n.t("validation.memberInExpenses", { member: used }),
     );
   }
 

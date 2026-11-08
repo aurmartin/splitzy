@@ -24,6 +24,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     config: {
       usesNonExemptEncryption: false, // Avoid the export compliance warning on the app store
     },
+    infoPlist: {
+      CFBundleAllowMixedLocalizations: true,
+    },
+  },
+  // Translations of the native strings (permission prompts). English ones are set by the plugins below.
+  locales: {
+    fr: "./lib/i18n/native/fr.json",
   },
   android: {
     adaptiveIcon: {
@@ -48,7 +55,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         backgroundColor: "#F7F3ED",
       },
     ],
-    "expo-localization",
+    ["expo-localization", { supportedLocales: ["en", "fr"] }],
     "expo-sqlite",
     [
       "@sentry/react-native/expo",
@@ -62,6 +69,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "expo-image-picker",
       {
         photosPermission: "The app accesses your photos to scan receipts.",
+        cameraPermission: "The app accesses your camera to scan receipts.",
       },
     ],
   ],

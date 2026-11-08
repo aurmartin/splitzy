@@ -50,15 +50,15 @@ const renderBalance = () =>
 
 describe("BalanceScreen", () => {
   it("records the suggested reimbursement once confirmed", async () => {
-    const alert = answerAlert("Confirmer");
+    const alert = answerAlert("Confirm");
     const user = userEvent.setup();
     await renderBalance();
 
-    await user.press(screen.getByLabelText("Marquer comme réglé"));
+    await user.press(screen.getByLabelText("Mark as settled"));
 
     expect(alert).toHaveBeenCalledWith(
-      "Marquer comme réglé ?",
-      expect.stringMatching(/^Bob a remboursé .+ à Alice\.$/),
+      "Mark as settled?",
+      expect.stringMatching(/^Bob paid .+ back to Alice\.$/),
       expect.any(Array),
       expect.anything(),
     );
@@ -72,14 +72,14 @@ describe("BalanceScreen", () => {
   });
 
   it("records nothing when the confirmation is cancelled", async () => {
-    answerAlert("Annuler");
+    answerAlert("Cancel");
     const user = userEvent.setup();
     await renderBalance();
 
-    await user.press(screen.getByLabelText("Marquer comme réglé"));
+    await user.press(screen.getByLabelText("Mark as settled"));
 
     expect(groupReimbursements()).toEqual([]);
-    screen.getByLabelText("Marquer comme réglé");
+    screen.getByLabelText("Mark as settled");
   });
 
   it("lists recent reimbursements once everyone is settled", async () => {
@@ -92,8 +92,8 @@ describe("BalanceScreen", () => {
 
     await renderBalance();
 
-    screen.getByText("Tout le monde est à jour !");
-    screen.getByText("Derniers remboursements");
-    screen.getByText(/a remboursé/);
+    screen.getByText("Everyone is settled up!");
+    screen.getByText("Recent reimbursements");
+    screen.getByText(/paid back/);
   });
 });

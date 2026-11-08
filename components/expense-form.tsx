@@ -9,6 +9,7 @@ import { Group, useMe } from "@/lib/groups";
 import { Money } from "@/lib/money";
 import * as ImagePicker from "expo-image-picker";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ActivityIndicator, ScrollView, View, type TextInputInstance } from "react-native";
 import { ChipList } from "./chip-list";
 import { useSnackBar } from "./snack-bar";
@@ -18,6 +19,8 @@ import { TopBarDeleteAction, TopBarSaveAction } from "./top-bar-action";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 
 const ReceiptLoader = () => {
+  const { t } = useTranslation();
+
   return (
     <View
       style={{
@@ -30,7 +33,7 @@ const ReceiptLoader = () => {
     >
       <View>
         <ActivityIndicator size="large" color="hsl(220, 10%, 50%)" style={{ marginBottom: 16 }} />
-        <Text>Traitement du reçu en cours...</Text>
+        <Text>{t("expense.processingReceipt")}</Text>
       </View>
     </View>
   );
@@ -55,6 +58,7 @@ const ExpenseForm = (props: {
   const me = useMe(group.id);
   const snackBar = useSnackBar();
   const { showActionSheetWithOptions } = useActionSheet();
+  const { t } = useTranslation();
 
   const titleInputRef = React.useRef<TextInputInstance>(null);
 
@@ -108,7 +112,7 @@ const ExpenseForm = (props: {
   const showReceiptActionSheet = async () => {
     showActionSheetWithOptions(
       {
-        options: ["Prendre une photo", "Choisir une photo", "Annuler"],
+        options: [t("expense.takePhoto"), t("expense.choosePhoto"), t("common.cancel")],
         cancelButtonIndex: 2,
       },
       async (index) => {
@@ -137,7 +141,7 @@ const ExpenseForm = (props: {
       const request = await ImagePicker.requestCameraPermissionsAsync();
 
       if (!request.granted) {
-        snackBar.show("Veuillez autoriser l'accès à la caméra", "error");
+        snackBar.show(t("expense.cameraDenied"), "error");
         return null;
       }
     }
@@ -155,7 +159,7 @@ const ExpenseForm = (props: {
       const request = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
       if (!request.granted) {
-        snackBar.show("Veuillez autoriser l'accès à la bibliothèque de photos", "error");
+        snackBar.show(t("expense.photosDenied"), "error");
       }
 
       return null;
@@ -189,7 +193,7 @@ const ExpenseForm = (props: {
         console.error(error);
       }
 
-      snackBar.show("Une erreur est survenue lors du téléchargement du reçu", "error");
+      snackBar.show(t("expense.receiptError"), "error");
 
       setReceiptLoading(false);
     }
@@ -202,7 +206,7 @@ const ExpenseForm = (props: {
   return (
     <>
       <TopBar
-        title={expense ? "Modifier la dépense" : "Créer une dépense"}
+        title={expense ? t("expense.editTitle") : t("expense.createTitle")}
         rightActions={
           <>
             {expense ? <TopBarDeleteAction onPress={onDelete} /> : null}
@@ -214,20 +218,20 @@ const ExpenseForm = (props: {
       <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false}>
         <View style={{ flex: 1, gap: 16 }}>
           <Button type="secondary" onPress={showReceiptActionSheet}>
-            Télécharger un reçu
+            {t("expense.uploadReceipt")}
           </Button>
 
           <View style={{ gap: 1 }}>
             <TextInput
               ref={titleInputRef}
-              label="Titre"
+              label={t("expense.titleLabel")}
               value={title}
               onChangeText={setTitle}
               style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
             />
 
             <MoneyInput
-              label="Montant"
+              label={t("expense.amountLabel")}
               value={total}
               onChange={handleTotalChange}
               style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
@@ -236,7 +240,7 @@ const ExpenseForm = (props: {
           </View>
 
           <View>
-            <Label>Payé par</Label>
+            <Label>{t("expense.paidBy")}</Label>
             <ChipList
               style={{ justifyContent: "center" }}
               value={payerName}

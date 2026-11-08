@@ -1,0 +1,150 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "save": "Save",
+    "error": "An error occurred",
+    "loading": "Loading...",
+    "name": "Name",
+    "members": "Members",
+    "newMember": "New member",
+    "addMember": "Add a member",
+    "currency": "Currency"
+  },
+  "errorBoundary": {
+    "title": "Oops, something went wrong...",
+    "back": "Back"
+  },
+  "notFound": {
+    "title": "Oops!",
+    "message": "This screen doesn't exist.",
+    "home": "Go to home screen!"
+  },
+  "login": {
+    "welcome": "Welcome!",
+    "title": "Sign in or create an account",
+    "description": "Enter your email address below. If you don't have an account yet, we'll create one for you automatically the first time you sign in!",
+    "email": "Email",
+    "submit": "Sign in or create an account",
+    "submitLabel": "Sign in",
+    "checkEmail": "Check your email for a magic sign-in link.",
+    "loading": "Signing in..."
+  },
+  "groups": {
+    "empty": "No groups found. Create one using the '+' button!",
+    "noMembers": "(no members)",
+    "syncError": "An error occurred while syncing the groups.",
+    "importing": "Importing group..."
+  },
+  "newGroup": {
+    "title": "Create a group",
+    "screenTitle": "New Group",
+    "currencyHint": "It can't be changed later."
+  },
+  "group": {
+    "share": "Share",
+    "settings": "Group settings",
+    "reimbursements": "Reimbursements",
+    "noExpenses": "No expenses",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "syncError": "An error occurred while syncing the expenses.",
+    "inviteTitle": "Join the group \"{{name}}\" on Splitzy!",
+    "inviteMessage": "Hey! I'm inviting you to join my group \"{{name}}\" on Splitzy to manage our shared expenses. Tap this link to join us!\n\n{{link}}",
+    "owed": "You are owed",
+    "owe": "You owe",
+    "settled": "You're settled up"
+  },
+  "setMe": {
+    "welcome": "Welcome to the group {{name}}! 👋",
+    "prompt": "Tell us who you are in this group:"
+  },
+  "groupSettings": {
+    "title": "Group settings",
+    "nameLabel": "Group name",
+    "memberMe": "{{member}} (me)",
+    "removeMember": "Remove {{member}}",
+    "cancelAdd": "Cancel adding",
+    "updated": "Group updated",
+    "leave": "Leave the group",
+    "leaveTitle": "Leave the group?",
+    "leaveMessage": "The group and its expenses will be removed from this device. The other members keep them, and an invite link lets you come back.",
+    "leaveConfirm": "Leave",
+    "left": "You left the group",
+    "leaveError": "Couldn't leave the group. Check your connection.",
+    "delete": "Delete the group",
+    "deleteTitle": "Delete the group?",
+    "deleteMessage": "The group and all its expenses will be deleted for all members.",
+    "deleted": "Group deleted"
+  },
+  "balance": {
+    "owed": "You are owed",
+    "owe": "You owe",
+    "settled": "You're settled up",
+    "title": "Balance",
+    "reimbursements": "Reimbursements",
+    "allSettled": "Everyone is settled up!",
+    "owes": "{{from}} <muted>owes</muted> {{to}}",
+    "paidBack": "{{payer}} <muted>paid back</muted> {{recipient}}",
+    "recent": "Recent reimbursements",
+    "markSettled": "Mark as settled",
+    "confirmTitle": "Mark as settled?",
+    "confirmMessage": "{{from}} paid {{amount}} back to {{to}}.",
+    "saved": "Reimbursement recorded"
+  },
+  "expense": {
+    "createTitle": "Create an expense",
+    "editTitle": "Edit the expense",
+    "created": "Expense created",
+    "updated": "Expense updated",
+    "deleted": "Expense deleted",
+    "paidByOn": "Paid by {{payer}} on {{date}}",
+    "split": "Split",
+    "receipt": "Receipt",
+    "uploadReceipt": "Upload a receipt",
+    "processingReceipt": "Processing the receipt...",
+    "receiptError": "An error occurred while uploading the receipt",
+    "takePhoto": "Take a photo",
+    "choosePhoto": "Choose a photo",
+    "cameraDenied": "Please allow access to the camera",
+    "photosDenied": "Please allow access to the photo library",
+    "titleLabel": "Title",
+    "amountLabel": "Amount",
+    "paidBy": "Paid by"
+  },
+  "split": {
+    "label": "Split the expense",
+    "equal": "Equally",
+    "percentage": "Percentage",
+    "amount": "Amount"
+  },
+  "reimbursement": {
+    "title": "Reimbursement {{amount}}",
+    "summary": "{{payer}} paid back {{recipient}}",
+    "summaryOn": "{{payer}} paid back {{recipient}} on {{date}}",
+    "deleteTitle": "Delete this reimbursement?",
+    "deleteMessage": "The balance will be recalculated.",
+    "deleted": "Reimbursement deleted"
+  },
+  "validation": {
+    "invalidName": "Invalid name",
+    "enterName": "Please enter a name",
+    "invalidMembers": "Invalid members",
+    "enterMember": "Please enter at least one member",
+    "duplicateMember": "{{member}} is already in the group",
+    "cannotRemoveMember": "Can't remove this member",
+    "cannotRemoveSelf": "You can't remove yourself. Leave the group instead.",
+    "memberInExpenses": "{{member}} appears in the group's expenses. Delete them first.",
+    "invalidTitle": "Invalid title",
+    "enterTitle": "Please enter a title",
+    "invalidMember": "Invalid member",
+    "selectMember": "Please select a member",
+    "selectTwoMembers": "Please select two members",
+    "chooseDifferentMembers": "Choose two different members",
+    "invalidAmount": "Invalid amount",
+    "enterAmount": "Please enter an amount",
+    "invalidSplit": "Invalid split",
+    "splitMismatch": "The amounts don't add up to the total"
+  }
+}

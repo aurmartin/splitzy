@@ -30,7 +30,7 @@ describe("SplitInput", () => {
       const mockOnTypeChange = jest.fn();
       await render(<SplitInput value={mockSplit} onChange={() => {}} onTypeChange={mockOnTypeChange} />);
 
-      await fireEvent.press(screen.getByRole("button", { name: "Pourcentage" }));
+      await fireEvent.press(screen.getByRole("button", { name: "Percentage" }));
 
       expect(mockOnTypeChange).toHaveBeenCalledWith("percentage");
     });

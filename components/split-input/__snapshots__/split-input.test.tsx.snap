@@ -26,7 +26,7 @@ exports[`SplitInput SplitInput component renders correctly 1`] = `
       ]
     }
   >
-    Partager la dépense
+    Split the expense
   </Text>
   <View
     style={
@@ -42,7 +42,7 @@ exports[`SplitInput SplitInput component renders correctly 1`] = `
     }
   >
     <View
-      accessibilityLabel="Également"
+      accessibilityLabel="Equally"
       accessibilityRole="button"
       accessibilityState={
         {
@@ -92,11 +92,11 @@ exports[`SplitInput SplitInput component renders correctly 1`] = `
           ]
         }
       >
-        Également
+        Equally
       </Text>
     </View>
     <View
-      accessibilityLabel="Pourcentage"
+      accessibilityLabel="Percentage"
       accessibilityRole="button"
       accessibilityState={
         {
@@ -146,11 +146,11 @@ exports[`SplitInput SplitInput component renders correctly 1`] = `
           ]
         }
       >
-        Pourcentage
+        Percentage
       </Text>
     </View>
     <View
-      accessibilityLabel="Montant"
+      accessibilityLabel="Amount"
       accessibilityRole="button"
       accessibilityState={
         {
@@ -200,7 +200,7 @@ exports[`SplitInput SplitInput component renders correctly 1`] = `
           ]
         }
       >
-        Montant
+        Amount
       </Text>
     </View>
   </View>

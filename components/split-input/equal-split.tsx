@@ -2,7 +2,7 @@ import { ListGroup } from "@/components/list-group";
 import { convertSplit } from "@/components/split-input/convert";
 import { Text } from "@/components/text";
 import { type EqualSplit } from "@/lib/expenses";
-import { getLocale } from "@/lib/locale";
+import { getDeviceLocale } from "@/lib/locale";
 import { Money } from "@/lib/money";
 import React from "react";
 import { View } from "react-native";
@@ -17,7 +17,7 @@ const EqualSplitInput = (props: { value: EqualSplit }) => {
       {Object.entries(amountSplit.amounts).map(([member, amount]) => (
         <View key={member} style={{ justifyContent: "space-between" }}>
           <Text numberOfLines={1}>{member}</Text>
-          <Text>{Money.format(amount, getLocale())}</Text>
+          <Text>{Money.format(amount, getDeviceLocale().languageTag)}</Text>
         </View>
       ))}
     </ListGroup>

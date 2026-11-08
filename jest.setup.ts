@@ -37,3 +37,7 @@ jest.mock("./lib/env", () => {
 
 jest.mock("@/lib/supabase-connector");
 jest.mock("@/lib/server-connector");
+
+// Components only get translations once the i18next instance is initialized,
+// which the root layout does in the app.
+require("@/lib/i18n").i18n.changeLanguage("en");

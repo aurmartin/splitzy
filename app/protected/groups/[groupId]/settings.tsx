@@ -15,6 +15,7 @@ import { deleteGroup, getMe, getMembersInExpenses, leaveGroup, updateGroup, useG
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Alert, ScrollView, View } from "react-native";
 
 const iconColor = "hsl(0 0% 50%)";
@@ -23,6 +24,7 @@ function GroupSettingsForm({ group }: { group: Group }) {
   const system = useSystem();
   const snackBar = useSnackBar();
   const expenses = useExpenses(group.id);
+  const { t } = useTranslation();
 
   const [name, setName] = React.useState(group.name);
   // Existing members can only be removed: expenses refer to them by name.
@@ -34,18 +36,12 @@ function GroupSettingsForm({ group }: { group: Group }) {
 
   const removeMember = (member: string) => {
     if (member === me) {
-      Alert.alert(
-        "Impossible de retirer ce membre",
-        "Vous ne pouvez pas vous retirer vous-même. Quittez le groupe à la place.",
-      );
+      Alert.alert(t("validation.cannotRemoveMember"), t("validation.cannotRemoveSelf"));
       return;
     }
 
     if (membersInExpenses.has(member)) {
-      Alert.alert(
-        "Impossible de retirer ce membre",
-        `${member} apparaît dans des dépenses du groupe. Supprimez-les d'abord.`,
-      );
+      Alert.alert(t("validation.cannotRemoveMember"), t("validation.memberInExpenses", { member }));
       return;
     }
 
@@ -68,23 +64,22 @@ function GroupSettingsForm({ group }: { group: Group }) {
       });
 
       router.back();
-      snackBar.show("Groupe modifié", "success");
+      snackBar.show(t("groupSettings.updated"), "success");
     } catch (error) {
       if (error instanceof DisplayableError) {
         Alert.alert(error.title, error.message);
       } else {
         console.error("Update group error", error);
-        snackBar.show("Une erreur est survenue", "error");
+        snackBar.show(t("common.error"), "error");
       }
     }
   };
 
   const handleLeave = async () => {
     const confirmed = await confirm({
-      title: "Quitter le groupe ?",
-      message:
-        "Le groupe et ses dépenses seront retirés de cet appareil. Les autres membres les gardent, et un lien d'invitation permet de revenir.",
-      confirmText: "Quitter",
+      title: t("groupSettings.leaveTitle"),
+      message: t("groupSettings.leaveMessage"),
+      confirmText: t("groupSettings.leaveConfirm"),
       destructive: true,
     });
 
@@ -96,18 +91,18 @@ function GroupSettingsForm({ group }: { group: Group }) {
       await leaveGroup(system, group.id);
 
       router.dismissTo("/protected");
-      snackBar.show("Vous avez quitté le groupe", "success");
+      snackBar.show(t("groupSettings.left"), "success");
     } catch (error) {
       console.error("Leave group error", error);
-      snackBar.show("Impossible de quitter le groupe. Vérifiez votre connexion.", "error");
+      snackBar.show(t("groupSettings.leaveError"), "error");
     }
   };
 
   const handleDelete = async () => {
     const confirmed = await confirm({
-      title: "Supprimer le groupe ?",
-      message: "Le groupe et toutes ses dépenses seront supprimés pour tous les membres.",
-      confirmText: "Supprimer",
+      title: t("groupSettings.deleteTitle"),
+      message: t("groupSettings.deleteMessage"),
+      confirmText: t("common.delete"),
       destructive: true,
     });
 
@@ -119,35 +114,37 @@ function GroupSettingsForm({ group }: { group: Group }) {
       await deleteGroup(system, group.id);
 
       router.dismissTo("/protected");
-      snackBar.show("Groupe supprimé", "success");
+      snackBar.show(t("groupSettings.deleted"), "success");
     } catch (error) {
       console.error("Delete group error", error);
-      snackBar.show("Une erreur est survenue", "error");
+      snackBar.show(t("common.error"), "error");
     }
   };
 
   return (
     <Screen>
-      <TopBar title="Paramètres du groupe" rightActions={<TopBarSaveAction key="save" onPress={handleSave} />} />
+      <TopBar title={t("groupSettings.title")} rightActions={<TopBarSaveAction key="save" onPress={handleSave} />} />
 
       <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false}>
-        <Label>Nom</Label>
-        <TextInput value={name} onChangeText={setName} placeholder="Nom" accessibilityLabel="Nom du groupe" />
+        <Label>{t("common.name")}</Label>
+        <TextInput
+          value={name}
+          onChangeText={setName}
+          placeholder={t("common.name")}
+          accessibilityLabel={t("groupSettings.nameLabel")}
+        />
 
-        <Label style={{ marginTop: 16 }}>Membres</Label>
+        <Label style={{ marginTop: 16 }}>{t("common.members")}</Label>
         <ListGroup>
           {[
             ...members.map((member) => (
               <View key={`member-${member}`}>
-                <Text style={{ flex: 1 }}>
-                  {member}
-                  {member === me ? " (moi)" : ""}
-                </Text>
+                <Text style={{ flex: 1 }}>{member === me ? t("groupSettings.memberMe", { member }) : member}</Text>
                 <Ionicons
                   name="trash-outline"
                   size={20}
                   color={iconColor}
-                  accessibilityLabel={`Retirer ${member}`}
+                  accessibilityLabel={t("groupSettings.removeMember", { member })}
                   onPress={() => removeMember(member)}
                 />
               </View>
@@ -156,8 +153,8 @@ function GroupSettingsForm({ group }: { group: Group }) {
               <TextInput
                 key={`new-member-${index}`}
                 value={member}
-                placeholder="Nouveau membre"
-                accessibilityLabel="Nouveau membre"
+                placeholder={t("common.newMember")}
+                accessibilityLabel={t("common.newMember")}
                 autoFocus
                 onChangeText={(text) => changeNewMember(index, text)}
                 right={
@@ -165,7 +162,7 @@ function GroupSettingsForm({ group }: { group: Group }) {
                     name="trash-outline"
                     size={20}
                     color={iconColor}
-                    accessibilityLabel="Annuler l'ajout"
+                    accessibilityLabel={t("groupSettings.cancelAdd")}
                     onPress={() => removeNewMember(index)}
                   />
                 }
@@ -175,15 +172,15 @@ function GroupSettingsForm({ group }: { group: Group }) {
         </ListGroup>
 
         <Button onPress={() => setNewMembers([...newMembers, ""])} type="secondary" style={{ marginTop: 8 }}>
-          Ajouter un membre
+          {t("common.addMember")}
         </Button>
 
         <View style={{ marginTop: 32, gap: 8 }}>
           <Button type="destructive" onPress={handleLeave}>
-            Quitter le groupe
+            {t("groupSettings.leave")}
           </Button>
           <Button type="destructive" onPress={handleDelete}>
-            Supprimer le groupe
+            {t("groupSettings.delete")}
           </Button>
         </View>
       </ScrollView>

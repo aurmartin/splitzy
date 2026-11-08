@@ -71,15 +71,24 @@ importers:
       expo-status-bar:
         specifier: ~58.0.4
         version: 58.0.4(expo@58.0.23)(react-native@0.88.1(@babel/core@7.29.13)(@react-native/metro-config@0.88.1(@babel/core@7.29.13))(@types/react@19.3.0)(react@19.3.0))(react@19.3.0)
+      i18next:
+        specifier: ^27.0.1
+        version: 27.0.1(typescript@6.0.3)
       immer:
         specifier: ^11.2.9
         version: 11.2.9
+      intl-pluralrules:
+        specifier: ^2.0.1
+        version: 2.0.1
       react:
         specifier: 19.3.0
         version: 19.3.0
       react-dom:
         specifier: 19.3.0
         version: 19.3.0(react@19.3.0)
+      react-i18next:
+        specifier: ^18.0.0
+        version: 18.0.0(i18next@27.0.1(typescript@6.0.3))(react@19.3.0)(typescript@6.0.3)
       react-native:
         specifier: 0.88.1
         version: 0.88.1(@babel/core@7.29.13)(@react-native/metro-config@0.88.1(@babel/core@7.29.13))(@types/react@19.3.0)(react@19.3.0)
@@ -3802,6 +3811,9 @@ packages:
   html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
 
+  html-parse-stringify@4.0.1:
+    resolution: {integrity: sha512-0zHsZJrK7S3K2aucXWL6ycoYJ/iNtIcFHC/nYQgFklPtrv5LpJctIiSCroWZWeuoXvuyFdzp6KzjJQ+OT5MfFw==}
+
   http-errors@2.0.1:
     resolution: {integrity: sha512-4FbRdAX+bSdmo4AUFuS0WNiPz8NgFt+r8ThgNWmlrjQjt1Q7ZR9+zTlce2859x4KSXrwIsaeTqDoKQmtP8pLmQ==}
     engines: {node: '>= 0.8'}
@@ -3824,6 +3836,15 @@ packages:
 
   hyphenate-style-name@1.1.0:
     resolution: {integrity: sha512-WDC/ui2VVRrz3jOVi+XtjqkDjiVjTtFaAGiW37k6b+ohyQ5wYDOGkvCZa8+H0nx3gyvv0+BST9xuOgIyGQ00gw==}
+
+  i18next@27.0.1:
+    resolution: {integrity: sha512-KaE5ozP8UUeVpOJIwMVbbnpRKpyYQuxd9ZbseJoDzezE3nvLnZZQn20pkzyIJwPI2Uet/Qs3WzPTG812f6F/Eg==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      typescript: ^5 || ^6 || ^7
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   iceberg-js@0.8.1:
     resolution: {integrity: sha512-1dhVQZXhcHje7798IVM+xoo/1ZdVfzOMIc8/rgVSijRK38EDqOJoGula9N/8ZI5RD8QTxNQtK/Gozpr+qUqRRA==}
@@ -3874,6 +3895,9 @@ packages:
   internal-slot@1.1.0:
     resolution: {integrity: sha512-4gd7VpWNQNB4UKKCFFVcp1AVv+FMOgs9NKzjHKusc8jTMhd5eL1NqQqOpE0KzMds804/yHlglp3uxgluOqAPLw==}
     engines: {node: '>= 0.4'}
+
+  intl-pluralrules@2.0.1:
+    resolution: {integrity: sha512-astxTLzIdXPeN0K9Rumi6LfMpm3rvNO0iJE+h/k8Kr/is+wPbRe4ikyDjlLr6VTh/mEfNv8RjN+gu3KwDiuhqg==}
 
   invariant@2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
@@ -4987,6 +5011,17 @@ packages:
     engines: {node: '>=10'}
     peerDependencies:
       react: '>=17.0.0'
+
+  react-i18next@18.0.0:
+    resolution: {integrity: sha512-xXq/pcuMRwrW4iH0If/RjbPH3zuEqWVtaw4PjDsG54vx0FTook7aS3kop7DXy3g66wHkYUji8l7ZBrA8kfj67Q==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      i18next: '>= 27.0.0'
+      react: '>= 18.0.0'
+      typescript: ^5 || ^6 || ^7
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
@@ -10154,6 +10189,8 @@ snapshots:
 
   html-escaper@2.0.2: {}
 
+  html-parse-stringify@4.0.1: {}
+
   http-errors@2.0.1:
     dependencies:
       depd: 2.0.0
@@ -10186,6 +10223,10 @@ snapshots:
   human-signals@2.1.0: {}
 
   hyphenate-style-name@1.1.0: {}
+
+  i18next@27.0.1(typescript@6.0.3):
+    optionalDependencies:
+      typescript: 6.0.3
 
   iceberg-js@0.8.1: {}
 
@@ -10229,6 +10270,8 @@ snapshots:
       es-errors: 1.3.0
       hasown: 2.0.2
       side-channel: 1.1.0
+
+  intl-pluralrules@2.0.1: {}
 
   invariant@2.2.4:
     dependencies:
@@ -11775,6 +11818,14 @@ snapshots:
   react-freeze@1.0.4(react@19.3.0):
     dependencies:
       react: 19.3.0
+
+  react-i18next@18.0.0(i18next@27.0.1(typescript@6.0.3))(react@19.3.0)(typescript@6.0.3):
+    dependencies:
+      html-parse-stringify: 4.0.1
+      i18next: 27.0.1(typescript@6.0.3)
+      react: 19.3.0
+    optionalDependencies:
+      typescript: 6.0.3
 
   react-is@18.3.1: {}
 

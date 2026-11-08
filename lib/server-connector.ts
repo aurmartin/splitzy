@@ -1,5 +1,6 @@
 import { getMinorUnitAmount } from "@/lib/currency";
 import { Env } from "@/lib/env";
+import { i18n } from "@/lib/i18n";
 import type { Receipt } from "@/lib/expenses";
 import type { System } from "@/lib/system";
 import { Money, type Currency } from "@/lib/money";
@@ -51,7 +52,7 @@ class ServerConnector {
   }
 
   async parseReceipt(file: string, currency: Currency): Promise<Receipt> {
-    const body = { file };
+    const body = { file, language: i18n.language };
     const response = (await this.post("/parse-receipt", body)) as ReceiptResponse;
 
     const items: Receipt["items"] = response.items.map((item) => ({

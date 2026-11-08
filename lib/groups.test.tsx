@@ -43,10 +43,10 @@ describe("updateGroup", () => {
   });
 
   it.each([
-    [{ name: " ", members: ["Alice"] }, "Veuillez entrer un nom"],
-    [{ name: "Trip", members: [""] }, "Veuillez entrer au moins un membre"],
-    [{ name: "Trip", members: ["Alice", "Bob", "bob"] }, "bob fait déjà partie du groupe"],
-    [{ name: "Trip", members: ["Bob"] }, "Vous ne pouvez pas vous retirer vous-même. Quittez le groupe à la place."],
+    [{ name: " ", members: ["Alice"] }, "Please enter a name"],
+    [{ name: "Trip", members: [""] }, "Please enter at least one member"],
+    [{ name: "Trip", members: ["Alice", "Bob", "bob"] }, "bob is already in the group"],
+    [{ name: "Trip", members: ["Bob"] }, "You can't remove yourself. Leave the group instead."],
   ])("refuses %j", async (params, message) => {
     await expect(updateGroup(system, groupId, params)).rejects.toEqual(expect.objectContaining({ message }));
 
@@ -64,10 +64,7 @@ describe("updateGroup", () => {
     });
 
     await expect(updateGroup(system, groupId, { name: "Trip", members: ["Alice"] })).rejects.toEqual(
-      new DisplayableError(
-        "Impossible de retirer ce membre",
-        "Bob apparaît dans des dépenses du groupe. Supprimez-les d'abord.",
-      ),
+      new DisplayableError("Can't remove this member", "Bob appears in the group's expenses. Delete them first."),
     );
 
     expect(getGroupRow(system, groupId)!.members).toEqual(["Alice", "Bob"]);

@@ -6,6 +6,7 @@ import { Text } from "@/components/text";
 import { Colors } from "@/lib/constants";
 import { tables } from "@/lib/db/schema";
 import { Env } from "@/lib/env";
+import { i18n } from "@/lib/i18n";
 import { System } from "@/lib/system";
 import { type FallbackRender } from "@sentry/react";
 import * as Sentry from "@sentry/react-native";
@@ -76,9 +77,9 @@ const ErrorBoundary: FallbackRender = ({ resetError }) => {
           gap: 16,
         }}
       >
-        <Text type="title">Oops, une erreur est survenue...</Text>
+        <Text type="title">{i18n.t("errorBoundary.title")}</Text>
         <Text type="titleMedium" style={{ color: Colors.primary }} onPress={resetError}>
-          Retour
+          {i18n.t("errorBoundary.back")}
         </Text>
       </View>
     </Screen>

@@ -1,3 +1,4 @@
+import { i18n } from "@/lib/i18n";
 import { Alert } from "react-native";
 
 type ConfirmOptions = {
@@ -15,7 +16,7 @@ const confirm = ({ title, message, confirmText, destructive = false }: ConfirmOp
       title,
       message,
       [
-        { text: "Annuler", style: "cancel", onPress: () => resolve(false) },
+        { text: i18n.t("common.cancel"), style: "cancel", onPress: () => resolve(false) },
         {
           text: confirmText,
           style: destructive ? "destructive" : "default",

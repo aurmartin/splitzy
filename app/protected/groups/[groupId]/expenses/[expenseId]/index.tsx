@@ -15,32 +15,34 @@ import {
   type Expense,
   type Reimbursement,
 } from "@/lib/expenses";
-import { getLocale } from "@/lib/locale";
+import { formatDate, getDeviceLocale } from "@/lib/locale";
 import { Money } from "@/lib/money";
 import { router, useLocalSearchParams } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
 
 // A reimbursement cannot be edited: to fix one, delete it and settle again.
 function ShowReimbursementScreen({ reimbursement }: { reimbursement: Reimbursement }) {
   const snackBar = useSnackBar();
   const system = useSystem();
+  const { t } = useTranslation();
 
   const deleteReimbursement = async () => {
     try {
       await ExpenseService.deleteExpense(system, reimbursement.id);
       router.back();
-      snackBar.show("Remboursement supprimé", "success");
+      snackBar.show(t("reimbursement.deleted"), "success");
     } catch (error) {
       console.error("Delete reimbursement error", error);
-      snackBar.show("Une erreur est survenue", "error");
+      snackBar.show(t("common.error"), "error");
     }
   };
 
   const handleDelete = async () => {
     const confirmed = await confirm({
-      title: "Supprimer ce remboursement ?",
-      message: "La balance sera recalculée.",
-      confirmText: "Supprimer",
+      title: t("reimbursement.deleteTitle"),
+      message: t("reimbursement.deleteMessage"),
+      confirmText: t("common.delete"),
       destructive: true,
     });
 
@@ -54,12 +56,17 @@ function ShowReimbursementScreen({ reimbursement }: { reimbursement: Reimburseme
       <TopBar rightActions={<TopBarDeleteAction onPress={handleDelete} />} />
 
       <Text type="headlineMedium" style={{ marginBottom: 16 }}>
-        Remboursement {Money.format(reimbursement.splitExpense.total, getLocale())}
+        {t("reimbursement.title", {
+          amount: Money.format(reimbursement.splitExpense.total, getDeviceLocale().languageTag),
+        })}
       </Text>
 
       <Text style={{ marginBottom: 16 }}>
-        {reimbursement.payerName} a remboursé {ReimbursementService.getRecipient(reimbursement)} le{" "}
-        {reimbursement.createdAt.toLocaleDateString()}
+        {t("reimbursement.summaryOn", {
+          payer: reimbursement.payerName,
+          recipient: ReimbursementService.getRecipient(reimbursement),
+          date: formatDate(reimbursement.createdAt),
+        })}
       </Text>
     </Screen>
   );
@@ -74,6 +81,7 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
   const snackBar = useSnackBar();
   const system = useSystem();
   const amounts = useAmounts(expense);
+  const { t } = useTranslation();
 
   const handleDelete = async () => {
     try {
@@ -81,11 +89,11 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
 
       router.back();
 
-      snackBar.show("Dépense supprimée", "success");
+      snackBar.show(t("expense.deleted"), "success");
     } catch (error) {
       console.error("Delete expense error", error);
 
-      snackBar.show("Une erreur est survenue", "error");
+      snackBar.show(t("common.error"), "error");
     }
   };
 
@@ -105,27 +113,27 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
       />
 
       <Text type="headlineMedium" style={{ marginBottom: 16 }}>
-        {expense.title} {Money.format(expense.splitExpense.total, getLocale())}
+        {expense.title} {Money.format(expense.splitExpense.total, getDeviceLocale().languageTag)}
       </Text>
 
       <Text style={{ marginBottom: 16 }}>
-        Payé par {expense.payerName} le {new Date(expense.createdAt).toLocaleDateString()}
+        {t("expense.paidByOn", { payer: expense.payerName, date: formatDate(new Date(expense.createdAt)) })}
       </Text>
 
       <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false}>
-        <Label>Répartition</Label>
+        <Label>{t("expense.split")}</Label>
         <ListGroup style={{ marginBottom: 16 }}>
           {Object.entries(amounts).map(([name, amount]) => (
             <View key={name} style={{ justifyContent: "space-between" }}>
               <Text key={name}>{name}</Text>
-              <Text>{Money.format(amount, getLocale())}</Text>
+              <Text>{Money.format(amount, getDeviceLocale().languageTag)}</Text>
             </View>
           ))}
         </ListGroup>
 
         {expense.receipt && (
           <>
-            <Label>Ticket de caisse</Label>
+            <Label>{t("expense.receipt")}</Label>
             <ListGroup itemHeight={70}>
               {expense.receipt.items.map((item) => (
                 <View key={item.description}>
@@ -138,7 +146,7 @@ function ShowExpenseScreen({ groupId, expense }: ShowExpenseScreenProps) {
                     </Text>
                   </View>
 
-                  <Text>{Money.format(item.price, getLocale())}</Text>
+                  <Text>{Money.format(item.price, getDeviceLocale().languageTag)}</Text>
                 </View>
               ))}
             </ListGroup>

@@ -183,7 +183,7 @@ exports[`GroupScreen should render correctly 1`] = `
             }
           >
             <Text
-              accessibilityLabel="Partager"
+              accessibilityLabel="Share"
               allowFontScaling={false}
               selectable={false}
               style={
@@ -244,7 +244,7 @@ exports[`GroupScreen should render correctly 1`] = `
             }
           >
             <Text
-              accessibilityLabel="Paramètres du groupe"
+              accessibilityLabel="Group settings"
               allowFontScaling={false}
               selectable={false}
               style={
@@ -290,7 +290,7 @@ exports[`GroupScreen should render correctly 1`] = `
             ]
           }
         >
-          Vous êtes à jour
+          You're settled up
         </Text>
         <View
           accessibilityRole="button"
@@ -360,14 +360,14 @@ exports[`GroupScreen should render correctly 1`] = `
               ]
             }
           >
-            Remboursements
+            Reimbursements
           </Text>
         </View>
       </View>
       <RCTScrollView
         ListEmptyComponent={
           <Text>
-            Aucune dépense
+            No expenses
           </Text>
         }
         ListFooterComponent={
@@ -431,7 +431,7 @@ exports[`GroupScreen should render correctly 1`] = `
               ]
             }
           >
-            Aucune dépense
+            No expenses
           </Text>
           <View
             onLayout={[Function]}

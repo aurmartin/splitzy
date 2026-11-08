@@ -72,7 +72,7 @@ exports[`RedirectScreen should render snapshot 1`] = `
             ]
           }
         >
-          Logging in...
+          Signing in...
         </Text>
       </View>
     </RNCSafeAreaView>

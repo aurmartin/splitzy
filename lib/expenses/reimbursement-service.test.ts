@@ -96,6 +96,6 @@ describe("ReimbursementService", () => {
         to: "Alice",
         amount: eur(0),
       }),
-    ).rejects.toThrow("Veuillez entrer un montant");
+    ).rejects.toThrow("Please enter an amount");
   });
 });

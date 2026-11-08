@@ -13,9 +13,9 @@ const routerContext = {
 const renderNewGroup = () => renderRouter(routerContext, system, { initialUrl: "/protected/groups/new" });
 
 const fillAndSave = async (user: ReturnType<typeof userEvent.setup>) => {
-  await user.type(screen.getByPlaceholderText("Nom"), "Tokyo");
-  await user.type(screen.getByPlaceholderText("Nouveau membre"), "Alice");
-  await user.press(screen.getByLabelText("Enregistrer"));
+  await user.type(screen.getByPlaceholderText("Name"), "Tokyo");
+  await user.type(screen.getByPlaceholderText("New member"), "Alice");
+  await user.press(screen.getByLabelText("Save"));
 };
 
 describe("NewGroupScreen", () => {

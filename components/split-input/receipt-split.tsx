@@ -1,7 +1,7 @@
 import { convertSplit } from "@/components/split-input/convert";
 import { Text } from "@/components/text";
 import { type Receipt, type ReceiptSplit } from "@/lib/expenses";
-import { getLocale } from "@/lib/locale";
+import { getDeviceLocale } from "@/lib/locale";
 import { Money } from "@/lib/money";
 import { produce } from "immer";
 import React from "react";
@@ -48,7 +48,7 @@ const ReceiptSplitInput = (props: { value: ReceiptSplit; onChange: (value: Recei
             }}
           >
             <Text numberOfLines={1}>{member}</Text>
-            <Text>{Money.format(amount, getLocale())}</Text>
+            <Text>{Money.format(amount, getDeviceLocale().languageTag)}</Text>
           </View>
         ))}
       </View>
@@ -82,7 +82,7 @@ const ReceiptSplitInput = (props: { value: ReceiptSplit; onChange: (value: Recei
                 </Text>
               </View>
 
-              <Text style={{ marginLeft: 8 }}>{Money.format(item.price, getLocale())}</Text>
+              <Text style={{ marginLeft: 8 }}>{Money.format(item.price, getDeviceLocale().languageTag)}</Text>
             </View>
 
             <ChipList

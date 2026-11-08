@@ -1,4 +1,5 @@
 import { DisplayableError } from "@/lib/displayable-error";
+import { i18n } from "@/lib/i18n";
 import { ExpensesRepository } from "@/lib/expenses/repository";
 import { Money } from "@/lib/money";
 import { System } from "@/lib/system";
@@ -26,15 +27,15 @@ const getRecipient = (reimbursement: Reimbursement): string => reimbursement.spl
 
 const validate = (params: ReimbursementParams) => {
   if (params.from.length === 0 || params.to.length === 0) {
-    throw new DisplayableError("Le membre est invalide", "Veuillez sélectionner deux membres");
+    throw new DisplayableError(i18n.t("validation.invalidMember"), i18n.t("validation.selectTwoMembers"));
   }
 
   if (params.from === params.to) {
-    throw new DisplayableError("Les membres sont invalides", "Choisissez deux membres différents");
+    throw new DisplayableError(i18n.t("validation.invalidMembers"), i18n.t("validation.chooseDifferentMembers"));
   }
 
   if (params.amount.amount <= 0) {
-    throw new DisplayableError("Le montant est invalide", "Veuillez entrer un montant");
+    throw new DisplayableError(i18n.t("validation.invalidAmount"), i18n.t("validation.enterAmount"));
   }
 };
 

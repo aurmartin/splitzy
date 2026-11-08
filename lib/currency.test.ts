@@ -1,12 +1,6 @@
 import { Money } from "@/lib/money";
 import * as Localization from "expo-localization";
-import {
-  getAbsoluteAmount,
-  getAmountColor,
-  getBalanceMessage,
-  getDeviceCurrency,
-  getMinorUnitAmount,
-} from "./currency";
+import { getAbsoluteAmount, getAmountColor, getDeviceCurrency, getMinorUnitAmount } from "./currency";
 
 describe("getAmountColor", () => {
   it("should return green for positive amounts", () => {
@@ -39,23 +33,6 @@ describe("getAbsoluteAmount", () => {
   it("should return zero for zero amount", () => {
     const amount = Money.create({ amount: 0, currency: "EUR" });
     expect(getAbsoluteAmount(amount).amount).toBe(0);
-  });
-});
-
-describe("getBalanceMessage", () => {
-  it("should return 'On vous doit' for positive amounts", () => {
-    const amount = Money.create({ amount: 1000, currency: "EUR" });
-    expect(getBalanceMessage(amount)).toBe("On vous doit");
-  });
-
-  it("should return 'Vous devez' for negative amounts", () => {
-    const amount = Money.create({ amount: -1000, currency: "EUR" });
-    expect(getBalanceMessage(amount)).toBe("Vous devez");
-  });
-
-  it("should return 'Vous êtes à jour' for zero amounts", () => {
-    const amount = Money.create({ amount: 0, currency: "EUR" });
-    expect(getBalanceMessage(amount)).toBe("Vous êtes à jour");
   });
 });
 

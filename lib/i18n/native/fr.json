@@ -1,0 +1,6 @@
+{
+  "ios": {
+    "NSPhotoLibraryUsageDescription": "L'app accède à vos photos pour scanner les reçus.",
+    "NSCameraUsageDescription": "L'app accède à votre appareil photo pour scanner les reçus."
+  }
+}

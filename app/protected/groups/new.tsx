@@ -14,11 +14,13 @@ import { ValidationError } from "@/lib/validation-error";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Alert, ScrollView, View } from "react-native";
 
 const GroupForm = () => {
   const router = useRouter();
   const addGroup = useAddGroup();
+  const { t } = useTranslation();
 
   const [name, setName] = React.useState("");
   const [currency, setCurrency] = React.useState<Currency>(getDeviceCurrency);
@@ -32,16 +34,16 @@ const GroupForm = () => {
     } catch (error) {
       if (error instanceof ValidationError) {
         if (error.errors.name) {
-          Alert.alert("Le nom est invalide", error.errors.name);
+          Alert.alert(t("validation.invalidName"), error.errors.name);
         } else if (error.errors.members) {
-          Alert.alert("Les membres sont invalides", error.errors.members);
+          Alert.alert(t("validation.invalidMembers"), error.errors.members);
         }
       } else {
         console.error("Error adding group", error);
 
-        const errorMessage = error instanceof Error ? error.message : "Une erreur est survenue";
+        const errorMessage = error instanceof Error ? error.message : t("common.error");
 
-        Alert.alert("Une erreur est survenue", errorMessage);
+        Alert.alert(t("common.error"), errorMessage);
       }
     }
   };
@@ -61,24 +63,24 @@ const GroupForm = () => {
 
   return (
     <Screen>
-      <TopBar title="Créer un groupe" rightActions={<TopBarSaveAction key="create" onPress={handleSubmit} />} />
+      <TopBar title={t("newGroup.title")} rightActions={<TopBarSaveAction key="create" onPress={handleSubmit} />} />
       <ScrollView showsVerticalScrollIndicator={false} alwaysBounceVertical={false}>
-        <TextInput value={name} onChangeText={setName} placeholder="Nom" />
+        <TextInput value={name} onChangeText={setName} placeholder={t("common.name")} />
 
         <View style={{ marginTop: 8 }}>
           <CurrencyPicker value={currency} onChange={setCurrency} />
           <Text type="bodySmall" style={{ marginTop: 4, marginHorizontal: 16, color: "hsl(0 0% 40%)" }}>
-            Elle ne pourra plus être changée.
+            {t("newGroup.currencyHint")}
           </Text>
         </View>
 
-        <Label style={{ marginTop: 16 }}>Membres</Label>
+        <Label style={{ marginTop: 16 }}>{t("common.members")}</Label>
         <ListGroup>
           {members.map((member, index) => (
             <TextInput
               key={index}
               value={member}
-              placeholder="Nouveau membre"
+              placeholder={t("common.newMember")}
               onChangeText={(text) => changeMember(index, text)}
               right={
                 index > 0 && (
@@ -90,7 +92,7 @@ const GroupForm = () => {
         </ListGroup>
 
         <Button onPress={addMember} type="secondary" style={{ marginTop: 8 }}>
-          Ajouter un membre
+          {t("common.addMember")}
         </Button>
       </ScrollView>
     </Screen>
@@ -98,9 +100,11 @@ const GroupForm = () => {
 };
 
 export default function NewGroupScreen() {
+  const { t } = useTranslation();
+
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen options={{ title: "New Group" }} />
+      <Stack.Screen options={{ title: t("newGroup.screenTitle") }} />
       <GroupForm />
     </View>
   );

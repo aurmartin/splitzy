@@ -91,7 +91,7 @@ describe("insertExpense", () => {
     };
 
     await expect(ExpenseService.insertExpense(system, invalidTitleParams)).rejects.toThrow(DisplayableError);
-    await expect(ExpenseService.insertExpense(system, invalidTitleParams)).rejects.toThrow(/titre/);
+    await expect(ExpenseService.insertExpense(system, invalidTitleParams)).rejects.toThrow(/title/);
 
     // Empty payer name
     const invalidPayerGroupId = generateId();
@@ -104,7 +104,7 @@ describe("insertExpense", () => {
     };
 
     await expect(ExpenseService.insertExpense(system, invalidPayerParams)).rejects.toThrow(DisplayableError);
-    await expect(ExpenseService.insertExpense(system, invalidPayerParams)).rejects.toThrow(/membre/);
+    await expect(ExpenseService.insertExpense(system, invalidPayerParams)).rejects.toThrow(/member/);
 
     // Verify no expenses were added with these groupIds
     const titleExpenses = getExpensesByGroupId(system, invalidTitleGroupId);

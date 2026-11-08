@@ -7,12 +7,14 @@ import { Group, useGroup } from "@/lib/groups";
 import { DisplayableError } from "@/lib/displayable-error";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const NewExpenseForm = (props: { group: Group }) => {
   const { group } = props;
 
   const snackBar = useSnackBar();
   const system = useSystem();
+  const { t } = useTranslation();
 
   const onSubmit = async (fields: ExpenseFormFields) => {
     try {
@@ -23,14 +25,14 @@ const NewExpenseForm = (props: { group: Group }) => {
 
       await ExpenseService.insertExpense(system, params);
 
-      snackBar.show("Dépense créée avec succès", "success");
+      snackBar.show(t("expense.created"), "success");
 
       router.back();
     } catch (error) {
       if (error instanceof DisplayableError) {
         snackBar.show(error.message, "error");
       } else {
-        snackBar.show("Une erreur est survenue", "error");
+        snackBar.show(t("common.error"), "error");
       }
     }
   };

@@ -67,9 +67,10 @@ const receiptSchema: Schema = {
   required: ["items", "currency", "date", "title"],
 };
 
-const parseReceipt = async (receiptBase64: string) => {
-  const prompt =
-    "Parse this receipt. Returns the list of items with its price and description. Also add a human readable description of the item, the title of the expense, the date of the expense and the currency of the receipt. The output should be in French.";
+const OUTPUT_LANGUAGES: Record<string, string> = { en: "English", fr: "French" };
+
+const parseReceipt = async (receiptBase64: string, language: string) => {
+  const prompt = `Parse this receipt. Returns the list of items with its price and description. Also add a human readable description of the item, the title of the expense, the date of the expense and the currency of the receipt. The output should be in ${language}.`;
 
   const response = await ai.models.generateContent({
     model: "gemini-3.5-flash-lite",
@@ -146,7 +147,9 @@ app.post("/parse-receipt", async (req, res) => {
     return;
   }
 
-  const result = await parseReceipt(file);
+  const requested = req.body?.language;
+  const language = Object.hasOwn(OUTPUT_LANGUAGES, requested) ? OUTPUT_LANGUAGES[requested] : OUTPUT_LANGUAGES.en;
+  const result = await parseReceipt(file, language);
 
   res.json(result);
 });

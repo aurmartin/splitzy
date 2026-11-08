@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable } from "react-native";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface TopBarActionProps {
   onPress?: () => void;
@@ -53,11 +54,13 @@ type TopBarSpecificActionProps = Omit<TopBarActionProps, "iconName"> & {
 };
 
 const TopBarDeleteAction = (props: TopBarSpecificActionProps) => {
-  return <TopBarAction iconName="trash" type="destructive" label="Supprimer" {...props} />;
+  const { t } = useTranslation();
+  return <TopBarAction iconName="trash" type="destructive" label={t("common.delete")} {...props} />;
 };
 
 const TopBarSaveAction = (props: TopBarSpecificActionProps) => {
-  return <TopBarAction iconName="checkmark" label="Enregistrer" {...props} />;
+  const { t } = useTranslation();
+  return <TopBarAction iconName="checkmark" label={t("common.save")} {...props} />;
 };
 
 export { TopBarAction, TopBarDeleteAction, TopBarSaveAction };

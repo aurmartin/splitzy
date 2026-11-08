@@ -1,12 +1,37 @@
-import { getLocales } from "expo-localization";
+import { getLocales, type Locale } from "expo-localization";
 
-const DEFAULT_LOCALE = "en-US";
+const SUPPORTED_LANGUAGES = ["en", "fr"];
 
-const getLocale = (): string => {
-  const locales = getLocales();
-  return locales[0]?.languageCode || DEFAULT_LOCALE;
+type SupportedLocale = {
+  languageTag: string;
+  languageCode: string;
 };
 
-const getDecimalSeparator = (): string => (1.5).toLocaleString(getLocale()).charAt(1);
+const DEFAULT_LOCALE: SupportedLocale = { languageTag: "en-US", languageCode: "en" };
 
-export { getLocale, getDecimalSeparator };
+const getDeviceLocale = (): Locale => getLocales()[0];
+
+const getSupportedLocale = (): SupportedLocale => {
+  for (const { languageTag, languageCode } of getLocales()) {
+    if (languageCode !== null && SUPPORTED_LANGUAGES.includes(languageCode)) {
+      return { languageTag, languageCode };
+    }
+  }
+
+  return DEFAULT_LOCALE;
+};
+
+const getDecimalSeparator = (): string => (1.5).toLocaleString(getDeviceLocale().languageTag).charAt(1);
+
+const formatDate = (date: Date, options?: Intl.DateTimeFormatOptions): string =>
+  date.toLocaleDateString(getDeviceLocale().languageTag, options);
+
+export {
+  DEFAULT_LOCALE,
+  SUPPORTED_LANGUAGES,
+  formatDate,
+  getDecimalSeparator,
+  getDeviceLocale,
+  getSupportedLocale,
+  type SupportedLocale,
+};

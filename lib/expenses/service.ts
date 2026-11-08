@@ -7,6 +7,7 @@ import { ValidationError } from "@/lib/validation-error";
 import { Money } from "@/lib/money";
 import { Expense, ExpenseCreateParams, ExpenseUpdateParams, Split } from "./types";
 import { DisplayableError } from "../displayable-error";
+import { i18n } from "../i18n";
 
 const insertExpense = async (system: System, params: ExpenseCreateParams) => {
   const validParams = validateCreateExpenseParams(params);
@@ -43,16 +44,16 @@ const createExpense = (validParams: ExpenseCreateParams): Expense => {
 
 const validateCreateExpenseParams = (params: ExpenseCreateParams) => {
   if (params.title.length === 0) {
-    throw new DisplayableError("Le titre est invalide", "Veuillez entrer un titre");
+    throw new DisplayableError(i18n.t("validation.invalidTitle"), i18n.t("validation.enterTitle"));
   }
 
   if (params.payerName.length === 0) {
-    throw new DisplayableError("Le membre est invalide", "Veuillez sélectionner un membre");
+    throw new DisplayableError(i18n.t("validation.invalidMember"), i18n.t("validation.selectMember"));
   }
 
   const splitError = validateSplit(params.splitExpense);
   if (splitError) {
-    throw new DisplayableError("Le partage est invalide", splitError);
+    throw new DisplayableError(i18n.t("validation.invalidSplit"), splitError);
   }
 
   return params;
@@ -62,11 +63,11 @@ const validateUpdateExpenseParams = (params: ExpenseUpdateParams) => {
   const errors: Record<string, string> = {};
 
   if (params.title.length === 0) {
-    errors.title = "Veuillez entrer un titre";
+    errors.title = i18n.t("validation.enterTitle");
   }
 
   if (params.payerName.length === 0) {
-    errors.payerName = "Veuillez sélectionner un membre";
+    errors.payerName = i18n.t("validation.selectMember");
   }
 
   const splitError = validateSplit(params.splitExpense);
@@ -91,7 +92,7 @@ const validateSplit = (split: Split): string | undefined => {
     );
 
     if (total.amount !== split.total.amount) {
-      return "La somme des montants ne correspond pas au total";
+      return i18n.t("validation.splitMismatch");
     }
   }
 };

@@ -2,6 +2,7 @@ import { Text } from "@/components/text";
 import { CURRENCIES, type Currency } from "@/lib/currency-codes";
 import { Host, Picker } from "@expo/ui";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
 type CurrencyPickerProps = {
@@ -11,6 +12,7 @@ type CurrencyPickerProps = {
 
 function CurrencyPicker(props: CurrencyPickerProps) {
   const { value, onChange } = props;
+  const { t } = useTranslation();
 
   return (
     <View
@@ -24,7 +26,7 @@ function CurrencyPicker(props: CurrencyPickerProps) {
         height: 55,
       }}
     >
-      <Text>Devise</Text>
+      <Text>{t("common.currency")}</Text>
       <Host matchContents>
         <Picker<Currency> testID="currency-picker" selectedValue={value} onValueChange={onChange}>
           {CURRENCIES.map((currency) => (

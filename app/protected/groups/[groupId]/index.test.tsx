@@ -79,7 +79,7 @@ describe("GroupScreen", () => {
     await renderRouter(routerContext, system, {
       initialUrl: testGroupScreenUrl,
     });
-    await user.press(screen.getByLabelText("Paramètres du groupe"));
+    await user.press(screen.getByLabelText("Group settings"));
     screen.getByText("Settings");
   });
 
@@ -102,7 +102,7 @@ describe("GroupScreen", () => {
     await renderRouter(routerContext, system, {
       initialUrl: testGroupScreenUrl,
     });
-    await user.press(screen.getByLabelText("Partager"));
+    await user.press(screen.getByLabelText("Share"));
     expect(share).toHaveBeenCalledTimes(1);
   });
 
@@ -123,8 +123,8 @@ describe("GroupScreen", () => {
 
     screen.getAllByText(expense.title);
     screen.getAllByText(/Alice/);
-    screen.getByText("Aujourd'hui");
-    screen.getByText("Hier");
+    screen.getByText("Today");
+    screen.getByText("Yesterday");
     screen.getByText(
       twoDaysAgo.toLocaleDateString(undefined, {
         weekday: "long",
@@ -162,7 +162,7 @@ describe("GroupScreen", () => {
       initialUrl: testGroupScreenUrl,
     });
 
-    await user.press(screen.getByText("Remboursements"));
+    await user.press(screen.getByText("Reimbursements"));
 
     screen.getByText("Balance");
   });
@@ -171,7 +171,7 @@ describe("GroupScreen", () => {
     await renderRouter(routerContext, system, {
       initialUrl: testGroupScreenUrl,
     });
-    screen.getByText("Aucune dépense");
+    screen.getByText("No expenses");
 
     const expense = buildExpenseRecord(group);
     // Groups are synced first, then expenses.

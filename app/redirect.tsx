@@ -3,6 +3,7 @@ import { useSystem } from "@/components/system-provider";
 import * as Linking from "expo-linking";
 import { router } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import * as Sentry from "@sentry/react-native";
 
 function getQueryParams(input: string): {
@@ -30,6 +31,7 @@ function getQueryParams(input: string): {
 export default function RedirectScreen() {
   const url = Linking.useLinkingURL();
   const system = useSystem();
+  const { t } = useTranslation();
 
   const createSessionFromUrl = React.useCallback(
     async (url: string) => {
@@ -73,5 +75,5 @@ export default function RedirectScreen() {
     }
   }, [url, createSessionFromUrl]);
 
-  return <LoadingScreen message="Logging in..." />;
+  return <LoadingScreen message={t("login.loading")} />;
 }

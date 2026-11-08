@@ -131,7 +131,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
             ]
           }
         >
-          Créer une dépense
+          Create an expense
         </Text>
         <View
           style={
@@ -181,7 +181,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
             }
           >
             <Text
-              accessibilityLabel="Enregistrer"
+              accessibilityLabel="Save"
               allowFontScaling={false}
               selectable={false}
               style={
@@ -284,7 +284,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                   ]
                 }
               >
-                Télécharger un reçu
+                Upload a receipt
               </Text>
             </View>
             <View
@@ -323,7 +323,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                     ]
                   }
                 >
-                  Titre
+                  Title
                 </Text>
                 <View
                   style={
@@ -334,7 +334,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                   }
                 >
                   <TextInput
-                    accessibilityLabel="Titre"
+                    accessibilityLabel="Title"
                     onChangeText={[Function]}
                     placeholderTextColor="#888"
                     style={
@@ -379,7 +379,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                     ]
                   }
                 >
-                  Montant
+                  Amount
                 </Text>
                 <View
                   style={
@@ -390,7 +390,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                   }
                 >
                   <TextInput
-                    accessibilityLabel="Montant"
+                    accessibilityLabel="Amount"
                     keyboardType="decimal-pad"
                     onChangeText={[Function]}
                     placeholder="0.00"
@@ -450,7 +450,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                   ]
                 }
               >
-                Payé par
+                Paid by
               </Text>
               <View
                 style={
@@ -601,7 +601,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                     ]
                   }
                 >
-                  Partager la dépense
+                  Split the expense
                 </Text>
                 <View
                   style={
@@ -617,7 +617,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                   }
                 >
                   <View
-                    accessibilityLabel="Également"
+                    accessibilityLabel="Equally"
                     accessibilityRole="button"
                     accessibilityState={
                       {
@@ -667,11 +667,11 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                         ]
                       }
                     >
-                      Également
+                      Equally
                     </Text>
                   </View>
                   <View
-                    accessibilityLabel="Pourcentage"
+                    accessibilityLabel="Percentage"
                     accessibilityRole="button"
                     accessibilityState={
                       {
@@ -721,11 +721,11 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                         ]
                       }
                     >
-                      Pourcentage
+                      Percentage
                     </Text>
                   </View>
                   <View
-                    accessibilityLabel="Montant"
+                    accessibilityLabel="Amount"
                     accessibilityRole="button"
                     accessibilityState={
                       {
@@ -775,7 +775,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                         ]
                       }
                     >
-                      Montant
+                      Amount
                     </Text>
                   </View>
                 </View>

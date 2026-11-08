@@ -6,11 +6,13 @@ import { TopBar } from "@/components/top-bar";
 import { Group, setMe, useGroup } from "@/lib/groups";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 
 function SetMeForm(props: { group: Group }) {
   const { group } = props;
   const system = useSystem();
+  const { t } = useTranslation();
 
   const handleSubmit = React.useCallback(
     (member: string) => {
@@ -24,9 +26,9 @@ function SetMeForm(props: { group: Group }) {
     <>
       <View style={{ marginBottom: 16 }}>
         <Text type="title" style={{ marginBottom: 8 }}>
-          Bienvenue dans le groupe {group.name} ! 👋
+          {t("setMe.welcome", { name: group.name })}
         </Text>
-        <Text>Dites-nous qui vous êtes dans ce groupe :</Text>
+        <Text>{t("setMe.prompt")}</Text>
       </View>
 
       <ListGroup>

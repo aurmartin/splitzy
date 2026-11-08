@@ -8,15 +8,17 @@ import { Text } from "@/components/text";
 import { TopBar } from "@/components/top-bar";
 import { TopBarAction } from "@/components/top-bar-action";
 import { useBalance } from "@/lib/balance";
-import { getAbsoluteAmount, getAmountColor, getBalanceMessage } from "@/lib/currency";
+import { getAbsoluteAmount, getAmountColor } from "@/lib/currency";
 import { Env } from "@/lib/env";
 import { Expense, ReimbursementService, useExpenses, type Reimbursement } from "@/lib/expenses";
 import { Group, useGroup, useMe, getMe } from "@/lib/groups";
-import { getLocale } from "@/lib/locale";
+import { formatDate, getDeviceLocale } from "@/lib/locale";
 import { Money } from "@/lib/money";
 import { Ionicons } from "@expo/vector-icons";
 import { Redirect, router, useLocalSearchParams, useRouter } from "expo-router";
+import type { TFunction } from "i18next";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { SectionList, Share, View } from "react-native";
 
 interface ExpenseSection {
@@ -24,9 +26,29 @@ interface ExpenseSection {
   data: Expense[];
 }
 
+const getSectionTitle = (date: Date, t: TFunction): string => {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  if (date.toDateString() === today.toDateString()) {
+    return t("group.today");
+  } else if (date.toDateString() === yesterday.toDateString()) {
+    return t("group.yesterday");
+  } else {
+    return formatDate(date, {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+};
+
 const ReimbursementItem = (props: { group: Group; reimbursement: Reimbursement }) => {
   const { group, reimbursement } = props;
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <Card
@@ -36,9 +58,14 @@ const ReimbursementItem = (props: { group: Group; reimbursement: Reimbursement }
       <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
         <Ionicons name="swap-horizontal" size={20} color="hsl(0 0% 40%)" />
         <Text style={{ flex: 1, color: "hsl(0 0% 40%)" }} numberOfLines={1}>
-          {reimbursement.payerName} a remboursé {ReimbursementService.getRecipient(reimbursement)}
+          {t("reimbursement.summary", {
+            payer: reimbursement.payerName,
+            recipient: ReimbursementService.getRecipient(reimbursement),
+          })}
         </Text>
-        <Text style={{ color: "hsl(0 0% 40%)" }}>{Money.format(reimbursement.splitExpense.total, getLocale())}</Text>
+        <Text style={{ color: "hsl(0 0% 40%)" }}>
+          {Money.format(reimbursement.splitExpense.total, getDeviceLocale().languageTag)}
+        </Text>
       </View>
     </Card>
   );
@@ -66,11 +93,11 @@ const ExpenseItem = (props: { group: Group; expense: Expense }) => {
             {expense.title}
           </Text>
           <Text style={{ color: "hsl(0 0% 40%)" }}>
-            {expense.payerName}, {expense.createdAt.toLocaleDateString()}
+            {expense.payerName}, {formatDate(expense.createdAt)}
           </Text>
         </View>
 
-        <Text>{Money.format(expense.splitExpense.total, getLocale())}</Text>
+        <Text>{Money.format(expense.splitExpense.total, getDeviceLocale().languageTag)}</Text>
       </View>
     </Card>
   );
@@ -82,32 +109,14 @@ const Expenses = React.memo(function Expenses(props: { group: Group }) {
   const system = useSystem();
   const [refreshing, setRefreshing] = React.useState(false);
   const snackBar = useSnackBar();
-
-  const formatDate = (date: Date) => {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    if (date.toDateString() === today.toDateString()) {
-      return "Aujourd'hui";
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      return "Hier";
-    } else {
-      return date.toLocaleDateString(undefined, {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    }
-  };
+  const { t } = useTranslation();
 
   const sections = React.useMemo(() => {
     const sections: Record<string, Expense[]> = {};
 
     expenses.forEach((expense) => {
       const date = new Date(expense.createdAt);
-      const formattedDate = formatDate(date);
+      const formattedDate = getSectionTitle(date, t);
 
       if (!sections[formattedDate]) {
         sections[formattedDate] = [];
@@ -119,7 +128,7 @@ const Expenses = React.memo(function Expenses(props: { group: Group }) {
       title: date,
       data: ids,
     }));
-  }, [expenses]);
+  }, [expenses, t]);
 
   const renderItem = ({ item }: { item: Expense }) => <ExpenseItem group={group} expense={item} />;
 
@@ -134,11 +143,11 @@ const Expenses = React.memo(function Expenses(props: { group: Group }) {
       // Groups too: another member may have added someone to this group.
       await system.syncEngine.syncAllTablesFromRemote();
     } catch {
-      snackBar.show("Une erreur est survenue lors de la synchronisation des dépenses.", "error");
+      snackBar.show(t("group.syncError"), "error");
     } finally {
       setRefreshing(false);
     }
-  }, [system, snackBar]);
+  }, [system, snackBar, t]);
 
   return (
     <SectionList
@@ -154,7 +163,7 @@ const Expenses = React.memo(function Expenses(props: { group: Group }) {
       refreshing={refreshing}
       style={{ borderRadius: 8 }}
       ListFooterComponent={<View style={{ height: 80 }} />}
-      ListEmptyComponent={<Text>Aucune dépense</Text>}
+      ListEmptyComponent={<Text>{t("group.noExpenses")}</Text>}
       showsVerticalScrollIndicator={false}
       stickySectionHeadersEnabled={false}
     />
@@ -165,8 +174,10 @@ const BalanceDisplay = React.memo(function BalanceDisplay(props: { group: Group 
   const { group } = props;
   const balance = useBalance(group);
   const me = useMe(group.id);
+  const { t } = useTranslation();
 
   const myBalance = balance[me];
+  const message = myBalance.amount > 0 ? t("group.owed") : myBalance.amount < 0 ? t("group.owe") : t("group.settled");
 
   return (
     <View
@@ -178,14 +189,14 @@ const BalanceDisplay = React.memo(function BalanceDisplay(props: { group: Group 
         marginBottom: 16,
       }}
     >
-      <Text type="title">{getBalanceMessage(myBalance)}</Text>
+      <Text type="title">{message}</Text>
       {Money.isZero(myBalance) ? null : (
         <Text type="title" style={{ color: getAmountColor(myBalance) }}>
-          {Money.format(getAbsoluteAmount(myBalance), getLocale())}
+          {Money.format(getAbsoluteAmount(myBalance), getDeviceLocale().languageTag)}
         </Text>
       )}
       <Button onPress={() => router.navigate(`/protected/groups/${group.id}/balance`)} style={{ marginTop: 8 }}>
-        Remboursements
+        {t("group.reimbursements")}
       </Button>
     </View>
   );
@@ -196,6 +207,7 @@ const GroupScreen = React.memo(function GroupScreen() {
   const { groupId }: { groupId: string } = useLocalSearchParams();
   const group = useGroup(groupId);
   const system = useSystem();
+  const { t } = useTranslation();
 
   const shareGroup = React.useCallback(() => {
     if (!group) {
@@ -216,10 +228,10 @@ const GroupScreen = React.memo(function GroupScreen() {
     const link = getLink();
 
     Share.share({
-      title: `Rejoins le groupe "${group.name}" sur Splitzy !`,
-      message: `Hey ! Je t'invite à rejoindre mon groupe "${group.name}" sur Splitzy pour gérer nos dépenses partagées. Clique sur ce lien pour nous rejoindre !\n\n${link}`,
+      title: t("group.inviteTitle", { name: group.name }),
+      message: t("group.inviteMessage", { name: group.name, link }),
     });
-  }, [group]);
+  }, [group, t]);
 
   if (!group || group.deletedAt) {
     return <Redirect href="/protected" />;
@@ -236,10 +248,10 @@ const GroupScreen = React.memo(function GroupScreen() {
         title={group.name}
         rightActions={
           <>
-            <TopBarAction key="share" label="Partager" iconName="share-outline" onPress={shareGroup} />
+            <TopBarAction key="share" label={t("group.share")} iconName="share-outline" onPress={shareGroup} />
             <TopBarAction
               key="settings"
-              label="Paramètres du groupe"
+              label={t("group.settings")}
               iconName="settings-outline"
               onPress={() => router.navigate(`/protected/groups/${group.id}/settings`)}
             />

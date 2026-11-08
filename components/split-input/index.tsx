@@ -6,6 +6,7 @@ import { ReceiptSplitInput, createReceiptSplit } from "@/components/split-input/
 import { type AmountSplit, type EqualSplit, type PercentageSplit, type ReceiptSplit, type Split } from "@/lib/expenses";
 import { type Money } from "@/lib/money";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { ChipList } from "../chip-list";
 import Label from "../label";
@@ -51,6 +52,7 @@ const SplitInput = (props: {
   onTypeChange: (type: Split["type"]) => void;
 }) => {
   const { value, onChange, onTypeChange } = props;
+  const { t } = useTranslation();
 
   let splitInput = <></>;
   if (value.type === "percentage") {
@@ -67,14 +69,14 @@ const SplitInput = (props: {
 
   return (
     <View style={{ gap: 8 }}>
-      <Label>Partager la dépense</Label>
+      <Label>{t("split.label")}</Label>
       <ChipList
         value={value.type}
         onChange={(type) => onTypeChange(type as Split["type"])}
         items={[
-          { label: "Également", value: "equal" },
-          { label: "Pourcentage", value: "percentage" },
-          { label: "Montant", value: "amount" },
+          { label: t("split.equal"), value: "equal" },
+          { label: t("split.percentage"), value: "percentage" },
+          { label: t("split.amount"), value: "amount" },
         ]}
         style={{ justifyContent: "center" }}
       />

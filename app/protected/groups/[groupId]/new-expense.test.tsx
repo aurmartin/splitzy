@@ -37,11 +37,11 @@ describe("NewExpenseScreen", () => {
       initialUrl: newExpenseScreenUrl,
     });
 
-    await user.clear(screen.getByLabelText("Titre"));
-    await user.type(screen.getByLabelText("Titre"), "Test expense");
-    await user.type(screen.getAllByLabelText(/Montant/)[0], "100");
+    await user.clear(screen.getByLabelText("Title"));
+    await user.type(screen.getByLabelText("Title"), "Test expense");
+    await user.type(screen.getAllByLabelText(/Amount/)[0], "100");
     await user.press(screen.getByRole("button", { name: /Alice/ }));
-    await user.press(screen.getByLabelText("Enregistrer"));
+    await user.press(screen.getByLabelText("Save"));
 
     await waitFor(async () => {
       const expenses = await system.db
@@ -62,10 +62,10 @@ describe("NewExpenseScreen", () => {
       initialUrl: newExpenseScreenUrl,
     });
 
-    await user.clear(screen.getByLabelText("Titre"));
-    await user.press(screen.getByLabelText("Enregistrer"));
+    await user.clear(screen.getByLabelText("Title"));
+    await user.press(screen.getByLabelText("Save"));
 
-    await screen.findByText("Veuillez entrer un titre");
+    await screen.findByText("Please enter a title");
   });
 
   it("should throw an error if the group is not found", async () => {
@@ -79,14 +79,14 @@ describe("NewExpenseScreen", () => {
   it("should handle receipt", async () => {
     const user = userEvent.setup();
 
-    // actionIndex = 1 => "Choisir une photo"
+    // actionIndex = 1 => "Choose a photo"
     showActionSheetWithOptions.mockImplementation((_, callback) => callback(1));
 
     await renderRouter(routerContext, system, {
       initialUrl: newExpenseScreenUrl,
     });
 
-    await user.press(screen.getByRole("button", { name: /Télécharger un reçu/ }));
+    await user.press(screen.getByRole("button", { name: /Upload a receipt/ }));
 
     await screen.findByDisplayValue("Test receipt");
   });
