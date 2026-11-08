@@ -7,4 +7,6 @@ const getLocale = (): string => {
   return locales[0]?.languageCode || DEFAULT_LOCALE;
 };
 
-export { getLocale };
+const getDecimalSeparator = (): string => (1.5).toLocaleString(getLocale()).charAt(1);
+
+export { getLocale, getDecimalSeparator };

@@ -61,7 +61,7 @@ exports[`PercentageSplit PercentageSplitInput renders correctly 1`] = `
     >
       <TextInput
         accessibilityLabel="user1"
-        keyboardType="numeric"
+        keyboardType="decimal-pad"
         onChangeText={[Function]}
         placeholder="0.00"
         placeholderTextColor="#888"

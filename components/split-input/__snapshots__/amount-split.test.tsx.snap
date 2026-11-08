@@ -60,7 +60,7 @@ exports[`AmountSplit AmountSplitInput renders correctly 1`] = `
     >
       <TextInput
         accessibilityLabel="alice"
-        keyboardType="numeric"
+        keyboardType="decimal-pad"
         onChangeText={[Function]}
         placeholder="0.00"
         placeholderTextColor="#888"
@@ -189,7 +189,7 @@ exports[`AmountSplit AmountSplitInput renders correctly 1`] = `
     >
       <TextInput
         accessibilityLabel="bob"
-        keyboardType="numeric"
+        keyboardType="decimal-pad"
         onChangeText={[Function]}
         placeholder="0.00"
         placeholderTextColor="#888"
@@ -256,7 +256,7 @@ exports[`AmountSplit AmountSplitInput renders correctly 1`] = `
     >
       <TextInput
         accessibilityLabel="charlie"
-        keyboardType="numeric"
+        keyboardType="decimal-pad"
         onChangeText={[Function]}
         placeholder="0.00"
         placeholderTextColor="#888"

@@ -391,7 +391,7 @@ exports[`NewExpenseScreen should render correctly 1`] = `
                 >
                   <TextInput
                     accessibilityLabel="Montant"
-                    keyboardType="numeric"
+                    keyboardType="decimal-pad"
                     onChangeText={[Function]}
                     placeholder="0.00"
                     placeholderTextColor="#888"

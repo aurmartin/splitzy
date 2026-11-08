@@ -1,3 +1,4 @@
+import { getDecimalSeparator } from "@/lib/locale";
 import React from "react";
 import { TextInput, type TextInputProps } from "./text-input";
 
@@ -8,27 +9,33 @@ interface FloatInputProps extends Omit<TextInputProps, "onChange" | "value"> {
   decimals?: number;
 }
 
+// Both separators are accepted whatever the locale: the iOS keypad only offers
+// the region's one, and some Android keyboards only offer ".".
 const getPattern = (decimals: number | undefined): RegExp => {
-  if (decimals === undefined) return /^[0-9]*(\.[0-9]*)?$/;
+  if (decimals === undefined) return /^[0-9]*([.,][0-9]*)?$/;
   if (decimals === 0) return /^[0-9]*$/;
-  return new RegExp(`^[0-9]*(\\.[0-9]{0,${decimals}})?$`);
+  return new RegExp(`^[0-9]*([.,][0-9]{0,${decimals}})?$`);
 };
 
 const getPlaceholder = (decimals: number | undefined): string => {
-  if (decimals === undefined) return "0.00";
-  return decimals === 0 ? "0" : `0.${"0".repeat(decimals)}`;
+  if (decimals === 0) return "0";
+  return `0${getDecimalSeparator()}${"0".repeat(decimals ?? 2)}`;
 };
+
+const parse = (text: string): number => parseFloat(text.replace(",", ".")) || 0;
+
+const format = (value: number): string => value.toString().replace(".", getDecimalSeparator());
 
 const FloatInput = (props: FloatInputProps) => {
   const { value, onChange, decimals, ...rest } = props;
-  const [text, setText] = React.useState(value.toString());
+  const [text, setText] = React.useState(() => format(value));
   const [prevValue, setPrevValue] = React.useState(value);
 
   // Sync the text with the value when it changes from the outside.
   if (value !== prevValue) {
     setPrevValue(value);
-    if (value !== parseFloat(text)) {
-      setText(value.toString());
+    if (value !== parse(text)) {
+      setText(format(value));
     }
   }
 
@@ -37,15 +44,13 @@ const FloatInput = (props: FloatInputProps) => {
       return;
     }
 
-    let parsedValue = 0;
-    if (textValue && parseFloat(textValue)) {
-      parsedValue = parseFloat(textValue);
-    }
+    const parsedValue = parse(textValue);
 
     onChange(parsedValue);
     setText((prevText) => {
-      if (prevText === "0") {
-        return parsedValue.toString();
+      // Typing a digit after the initial "0" replaces it, but "0," starts a decimal.
+      if (prevText === "0" && /^[0-9]+$/.test(textValue)) {
+        return format(parsedValue);
       }
       return textValue;
     });
@@ -56,7 +61,7 @@ const FloatInput = (props: FloatInputProps) => {
       testID="float-input"
       value={text}
       onChangeText={handleChange}
-      keyboardType="numeric"
+      keyboardType={decimals === 0 ? "number-pad" : "decimal-pad"}
       placeholder={getPlaceholder(decimals)}
       {...rest}
     />
