@@ -16,6 +16,7 @@
     "test": "NODE_ENV=test dotenv -e .env.test -- jest",
     "test:watch": "NODE_ENV=test dotenv -e .env.test -- jest --watchAll",
     "test:ci": "NODE_ENV=test dotenv -e .env.test -- jest --ci --coverage",
+    "test:integration": "NODE_ENV=test dotenv -e .env.integration -- jest --config jest.integration.config.js",
     "format": "prettier --write .",
     "lint": "expo lint",
     "build:android-dev": "EXPO_NO_DOTENV=1 APP_ENV=development dotenv -e .env.development -- eas build --platform android --profile development --local",
