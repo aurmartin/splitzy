@@ -33,7 +33,7 @@
     "@expo/vector-icons": "^15.1.1",
     "@react-native-community/netinfo": "12.0.1",
     "@sentry/react-native": "~8.28.0",
-    "@supabase/supabase-js": "~2.118.0",
+    "@supabase/supabase-js": "~2.119.0",
     "drizzle-orm": "^0.45.4",
     "expo": "~58.0.22",
     "expo-constants": "~58.0.14",
