@@ -3,7 +3,7 @@ description: "Setup  Node + PNPM + Install Dependencies"
 runs:
   using: "composite"
   steps:
-    - uses: pnpm/action-setup@v5
+    - uses: pnpm/action-setup@v6
       with:
         run_install: false
 
