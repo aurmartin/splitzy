@@ -29,7 +29,7 @@
   "dependencies": {
     "@expo/metro-runtime": "~58.0.16",
     "@expo/react-native-action-sheet": "^4.1.1",
-    "@expo/ui": "~58.0.27",
+    "@expo/ui": "~58.0.28",
     "@expo/vector-icons": "^15.1.1",
     "@react-native-community/netinfo": "12.0.1",
     "@sentry/react-native": "~8.28.0",
@@ -70,7 +70,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "~26.6.6",
     "@types/react": "~19.3.0",
-    "better-sqlite3": "~13.0.3",
+    "better-sqlite3": "~13.1.1",
     "dotenv": "^17.4.2",
     "dotenv-cli": "^8.0.0",
     "eslint": "^9.26.0",
